@@ -76,8 +76,6 @@ hq-clothing-store/
 │   │   └── 📂 services/        # Axios API Config
 └── docker-compose.yml          # Triển khai với Docker (App + MySQL Server)
 
----
-
 ```
 ## 🚀 Cài đặt và chạy
 

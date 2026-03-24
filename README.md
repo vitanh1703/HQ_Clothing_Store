@@ -78,6 +78,7 @@ hq-clothing-store/
 
 ---
 
+```
 ## 🚀 Cài đặt và chạy
 
 ### 1️⃣ Clone dự án
@@ -123,13 +124,8 @@ docker-compose up -d --build
 
 ## 👥 Thành viên nhóm - Cửa hàng H&Q
 
-| STT | Họ và Tên | MSSV | Vai trò |
-| :--- | :--- | :--- | :--- |
-| 1 | **Diêm Việt Anh** | 23810310083 | Project Manager |
-| 2 | **Nguyễn Thị Hảo** | 23810310152 | Developer |
-| 3 | **Đặng Thị Quỳnh** | 23810310156 | Developer |
-
----
-```
-
-Chúc nhóm bạn bảo vệ đồ án thành công rực rỡ! Nếu cần hỗ trợ thêm về code Backend hay Frontend cứ bảo mình nhé.
+| STT | Họ và Tên | MSSV |
+| :--- | :--- | :--- |
+| 1 | **Diêm Việt Anh** | 23810310083 |
+| 2 | **Nguyễn Thị Hảo** | 23810310152 |
+| 3 | **Đặng Thị Quỳnh** | 23810310156 |

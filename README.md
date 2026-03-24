@@ -1,4 +1,3 @@
-```markdown
 # 👕 H&Q Clothing Store - Website Bán Quần Áo Thời Trang
 
 [![Framework](https://img.shields.io/badge/Framework-ASP.NET%20Core%209.0-purple)](https://dotnet.microsoft.com/)
@@ -76,7 +75,6 @@ hq-clothing-store/
 │   │   ├── 📂 pages/           # Home, ProductDetail, Profile...
 │   │   └── 📂 services/        # Axios API Config
 └── docker-compose.yml          # Triển khai với Docker (App + MySQL Server)
-```
 
 ---
 

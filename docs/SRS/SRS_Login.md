@@ -1,9 +1,9 @@
 # Software Requirement Specification (SRS)
 ## Chức năng: Hệ thống Xác thực người dùng (User Authentication)
-**Mã chức năng:** AUTH-01  
+**Mã chức năng:** AUTH-02  
 **Trạng thái:** Draft / Review  
-**Người soạn thảo:** [diepcd]  
-**Vai trò:** Lead Researcher / Developer
+**Người soạn thảo:** [nguyenthihao]  
+**Vai trò:** Developer
 
 ---
 

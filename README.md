@@ -133,7 +133,7 @@ docker-compose up -d --build
 ## 📘 Software Requirement Specifications (SRS)
 
 ### 🔐 Authentication
-- [User Login (AUTH-01)](docs/SRS/SRS_Login.md)
+- [User Login (AUTH-02)](docs/SRS/SRS_Login.md)
 
 ---
 
@@ -141,4 +141,4 @@ docker-compose up -d --build
 
 | ID | Chức năng | Link |
 |----|----------|------|
-| AUTH-01 | Đăng nhập | [Xem](docs/SRS/SRS_Login.md) |
+| AUTH-02 | Đăng nhập | [Xem](docs/SRS/SRS_Login.md) |

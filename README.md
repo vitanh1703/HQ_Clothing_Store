@@ -127,3 +127,18 @@ docker-compose up -d --build
 | 1 | **Diêm Việt Anh** | 23810310083 |
 | 2 | **Nguyễn Thị Hảo** | 23810310152 |
 | 3 | **Đặng Thị Quỳnh** | 23810310156 |
+
+---
+
+## 📘 Software Requirement Specifications (SRS)
+
+### 🔐 Authentication
+- [User Login (AUTH-01)](docs/SRS/SRS_Login.md)
+
+---
+
+## 📂 Danh sách tài liệu
+
+| ID | Chức năng | Link |
+|----|----------|------|
+| AUTH-01 | Đăng nhập | [Xem](docs/SRS/SRS_Login.md) |

@@ -141,4 +141,4 @@ docker-compose up -d --build
 
 | ID | Chức năng | Link |
 |----|----------|------|
-| AUTH-02 | Đăng nhập | [Xem](docs/SRS/SRS_LOGIN.MD) |
+| AUTH-02 | Đăng nhập | [Xem](docs/srs/SRS_LOGIN.MD) |

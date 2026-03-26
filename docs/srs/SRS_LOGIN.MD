@@ -1,53 +1,64 @@
-# Software Requirement Specification (SRS)
+#  Software Requirement Specification (SRS)
 ## Chức năng: Hệ thống Xác thực người dùng (User Authentication)
 **Mã chức năng:** AUTH-02  
-**Trạng thái:** Draft / Review  
-**Người soạn thảo:** [nguyenthihao]  
+**Trạng thái:** Review  
+**Người soạn thảo:** [Nguyễn Thị Hảo]  
 **Vai trò:** Developer
+**Dự án:** H&Q Clothing Store 
 
 ---
 
 ### 1. Mô tả tổng quan (Description)
-Cung cấp cơ chế xác thực an toàn để người dùng (Nghiên cứu viên/Quản trị viên) truy cập vào hệ thống quản lý dữ liệu và mô hình AI. Đảm bảo tính bảo mật cho các tài sản trí tuệ và kết quả thí nghiệm.
+Cung cấp cơ chế xác thực bảo mật cho phép người dùng truy cập vào hệ thống H&Q. Hệ thống phân quyền dựa trên 3 vai trò chính (Admin, Staff, Customer) để đảm bảo người dùng chỉ tiếp cận đúng các tính năng được phép. Hỗ trợ đăng nhập truyền thống và Google OAuth2.
 
 ### 2. Luồng nghiệp vụ (User Workflow)
+
 | Bước | Hành động người dùng | Phản hồi hệ thống |
 | :--- | :--- | :--- |
-| 1 | Truy cập URL `/login` | Hiển thị Form đăng nhập (Email, Password, Remember Me). |
-| 2 | Nhập thông tin và nhấn "Login" | Validate định dạng dữ liệu đầu vào (Client-side & Server-side). |
-| 3 | Hệ thống kiểm tra thông tin | So khớp Email và mã hóa Password (Bcrypt) trong Database. |
-| 4 | Xác thực thành công | Khởi tạo Session/Token, chuyển hướng về Dashboard. |
-| 5 | Xác thực thất bại | Giữ nguyên trang, hiển thị thông báo lỗi và xóa trường Password. |
+| 1 | Truy cập URL `/login` | Hiển thị giao diện đăng nhập (Form & Nút Google). |
+| 2a | Nhập Email/Password và nhấn "Login" | Gửi request POST tới API Backend `/api/auth/login`. |
+| 2b | Nhấn "Login with Google" | Chuyển hướng tới Google Identity Provider để xác thực. |
+| 3 | Hệ thống kiểm tra thông tin | Truy vấn bảng `users`, so khớp `password_hash` hoặc `google_id`. |
+| 4 | Xác thực thành công | Trả về **JWT Token** (chứa ID, Email, Role). |
+| 5 | Điều hướng theo Role | **Admin/Staff:** Vào Dashboard quản trị. <br> **Customer:** Vào trang chủ mua sắm. |
+| 6 | Xác thực thất bại | Thông báo lỗi cụ thể (Sai thông tin/Tài khoản bị khóa). |
 
 ### 3. Yêu cầu dữ liệu (Data Requirements)
+
 #### 3.1. Dữ liệu đầu vào (Input Fields)
-* **Email:** `string`, định dạng email hợp lệ, bắt buộc.
-* **Password:** `string`, tối thiểu 8 ký tự, ẩn ký tự khi nhập, bắt buộc.
-* **Remember Me:** `boolean`, tùy chọn (mặc định false).
+* **Email:** `string`, bắt buộc, định dạng email hợp lệ (Dùng cho cả Local và Google).
+* **Password:** `string`, tối thiểu 8 ký tự (Chỉ bắt buộc nếu `auth_provider = 'local'`).
+* **Google ID:** `string`, nhận được sau khi người dùng xác thực thành công với Google.
 
 #### 3.2. Dữ liệu lưu trữ (Database - Bảng `users`)
-* `email`: unique, index.
-* `password`: hashed string.
-* `last_login_at`: timestamp (để theo dõi truy cập).
-* `login_ip`: string (phục vụ Audit Log).
+Hệ thống sẽ truy vấn và cập nhật các trường sau:
+* `email`: Dùng để định danh duy nhất.
+* `password`: Chuỗi đã băm (Hashed) bằng BCrypt.
+* `role`: Lấy giá trị ('Admin', 'Staff', 'Customer') để phân quyền.
+* `auth_provider`: Phân biệt nguồn ('local' hoặc 'google').
+* `google_id`: Lưu trữ định danh Google để nhận diện trong các lần sau.
+* `status`: Kiểm tra trạng thái (1: Active, 0: Locked).
 
 ### 4. Ràng buộc kỹ thuật & Bảo mật (Technical Constraints)
-* **Giao thức:** Bắt buộc sử dụng **HTTPS** để mã hóa dữ liệu trên đường truyền.
-* **Bảo mật Form:** Tích hợp mã **CSRF Token** trong mọi request POST.
-* **Mã hóa:** Mật khẩu không bao giờ được lưu dưới dạng văn bản thuần (Plaintext). Sử dụng thuật toán `Argon2` hoặc `Bcrypt`.
-* **Throttling (Chống Brute-force):** Khóa tạm thời IP/Tài khoản nếu đăng nhập sai quá 5 lần trong 1 phút.
+* **Giao thức:** Bắt buộc sử dụng **HTTPS** (SSL/TLS) cho mọi yêu cầu API.
+* **Mã hóa:** Tuyệt đối không lưu mật khẩu dạng văn bản thuần. Sử dụng thư viện `BCrypt.Net` hoặc `Identity PasswordHasher`.
+* **JWT (JSON Web Token):** Token được đính kèm vào Header `Authorization: Bearer <token>` trong các request tiếp theo.
+* **CORS:** Chỉ cho phép Origin từ tên miền của Frontend (React) truy cập API.
+* **Brute-force:** Tự động khóa đăng nhập 15 phút nếu nhập sai mật khẩu quá 5 lần liên tiếp.
 
 ### 5. Trường hợp ngoại lệ & Xử lý lỗi (Edge Cases)
-* **Trường hợp:** Người dùng nhập sai định dạng email.  
-  * **Xử lý:** Hiển thị lỗi ngay tại field: "Email không đúng định dạng".
-* **Trường hợp:** Tài khoản đã bị quản trị viên khóa (Inactive).  
-  * **Xử lý:** Thông báo: "Tài khoản của bạn tạm thời bị đình chỉ. Vui lòng liên hệ Admin".
-* **Trường hợp:** Token CSRF hết hạn (do để trang quá lâu).  
-  * **Xử lý:** Redirect về trang login với thông báo "Phiên làm việc hết hạn, vui lòng thử lại".
+
+| Tình huống | Hành động xử lý |
+| :--- | :--- |
+| **Email chưa đăng ký** | Thông báo: "Email hoặc mật khẩu không chính xác". |
+| **Tài khoản bị khóa (`status=0`)** | Thông báo: "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin". |
+| **Đăng nhập Google lần đầu** | Hệ thống tự động Insert 1 dòng mới vào bảng `users` với `role = 'Customer'` và tạo 1 `carts` tương ứng. |
+| **Phiên làm việc hết hạn** | API trả về mã lỗi `401 Unauthorized`, Frontend tự động xóa Token và chuyển về trang Login. |
 
 ### 6. Giao diện (UI/UX)
-* Thiết kế Responsive (hoạt động tốt trên cả Desktop và Mobile).
-* Nút "Login" hiển thị trạng thái `processing` (spinner) khi đang gửi request.
-* Hỗ trợ phím tắt: Nhấn `Enter` để gửi form.
+* **Responsive:** Giao diện co giãn tốt trên cả Mobile và Desktop.
+* **Feedback:** Hiển thị Spinner khi đang gửi yêu cầu xác thực.
+* **Accessibility:** Hỗ trợ nhấn `Enter` để thực hiện gửi form nhanh.
+* **Remember Me:** Sử dụng Persistent Storage để lưu trạng thái đăng nhập nếu người dùng tích chọn.
 
 ---

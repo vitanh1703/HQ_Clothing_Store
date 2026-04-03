@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Image from "../assets/image.png";
 import Logo from "../assets/logo.png";
-import GoogleSvg from "../assets/icons8-google.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../services/hooks";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +17,7 @@ const Login = () => {
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
     if (savedAuth) {
-      navigate("/dashboard");
+      navigate("/products");
     }
   }, [navigate]);
 
@@ -41,6 +42,29 @@ const Login = () => {
     } catch (err: any) {
       toast.error(err.message || "Đăng nhập thất bại, vui lòng thử lại");
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      // 1. Lấy Token từ Google
+      const idToken = credentialResponse.credential;
+      
+      // 2. Giải mã để xem thông tin user (tùy chọn)
+      const decoded: any = jwtDecode(idToken);
+      console.log("Thông tin Google User:", decoded);
+
+      // 3. Gửi Token này về Backend ASP.NET của Việt Anh để xác thực
+      // const response = await axios.post("https://localhost:7137/api/Auth/google-login", { token: idToken });
+      
+      toast.success(`Chào ${decoded.name}, đăng nhập Google thành công!`);
+      localStorage.setItem("auth", JSON.stringify({ token: idToken, user: decoded }));
+      navigate("/products");
+    } catch (error) {
+      toast.error("Đăng nhập Google thất bại");
+    }
+  };
+  const handleGoogleError = () => {
+    toast.error("Đăng nhập Google thất bại!");
   };
 
   return (
@@ -101,7 +125,7 @@ const Login = () => {
             <div className="space-y-3">
               <button 
                 type="submit" 
-                disabled={loading} // Ngăn nhấn nhiều lần khi đang load
+                disabled={loading}
                 className={`w-full bg-black text-white py-3 rounded-lg font-semibold transition-all ${
                   loading ? "bg-gray-500 cursor-not-allowed" : "hover:bg-gray-800"
                 }`}
@@ -109,13 +133,18 @@ const Login = () => {
                 {loading ? "Đang xác thực..." : "Đăng Nhập"}
               </button>
               
-              <button 
-                type="button"
-                className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-              >
-                <img src={GoogleSvg} alt="Google" className="w-5 h-5" />
-                Đăng nhập bằng Google
-              </button>
+              {/* SỬA TẠI ĐÂY: Thay nút Google cũ bằng Component của thư viện */}
+              <div className="flex justify-center w-full">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  size="large"
+                  text="signin_with"
+                  shape="rectangular"
+                  width="384px" // Khớp với chiều rộng max-w-md của form
+                />
+              </div>
             </div>
           </form>
 

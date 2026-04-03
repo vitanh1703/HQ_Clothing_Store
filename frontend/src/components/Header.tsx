@@ -1,4 +1,4 @@
-import { Search, Menu, ShoppingBag, User, Heart } from "lucide-react";
+import { Menu, ShoppingBag, User, Heart } from "lucide-react";
 
 const Header = () => {
   return (

@@ -75,7 +75,7 @@ const ProductsPage = () => {
               {categories.map(c => (
                 <button 
                   key={c} 
-                  className="px-3 py-1 text-[9px] border border-gray-200 bg-white font-bold hover:bg-black hover:text-white transition-all uppercase min-w-[90px] h-7 flex items-center justify-center leading-none shadow-sm"
+                  className="px-3 py-1 text-[9px] border border-gray-200 bg-white font-bold hover:bg-black hover:text-white transition-all uppercase min-w-22.5 h-7 flex items-center justify-center leading-none shadow-sm"
                 >
                   {c}
                 </button>
@@ -89,7 +89,7 @@ const ProductsPage = () => {
               {products.map((item) => (
                 <div key={item} className="group cursor-pointer">
                   {/* Khung ảnh xám tỉ lệ 3:4 */}
-                  <div className="bg-[#D1D5DB] aspect-[3/4] mb-4 flex items-center justify-center relative overflow-hidden">
+                  <div className="bg-[#D1D5DB] aspect-3/4 mb-4 flex items-center justify-center relative overflow-hidden">
                     <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">
                       Ảnh {item}
                     </span>

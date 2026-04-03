@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [token, setToken] = useState(JSON.parse(localStorage.getItem("auth") || "null") || "");
+  const [token] = useState(JSON.parse(localStorage.getItem("auth") || "null") || "");
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,7 +25,6 @@ const Login = () => {
     if (email.length > 0 && password.length > 0) {
       const formData = { email, password };
       try {
-        // Lưu ý: Đổi URL này thành URL Backend ASP.NET của bạn (ví dụ: https://localhost:7xxx/api/auth/login)
         const response = await axios.post("http://localhost:3000/api/v1/login", formData);
         
         localStorage.setItem('auth', JSON.stringify(response.data.token));

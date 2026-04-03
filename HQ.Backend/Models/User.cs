@@ -3,11 +3,11 @@
     public class User
     {
         public int Id { get; set; }
-        public string? Username { get; set; }
-        public string Password { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string Role { get; set; } = "Customer"; 
-        public string FullName { get; set; } = null!;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public string? username { get; set; }
+        public string password { get; set; } = null!;
+        public string email { get; set; } = null!;
+        public string role { get; set; } = "Customer";
+        public string full_name { get; set; } = null!; 
+        public DateTime created_at { get; set; } = DateTime.Now; 
     }
 }

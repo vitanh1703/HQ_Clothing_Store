@@ -107,11 +107,11 @@
             "type": "string",
             "nullable": true
           },
-          "fullName": {
+          "full_name": {
             "type": "string",
             "nullable": true
           },
-          "createdAt": {
+          "created_at": {
             "type": "string",
             "format": "date-time"
           }

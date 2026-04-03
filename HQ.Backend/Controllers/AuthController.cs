@@ -3,6 +3,7 @@ using HQ.Backend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HQ.Backend.Controllers
 {
@@ -17,31 +18,24 @@ namespace HQ.Backend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] User user)
         {
-            // 1. Kiểm tra email tồn tại chưa
-            if (_context.Users.Any(u => u.Email == user.Email))
+            if (await _context.Users.AnyAsync(u => u.email == user.email))
                 return BadRequest(new { message = "Email đã được sử dụng!" });
 
-            // 2. Lưu user (Lưu ý: Thực tế nên dùng BCrypt để Hash Password)
+            // 2. Lưu user vào MySQL
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Đăng ký thành công!" });
         }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            // 1. Tìm user trong Database theo Email
-            // Sử dụng SingleOrDefaultAsync hoặc FirstOrDefaultAsync từ Entity Framework
-            var user = _context.Users.FirstOrDefault(u => u.Email == request.Email);
-
-            // 2. Kiểm tra user có tồn tại và mật khẩu có khớp không
-            if (user == null || user.Password != request.Password)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.email == request.Email);
+            if (user == null || user.password != request.Password)
             {
                 return Unauthorized(new { message = "Email hoặc mật khẩu không chính xác!" });
             }
-
-            // 3. Giả lập trả về Token (Sau này bạn sẽ dùng JWT ở đây)
-            // Hiện tại trả về một chuỗi string ngẫu nhiên để Frontend lưu vào LocalStorage
             var fakeToken = "HQ-STORE-TOKEN-" + Guid.NewGuid().ToString();
 
             return Ok(new
@@ -51,12 +45,13 @@ namespace HQ.Backend.Controllers
                 user = new
                 {
                     id = user.Id,
-                    email = user.Email,
-                    username = user.Username
+                    email = user.email,
+                    username = user.username
                 }
             });
         }
     }
+
     public class LoginRequest
     {
         public string Email { get; set; } = null!;

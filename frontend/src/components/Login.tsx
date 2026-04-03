@@ -4,60 +4,58 @@ import Logo from "../assets/logo.png";
 import GoogleSvg from "../assets/icons8-google.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth } from "../services/hooks";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [token] = useState(JSON.parse(localStorage.getItem("auth") || "null") || "");
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Kiểm tra đăng nhập ngay khi vào trang
+  useEffect(() => {
+    const savedAuth = localStorage.getItem("auth");
+    if (savedAuth) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const target = e.target as typeof e.target & {
-      email: { value: string };
-      password: { value: string };
-    };
     
-    let email = target.email.value;
-    let password = target.password.value;
+    // Lấy dữ liệu từ form
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    if (email.length > 0 && password.length > 0) {
-      const formData = { email, password };
-      try {
-        const response = await axios.post("http://localhost:3000/api/v1/login", formData);
-        
-        localStorage.setItem('auth', JSON.stringify(response.data.token));
-        toast.success("Đăng nhập thành công!");
-        navigate("/dashboard");
-      } catch (err: any) {
-        console.log(err);
-        toast.error(err.response?.data?.message || "Sai tài khoản hoặc mật khẩu");
-      }
-    } else {
-      toast.error("Vui lòng nhập đầy đủ thông tin");
+    try {
+      const data = await login(email, password);
+      
+      // 'data' ở đây là kết quả trả về từ api.ts (bao gồm token, user info...)
+      localStorage.setItem("auth", JSON.stringify(data));
+      
+      toast.success("Chào mừng bạn trở lại!");
+      
+      // Chuyển hướng ngay sang dashboard
+      navigate("/dashboard");
+    } catch (err: any) {
+      // Hiển thị lỗi từ Controller hoặc Server trả về
+      toast.error(err.message || "Đăng nhập thất bại, vui lòng thử lại");
     }
   };
 
-  useEffect(() => {
-    if (token !== "") {
-      toast.info("Bạn đã đăng nhập rồi");
-      navigate("/dashboard");
-    }
-  }, [token, navigate]);
-
   return (
     <div className="flex min-h-screen bg-white">
-      {/* Cánh trái: Hình ảnh minh họa (Ẩn trên thiết bị di động) */}
+      {/* Cánh trái: Hình ảnh */}
       <div className="hidden lg:flex w-1/2 bg-gray-100 items-center justify-center">
-        <img src={Image} alt="Hình ảnh đăng nhập" className="max-w-full h-auto object-cover" />
+        <img src={Image} alt="Login Illustration" className="max-w-full h-auto object-cover" />
       </div>
 
-      {/* Cánh phải: Form đăng nhập */}
+      {/* Cánh phải: Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="max-w-md w-full space-y-8">
           <div className="flex flex-col items-center">
-            <img src={Logo} alt="Logo Công ty" className="w-32 mb-6" />
+            <img src={Logo} alt="Logo" className="w-32 mb-6" />
             <h2 className="text-3xl font-bold text-gray-900">Chào mừng trở lại!</h2>
             <p className="text-gray-500">Vui lòng nhập thông tin chi tiết của bạn</p>
           </div>
@@ -69,6 +67,7 @@ const Login = () => {
                 <input
                   type="email"
                   name="email"
+                  required
                   placeholder="Địa chỉ email của bạn"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
                 />
@@ -79,6 +78,7 @@ const Login = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
+                  required
                   placeholder="Nhập mật khẩu"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
                 />
@@ -94,7 +94,7 @@ const Login = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input id="remember" type="checkbox" className="h-4 w-4 text-black border-gray-300 rounded focus:ring-black" />
-                <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">Ghi nhớ trong 30 ngày</label>
+                <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">Ghi nhớ</label>
               </div>
               <a href="#" className="text-sm font-semibold text-black hover:underline">Quên mật khẩu?</a>
             </div>
@@ -102,10 +102,14 @@ const Login = () => {
             <div className="space-y-3">
               <button 
                 type="submit" 
-                className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                disabled={loading} // Ngăn nhấn nhiều lần khi đang load
+                className={`w-full bg-black text-white py-3 rounded-lg font-semibold transition-all ${
+                  loading ? "bg-gray-500 cursor-not-allowed" : "hover:bg-gray-800"
+                }`}
               >
-                Đăng Nhập
+                {loading ? "Đang xác thực..." : "Đăng Nhập"}
               </button>
+              
               <button 
                 type="button"
                 className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"

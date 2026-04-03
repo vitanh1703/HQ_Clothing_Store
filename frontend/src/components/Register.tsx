@@ -2,56 +2,52 @@ import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import GoogleSvg from "../assets/icons8-google.svg";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth } from "../services/hooks"; // 1. Dùng hook thay vì gọi axios trực tiếp
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const [token] = useState(JSON.parse(localStorage.getItem("auth") || "null") || "");
+  const { register, loading } = useAuth(); // 2. Lấy hàm register và trạng thái loading từ hook
 
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const target = e.target as any;
     
-    let name = target.name.value;
-    let lastname = target.lastname.value;
-    let email = target.email.value;
-    let password = target.password.value;
-    let confirmPassword = target.confirmPassword.value;
+    // 3. Sử dụng FormData giúp code gọn và chuẩn TypeScript hơn
+    const target = e.currentTarget;
+    const formData = new FormData(target);
+    
+    const name = formData.get("name") as string;
+    const lastname = formData.get("lastname") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
 
-    if (name && lastname && email && password && confirmPassword) {
-      if (password === confirmPassword) {
-        const formData = {
-          username: `${name} ${lastname}`,
-          email,
-          password
-        };
-        try {
-          // Lưu ý: Đổi URL này cho khớp với Backend của bạn
-          await axios.post("http://localhost:3000/api/v1/register", formData);
-          toast.success("Đăng ký thành công!");
-          navigate("/login");
-        } catch (err: any) {
-          toast.error(err.response?.data?.message || err.message);
-        }
-      } else {
-        toast.error("Mật khẩu xác nhận không khớp");
-      }
-    } else {
-      toast.error("Vui lòng điền đầy đủ thông tin");
+    const registerData = { name, lastname, email, password, confirmPassword };
+
+    try {
+      // 4. Gọi hàm từ hook. Hook này đã trỏ sẵn vào https://localhost:7137
+      await register(registerData);
+      
+      toast.success("Đăng ký thành công! Hãy đăng nhập nhé.");
+      navigate("/login");
+    } catch (err: any) {
+      // 5. Hiển thị lỗi từ Controller hoặc Backend trả về
+      toast.error(err.message || "Đăng ký thất bại");
     }
   };
 
+  // Kiểm tra token để không cho người đã đăng nhập vào trang này
   useEffect(() => {
-    if (token !== "") {
+    const savedAuth = localStorage.getItem("auth");
+    if (savedAuth) {
       navigate("/dashboard");
     }
-  }, [token, navigate]);
+  }, [navigate]);
 
   return (
     <div className="flex min-h-screen bg-white">
-      {/* Bên trái: Hình ảnh minh họa (Ẩn trên mobile) */}
+      {/* Bên trái: Hình ảnh (Giữ nguyên) */}
       <div className="hidden lg:flex w-1/2 bg-gray-100 items-center justify-center p-12">
         <div className="max-w-md text-center">
           <div className="bg-black w-full aspect-square rounded-2xl flex items-center justify-center text-white text-6xl font-bold mb-8 shadow-2xl">
@@ -102,8 +98,13 @@ const Register = () => {
             </div>
 
             <div className="pt-2 space-y-3">
-              <button type="submit" className="w-full bg-black text-white py-3 rounded-lg font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-95">
-                Đăng ký ngay
+              {/* 6. Thêm trạng thái disabled khi đang loading để tránh spam click */}
+              <button 
+                type="submit" 
+                disabled={loading}
+                className={`w-full bg-black text-white py-3 rounded-lg font-bold shadow-lg transition-all active:scale-95 ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-800"}`}
+              >
+                {loading ? "Đang xử lý..." : "Đăng ký ngay"}
               </button>
               
               <button type="button" className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all">

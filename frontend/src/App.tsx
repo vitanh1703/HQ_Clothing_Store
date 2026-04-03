@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
-import Register from './components/Register'; // Đảm bảo đã tạo file này
+import Register from './components/Register'; 
 import Logout from './components/Logout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

@@ -39,7 +39,6 @@ const Login = () => {
       // Chuyển hướng ngay sang dashboard
       navigate("/dashboard");
     } catch (err: any) {
-      // Hiển thị lỗi từ Controller hoặc Server trả về
       toast.error(err.message || "Đăng nhập thất bại, vui lòng thử lại");
     }
   };

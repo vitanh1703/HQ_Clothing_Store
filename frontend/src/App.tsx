@@ -10,24 +10,24 @@ import ProductsPage from './components/ProductsPage';
 function App() {
   return (
     <>
-      {/* Cấu hình để thông báo Toast hiện lên */}
+      {/* ToastContainer để hiển thị thông báo */}
       <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* Navbar sẽ luôn hiện ở trên cùng của mọi trang */}
+      {/* Navbar luôn hiện ở trên cùng */}
       <Navbar />
 
       <div className="main-content">
         <Routes>
-          {/* Khi vào trang chủ sẽ tự động chuyển đến trang Sản phẩm hoặc Login */}
-          <Route path="/" element={<Navigate to="/products" />} />
+          {/* SỬA TẠI ĐÂY: Chuyển hướng từ trang chủ "/" sang "/login" */}
+          <Route path="/" element={<Navigate to="/login" />} />
           
-          {/* Định nghĩa các tuyến đường (Routes) */}
+          {/* Định nghĩa các tuyến đường */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/products" element={<ProductsPage />} />
           
-          {/* Trang 404 nếu gõ sai URL */}
+          {/* Trang 404 */}
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

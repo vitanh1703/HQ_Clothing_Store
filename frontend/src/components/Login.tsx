@@ -37,7 +37,7 @@ const Login = () => {
       toast.success("Chào mừng bạn trở lại!");
       
       // Chuyển hướng ngay sang dashboard
-      navigate("/dashboard");
+      navigate("/products");
     } catch (err: any) {
       toast.error(err.message || "Đăng nhập thất bại, vui lòng thử lại");
     }

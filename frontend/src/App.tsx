@@ -1,12 +1,25 @@
-import Login from './components/Login'; 
-import './App.css'
+// import Login from './components/Login'; 
+// import './App.css'
+
+// function App() {
+//   return (
+//     <div className="App">
+//       <Login />
+//     </div>
+//   );
+// }
+
+// export default App
+
+import Navbar from './components/Header';
+import ProductsPage from './components/ProductsPage';
 
 function App() {
   return (
-    <div className="App">
-      <Login />
-    </div>
+    <>
+      <Navbar />
+      <ProductsPage />
+    </>
   );
 }
-
 export default App

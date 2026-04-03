@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HQ.Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HQ.Backend.Data
 {
@@ -7,5 +8,6 @@ namespace HQ.Backend.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+        public DbSet<User> Users { get; set; }
     }
 }

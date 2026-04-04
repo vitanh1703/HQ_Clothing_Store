@@ -9,3 +9,9 @@ public class User
     public string full_name { get; set; } = null!;
     public DateTime created_at { get; set; } = DateTime.Now;
 }
+
+public class LoginRequest
+{
+    public string Email { get; set; } = null!;
+    public string Password { get; set; } = null!;
+}

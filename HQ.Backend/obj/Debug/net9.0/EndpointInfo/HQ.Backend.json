@@ -132,10 +132,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "username": {
-            "type": "string",
-            "nullable": true
-          },
           "password": {
             "type": "string",
             "nullable": true

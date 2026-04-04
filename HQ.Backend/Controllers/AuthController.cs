@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
 
 namespace HQ.Backend.Controllers
 {
@@ -22,7 +23,7 @@ namespace HQ.Backend.Controllers
         {
             if (await _context.Users.AnyAsync(u => u.email == user.email))
                 return BadRequest(new { message = "Email đã được sử dụng!" });
-
+            user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -30,13 +31,14 @@ namespace HQ.Backend.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] Models.LoginRequest request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.email == request.Email);
-            if (user == null || user.password != request.Password)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.password))
             {
                 return Unauthorized(new { message = "Email hoặc mật khẩu không chính xác!" });
             }
+
             var fakeToken = "HQ-STORE-TOKEN-" + Guid.NewGuid().ToString();
 
             return Ok(new
@@ -47,6 +49,7 @@ namespace HQ.Backend.Controllers
                 {
                     id = user.Id,
                     email = user.email,
+                    full_name = user.full_name 
                 }
             });
         }
@@ -70,7 +73,7 @@ namespace HQ.Backend.Controllers
                     {
                         email = payload.Email,
                         full_name = payload.Name,
-                        password = Guid.NewGuid().ToString(), 
+                        password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()),
                         role = "Customer",
                         created_at = DateTime.Now
                     };
@@ -78,10 +81,17 @@ namespace HQ.Backend.Controllers
                     _context.Users.Add(user);
                     await _context.SaveChangesAsync();
                 }
+
                 return Ok(new
                 {
                     message = "Đăng nhập Google thành công",
-                    user = user
+                    token = "HQ-STORE-GOOGLE-TOKEN-" + Guid.NewGuid().ToString(), 
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.email,
+                        full_name = user.full_name
+                    }
                 });
             }
             catch (Exception ex)
@@ -89,11 +99,5 @@ namespace HQ.Backend.Controllers
                 return BadRequest(new { message = "Xác thực Google thất bại", error = ex.Message });
             }
         }
-    }
-
-    public class LoginRequest
-    {
-        public string Email { get; set; } = null!;
-        public string Password { get; set; } = null!;
     }
 }

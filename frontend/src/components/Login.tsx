@@ -6,11 +6,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../services/hooks";
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, loading } = useAuth();
+  const { login, loginWithGoogle, loading } = useAuth(); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,18 +39,17 @@ const Login = () => {
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
       const idToken = credentialResponse.credential;
-      const decoded: any = jwtDecode(idToken);
-      console.log("Thông tin Google User:", decoded);
-      toast.success(`Chào ${decoded.name}, đăng nhập Google thành công!`);
-      localStorage.setItem("auth", JSON.stringify({ token: idToken, user: decoded }));
+      const data = await loginWithGoogle(idToken);
+      toast.success(`Chào mừng ${data.user.full_name} trở lại!`);
       navigate("/products");
-    } catch (error) {
-      toast.error("Đăng nhập Google thất bại");
+    } catch (error: any) {
+      toast.error(error.message || "Đăng nhập Google thất bại");
     }
   };
-  const handleGoogleError = () => {
-    toast.error("Đăng nhập Google thất bại!");
-  };
+
+  function handleGoogleError(): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <div className="flex min-h-screen bg-white">

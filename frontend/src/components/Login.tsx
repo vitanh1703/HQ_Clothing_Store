@@ -65,7 +65,7 @@ const Login = () => {
         <div className="w-100 space-y-8 flex flex-col items-center">
           
           <div className="flex flex-col items-center w-full">
-            <img src={Logo} alt="Logo" className="w-32 mb-6" />
+            <img src={Logo} alt="Logo" className="w-20 mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 text-center">Chào mừng trở lại!</h2>
             <p className="text-gray-500 text-center">Vui lòng nhập thông tin chi tiết của bạn</p>
           </div>

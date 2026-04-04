@@ -29,7 +29,6 @@ export const useAuth = () => {
     try {
       setLoading(true);
       const formattedData = {
-        username: registerData.email.split('@')[0], 
         password: registerData.password,             
         email: registerData.email,               
         role: "Customer",                         

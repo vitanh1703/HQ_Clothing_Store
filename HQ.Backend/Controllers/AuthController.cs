@@ -47,7 +47,6 @@ namespace HQ.Backend.Controllers
                 {
                     id = user.Id,
                     email = user.email,
-                    username = user.username
                 }
             });
         }
@@ -69,7 +68,6 @@ namespace HQ.Backend.Controllers
                 {
                     user = new User
                     {
-                        username = payload.Email.Split('@')[0],
                         email = payload.Email,
                         full_name = payload.Name,
                         password = Guid.NewGuid().ToString(), 

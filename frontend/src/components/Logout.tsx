@@ -1,20 +1,18 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Loader2 } from 'lucide-react'; // Dùng Lucide để có icon đẹp
+import { LogOut, Loader2 } from 'lucide-react';
 
 const Logout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 1. Xóa Token khỏi LocalStorage
     localStorage.removeItem("auth");
 
-    // 2. Chuyển hướng sau 3 giây
     const timer = setTimeout(() => {
       navigate("/");
     }, 3000);
 
-    return () => clearTimeout(timer); // Dọn dẹp timer nếu component bị unmount
+    return () => clearTimeout(timer); 
   }, [navigate]);
 
   return (

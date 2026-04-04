@@ -9,7 +9,7 @@ import ProductsPage from './components/ProductsPage';
 
 function App() {
   const location = useLocation();
-  const hideNavbarPaths = ["/login", "/register"];
+  const hideNavbarPaths = ["/login", "/register", "/logout"];
 
   return (
     <>

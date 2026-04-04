@@ -1,47 +1,55 @@
 import React, { useEffect, useState } from "react";
 import Image from "../assets/image.png";
 import Logo from "../assets/logo.png";
-import GoogleSvg from "../assets/icons8-google.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../services/hooks";
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, loading } = useAuth();
+  const { login, loginWithGoogle, loading } = useAuth(); 
   const navigate = useNavigate();
 
-  // Kiểm tra đăng nhập ngay khi vào trang
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
     if (savedAuth) {
-      navigate("/dashboard");
+      navigate("/products");
     }
   }, [navigate]);
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    // Lấy dữ liệu từ form
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
     try {
       const data = await login(email, password);
-      
-      // 'data' ở đây là kết quả trả về từ api.ts (bao gồm token, user info...)
       localStorage.setItem("auth", JSON.stringify(data));
-      
       toast.success("Chào mừng bạn trở lại!");
       
-      // Chuyển hướng ngay sang dashboard
       navigate("/products");
     } catch (err: any) {
       toast.error(err.message || "Đăng nhập thất bại, vui lòng thử lại");
     }
   };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const idToken = credentialResponse.credential;
+      const data = await loginWithGoogle(idToken);
+      toast.success(`Chào mừng ${data.user.full_name} trở lại!`);
+      navigate("/products");
+    } catch (error: any) {
+      toast.error(error.message || "Đăng nhập Google thất bại");
+    }
+  };
+
+  function handleGoogleError(): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <div className="flex min-h-screen bg-white">
@@ -52,15 +60,16 @@ const Login = () => {
 
       {/* Cánh phải: Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="max-w-md w-full space-y-8">
-          <div className="flex flex-col items-center">
-            <img src={Logo} alt="Logo" className="w-32 mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900">Chào mừng trở lại!</h2>
-            <p className="text-gray-500">Vui lòng nhập thông tin chi tiết của bạn</p>
+        <div className="w-100 space-y-8 flex flex-col items-center">
+          
+          <div className="flex flex-col items-center w-full">
+            <img src={Logo} alt="Logo" className="w-20 mb-6" />
+            <h2 className="text-3xl font-bold text-gray-900 text-center">Chào mừng trở lại!</h2>
+            <p className="text-gray-500 text-center">Vui lòng nhập thông tin chi tiết của bạn</p>
           </div>
 
-          <form onSubmit={handleLoginSubmit} className="mt-8 space-y-6">
-            <div className="space-y-4">
+          <form onSubmit={handleLoginSubmit} className="mt-8 space-y-6 w-full">
+            <div className="space-y-4 w-full">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
@@ -68,18 +77,18 @@ const Login = () => {
                   name="email"
                   required
                   placeholder="Địa chỉ email của bạn"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none transition-all"
                 />
               </div>
               
-              <div className="relative">
+              <div className="relative w-full">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   required
                   placeholder="Nhập mật khẩu"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none transition-all"
                 />
                 <div 
                   className="absolute bottom-3 right-0 pr-3 flex items-center cursor-pointer text-gray-400 hover:text-black"
@@ -90,7 +99,7 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between w-full">
               <div className="flex items-center">
                 <input id="remember" type="checkbox" className="h-4 w-4 text-black border-gray-300 rounded focus:ring-black" />
                 <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">Ghi nhớ</label>
@@ -98,24 +107,29 @@ const Login = () => {
               <a href="#" className="text-sm font-semibold text-black hover:underline">Quên mật khẩu?</a>
             </div>
 
-            <div className="space-y-3">
+            <div className="flex flex-col gap-3 w-full items-center">
               <button 
                 type="submit" 
-                disabled={loading} // Ngăn nhấn nhiều lần khi đang load
-                className={`w-full bg-black text-white py-3 rounded-lg font-semibold transition-all ${
-                  loading ? "bg-gray-500 cursor-not-allowed" : "hover:bg-gray-800"
+                disabled={loading}
+                className={`w-full font-semibold transition-all shadow-sm rounded-md ${
+                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-black text-white hover:bg-gray-800"
                 }`}
+                style={{ height: '40px' }} 
               >
                 {loading ? "Đang xác thực..." : "Đăng Nhập"}
               </button>
               
-              <button 
-                type="button"
-                className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-              >
-                <img src={GoogleSvg} alt="Google" className="w-5 h-5" />
-                Đăng nhập bằng Google
-              </button>
+              <div className="w-full">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  size="large"   
+                  text="signin_with"
+                  shape="rectangular" 
+                  width="400px" 
+                />
+              </div>
             </div>
           </form>
 

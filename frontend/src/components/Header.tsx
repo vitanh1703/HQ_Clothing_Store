@@ -1,6 +1,9 @@
 import { Menu, ShoppingBag, User, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate(); 
+
   return (
     <nav className="flex items-center justify-between px-8 py-4 bg-[#F5F5F5] border-b border-gray-200">
       <div className="flex items-center gap-8 text-sm font-medium">
@@ -19,7 +22,9 @@ const Header = () => {
         <button className="p-2 hover:bg-gray-200 rounded-full transition-colors">
           <Heart size={20} />
         </button>
-        <div className="flex items-center bg-black text-white px-4 py-2 rounded-full gap-2 cursor-pointer hover:bg-gray-800 transition-all">
+        <div  onClick={() => navigate("/cart")}
+              className="flex items-center bg-black text-white px-4 py-2 rounded-full gap-2 cursor-pointer hover:bg-gray-800 transition-all"
+        >
           <span className="text-sm font-bold uppercase tracking-widest">Cart</span>
           <div className="bg-white text-black rounded-full p-1">
             <ShoppingBag size={14} />

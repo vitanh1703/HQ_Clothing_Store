@@ -9,6 +9,7 @@ export const authController = {
     }
     return { success: true };
   },
+  
   validateRegister: (data: any) => {
     const { name, lastname, email, password, confirmPassword } = data;
     

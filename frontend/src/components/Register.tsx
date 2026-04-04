@@ -3,17 +3,18 @@ import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import GoogleSvg from "../assets/icons8-google.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAuth } from "../services/hooks"; // 1. Dùng hook thay vì gọi axios trực tiếp
+import { useAuth } from "../services/hooks";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { register, loading } = useAuth(); // 2. Lấy hàm register và trạng thái loading từ hook
+  const { register, loading } = useAuth(); 
 
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // 3. Sử dụng FormData giúp code gọn và chuẩn TypeScript hơn
     const target = e.currentTarget;
     const formData = new FormData(target);
     
@@ -26,7 +27,6 @@ const Register = () => {
     const registerData = { name, lastname, email, password, confirmPassword };
 
     try {
-      // 4. Gọi hàm từ hook. Hook này đã trỏ sẵn vào https://localhost:7137
       await register(registerData);
       
       toast.success("Đăng ký thành công! Hãy đăng nhập nhé.");
@@ -37,14 +37,40 @@ const Register = () => {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const idToken = credentialResponse.credential;
+      const decoded: any = jwtDecode(idToken);
+      
+      // Ở đây Việt Anh nên gọi một API riêng (ví dụ: api/Auth/google-auth) 
+      // Backend sẽ tự động tạo User nếu chưa có dựa trên email này.
+      
+      console.log("Dữ liệu Google:", decoded);
+      
+      // Tạm thời lưu vào local giống Login để demo
+      localStorage.setItem("auth", JSON.stringify({ 
+        token: idToken, 
+        user: {
+          email: decoded.email,
+          full_name: decoded.name
+        }
+      }));
+
+      toast.success(`Chào mừng ${decoded.name} gia nhập H&Q!`);
+      navigate("/products");
+    } catch (error) {
+      toast.error("Lỗi xác thực Google");
+    }
+  };
+
   // Kiểm tra token để không cho người đã đăng nhập vào trang này
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
     if (savedAuth) {
-      navigate("/dashboard");
+      navigate("/products"); // Chuyển hướng nếu đã có phiên đăng nhập
     }
   }, [navigate]);
-
+  
   return (
     <div className="flex min-h-screen bg-white">
       {/* Bên trái: Hình ảnh (Giữ nguyên) */}

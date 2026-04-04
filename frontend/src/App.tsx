@@ -6,6 +6,7 @@ import Login from './components/Login';
 import Register from './components/Register'; 
 import Logout from './components/Logout';
 import ProductsPage from './components/ProductsPage';
+import CartPage from "./components/CartPage";
 
 function App() {
   const location = useLocation();
@@ -23,6 +24,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

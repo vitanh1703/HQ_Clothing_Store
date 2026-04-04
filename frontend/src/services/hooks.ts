@@ -19,6 +19,7 @@ export const useAuth = () => {
       setLoading(false);
     }
   };
+
   const register = async (registerData: any) => {
     const validation = authController.validateRegister(registerData);
     if (!validation.success) {
@@ -27,8 +28,6 @@ export const useAuth = () => {
 
     try {
       setLoading(true);
-      
-      // PHẢI KHỚP 100% VỚI CLASS USER TRONG C#
       const formattedData = {
         username: registerData.email.split('@')[0], 
         password: registerData.password,             
@@ -44,5 +43,18 @@ export const useAuth = () => {
     }
   };
 
-  return { login, register, loading };
+  const loginWithGoogle = async (idToken: string) => {
+    try {
+      setLoading(true);
+      const data = await authApi.googleLogin(idToken);
+      localStorage.setItem("auth", JSON.stringify(data));
+      return data;
+    } catch (err: any) {
+      throw new Error(err.response?.data?.message || "Xác thực Google thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { login, register, loginWithGoogle, loading };
 };

@@ -11,6 +11,11 @@ export const authApi = {
   register: async (formData: any) => {
     const response = await axios.post(`${API_BASE}/Auth/register`, formData);
     return response.data;
+  },
+
+  googleLogin: async (idToken: string) => {
+    const response = await axios.post(`${API_BASE}/Auth/google-login`, { token: idToken });
+    return response.data;
   }
 };
 

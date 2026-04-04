@@ -123,3 +123,9 @@ D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\ref\HQ.Backend.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Google.Apis.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Google.Apis.Auth.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Google.Apis.Core.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Newtonsoft.Json.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.Management.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\runtimes\win\lib\net7.0\System.Management.dll

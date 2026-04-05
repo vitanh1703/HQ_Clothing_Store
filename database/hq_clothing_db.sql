@@ -3,7 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
+<<<<<<< HEAD
 -- Thời gian đã tạo: Th4 05, 2026 lúc 09:32 AM
+=======
+-- Thời gian đã tạo: Th4 05, 2026 lúc 08:22 AM
+>>>>>>> 8ded1ec48dc42bcfbfd968c560ca3d893c3a24cc
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -159,9 +163,15 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `brand_text`, `accent_color`, `hover_accent`, `image_url`, `description`, `category_id`, `supplier_id`) VALUES
+<<<<<<< HEAD
 (1, 'Sơ mi Seersucker Kẻ Sọc', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484709/item/vngoods_50_484709_3x4.jpg', 'Chất liệu vải nhăn thoáng mát, phù hợp mùa hè', 2, 1),
 (2, 'Áo thun Slim Fit Cotton', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484709/item/vngoods_50_484709_3x4.jpg', 'Vải cotton 100% co giãn 4 chiều', 1, 1),
 (3, 'Quần Jean Slim Fit Navy', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/484709/sub/goods_484709_sub14_3x4.jpg', 'Quần Jean nam màu xanh navy thời thượng', 3, 2);
+=======
+(1, 'Sơ mi Seersucker Kẻ Sọc', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/476997/sub/vngoods_476997_sub3_3x4.jpg', 'Chất liệu vải nhăn thoáng mát, phù hợp mùa hè', 2, 1),
+(2, 'Áo thun Slim Fit Cotton', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://static.zara.net/photos///2024/I/0/1/p/0679/303/250/2/w/563/0679303250_6_1_1.jpg', 'Vải cotton 100% co giãn 4 chiều', 1, 1),
+(3, 'Quần Jean Slim Fit Navy', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1000', 'Quần Jean nam màu xanh navy thời thượng', 3, 2);
+>>>>>>> 8ded1ec48dc42bcfbfd968c560ca3d893c3a24cc
 
 -- --------------------------------------------------------
 
@@ -189,7 +199,11 @@ INSERT INTO `product_variants` (`id`, `product_id`, `size`, `color`, `price`, `s
 (3, 2, 'S', 'Đen', 250000.00, 100, 'HQ-AT-B-S'),
 (4, 2, 'M', 'Đen', 250000.00, 80, 'HQ-AT-B-M'),
 (5, 3, '30', 'Xanh Indigo', 650000.00, 40, 'HQ-QJ-I-30'),
+<<<<<<< HEAD
 (6, 3, 'M', 'Xanh Indigo', 650000.00, 25, 'HQ-QJ-I-32');
+=======
+(6, 3, '32', 'Xanh Indigo', 650000.00, 25, 'HQ-QJ-I-32');
+>>>>>>> 8ded1ec48dc42bcfbfd968c560ca3d893c3a24cc
 
 -- --------------------------------------------------------
 
@@ -317,8 +331,12 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `password`, `email`, `role`, `auth_provider`, `google_id`, `full_name`, `phone`, `address`, `avatar_url`, `status`, `created_at`) VALUES
 (1, '$2a$11$l6AwTBlpYjj/LtO6fDt4YebGr0u22bp0XOr.C5NorG4XECM1KYBKq', 'admin@hq.com', 'Admin', 'local', NULL, 'Quản trị viên', '0900000001', 'Hà Nội', NULL, 1, '2026-04-05 06:20:49'),
 (2, '$2a$11$B2BN/a9C16TVQE2YsmTMrumhI/cDIBZv0oGxiWkvwY8C7dwUiCr3G', 'diema@gmail.com', 'Customer', 'local', NULL, 'Diêm Anh', '0900000002', 'Hải Phòng', NULL, 1, '2026-04-05 06:20:49'),
+<<<<<<< HEAD
 (3, '$2a$11$2eSdcFbMEOrxj8p50vjv.eC8OdmxBnA24TVP1KYc/8F4PXQl8.CpO', 'vietanh@gmail.com', 'Customer', 'local', NULL, 'Diêm Việt Anh', '0900000003', 'Hà Nội', NULL, 1, '2026-04-05 06:20:49'),
 (4, '$2a$11$ne2nAQEV8.sekykzIQ8BJ.qEJaz9FcnTIzRObfp1CoSwAfMbU3Q6W', 'diema448@gmail.com', 'Customer', 'google', '104884167290364105829', 'Diêm Việt Anh', NULL, NULL, 'https://lh3.googleusercontent.com/a/ACg8ocLHZKCZ0cWLxikxVdSzqJ7qSoORzATbHfxtSYNMH0Bi9_EhxwYF=s96-c', 1, '2026-04-05 06:51:58');
+=======
+(3, '$2a$11$2eSdcFbMEOrxj8p50vjv.eC8OdmxBnA24TVP1KYc/8F4PXQl8.CpO', 'vietanh@gmail.com', 'Customer', 'local', NULL, 'Diêm Việt Anh', '0900000003', 'Hà Nội', NULL, 1, '2026-04-05 06:20:49');
+>>>>>>> 8ded1ec48dc42bcfbfd968c560ca3d893c3a24cc
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -497,7 +515,11 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+>>>>>>> 8ded1ec48dc42bcfbfd968c560ca3d893c3a24cc
 
 --
 -- Các ràng buộc cho các bảng đã đổ

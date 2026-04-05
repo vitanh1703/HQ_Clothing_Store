@@ -2,15 +2,14 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Header'; 
-import Login from './components/Login';
-import Register from './components/Register'; 
+import AuthForm from './components/AuthForm';
 import Logout from './components/Logout';
 import ProductsPage from './components/ProductsPage';
 import CartPage from "./components/CartPage";
 
 function App() {
   const location = useLocation();
-  const hideNavbarPaths = ["/login", "/register", "/logout"];
+  const hideNavbarPaths = ["/auth", "/logout"];
 
   return (
     <>
@@ -19,9 +18,8 @@ function App() {
 
       <div className="main-content">
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Navigate to="/auth" />} />
+          <Route path="/auth" element={<AuthForm />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/cart" element={<CartPage />} />

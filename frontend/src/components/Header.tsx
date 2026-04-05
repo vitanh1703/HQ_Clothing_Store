@@ -36,14 +36,9 @@ const Header = () => {
   }, [isDropdownOpen]);
 
   const handleLogout = () => {
-    localStorage.removeItem("auth");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
     setIsDropdownOpen(false);
-    navigate("/auth");
-  }; 
+    navigate("/logout"); 
+  };
 
   return (
     <nav className="flex items-center justify-between px-8 py-4 bg-[#F5F5F5] border-b border-gray-200">

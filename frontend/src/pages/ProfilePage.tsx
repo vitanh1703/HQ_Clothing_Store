@@ -33,39 +33,51 @@ const ProfilePage = () => {
         <div className="bg-white rounded-lg shadow-sm p-8">
           <h1 className="text-3xl font-black uppercase mb-8 text-center">Thông tin cá nhân</h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h2 className="text-xl font-bold uppercase mb-4">Thông tin cơ bản</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-600 uppercase mb-1">Họ và tên</label>
-                  <p className="text-lg font-medium">{user.fullName || 'Chưa cập nhật'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-600 uppercase mb-1">Email</label>
-                  <p className="text-lg font-medium">{user.email}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-600 uppercase mb-1">Vai trò</label>
-                  <p className="text-lg font-medium">{user.role || 'Customer'}</p>
-                </div>
+          <div className="mb-10 flex flex-col items-center gap-6 text-center md:flex-row md:items-start md:text-left md:justify-between">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-36 h-36 rounded-full overflow-hidden bg-gray-100 border-4 border-black">
+                <img
+                  src={
+                    user.avatar || user.avatar_url || user.AvatarUrl || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80"
+                  }
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-2xl font-black uppercase">{user.fullName || user.full_name || 'Khách hàng'}</p>
+                <p className="text-sm text-gray-500 mb-2">{user.email}</p>
+                <span className="bg-black text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">{user.role || 'Customer'}</span>
               </div>
             </div>
 
-            <div>
-              <h2 className="text-xl font-bold uppercase mb-4">Lịch sử mua hàng</h2>
-              <div className="bg-gray-50 rounded-lg p-6 text-center">
-                <p className="text-gray-600 mb-4">Chưa có đơn hàng nào</p>
-                <button
-                  onClick={() => navigate("/products")}
-                  className="bg-black text-white px-6 py-2 rounded-lg font-bold uppercase text-sm hover:bg-gray-800 transition-colors"
-                >
-                  Mua sắm ngay
-                </button>
+            <div className="w-full max-w-xl rounded-xl bg-gray-50 p-6 border border-gray-200">
+              <h2 className="text-xl font-bold uppercase mb-4">Thông tin liên hệ</h2>
+              <div className="space-y-4 text-left">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-gray-500 mb-1">Địa chỉ</p>
+                  <p className="text-base font-medium">{user.address || user.Address || 'Chưa cập nhật'}</p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-gray-500 mb-1">Số điện thoại</p>
+                  <p className="text-base font-medium">{user.phone || user.Phone || 'Chưa cập nhật'}</p>
+                </div>
               </div>
             </div>
           </div>
 
+          <div>
+              <h2 className="text-xl font-bold uppercase mb-4">Lịch sử mua hàng</h2>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+              <p className="text-gray-600 mb-4">Chưa có đơn hàng nào</p>
+                <button
+                onClick={() => navigate("/products")}
+                className="bg-black text-white px-6 py-2 rounded-lg font-bold uppercase text-sm hover:bg-gray-800 transition-colors"
+              >
+                Mua sắm ngay
+              </button>
+            </div>
+        </div>
           <div className="mt-8 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-bold uppercase mb-4">Cài đặt tài khoản</h2>
             <div className="flex gap-4">

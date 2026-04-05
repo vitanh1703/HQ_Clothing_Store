@@ -59,7 +59,10 @@ namespace HQ.Backend.Controllers
                     id = user.Id,
                     email = user.Email,
                     full_name = user.FullName,
-                    role = user.Role
+                    role = user.Role,
+                    avatar = user.AvatarUrl,
+                    address = user.Address,
+                    phone = user.Phone
                 }
             });
         }
@@ -103,7 +106,9 @@ namespace HQ.Backend.Controllers
                         id = user.Id,
                         email = user.Email,
                         full_name = user.FullName,
-                        avatar = user.AvatarUrl
+                        avatar = user.AvatarUrl,
+                        address = user.Address,
+                        phone = user.Phone
                     }
                 });
             }

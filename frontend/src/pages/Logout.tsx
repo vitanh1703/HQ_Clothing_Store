@@ -7,9 +7,12 @@ const Logout = () => {
 
   useEffect(() => {
     localStorage.removeItem("auth");
+    localStorage.removeItem("cart"); 
+    localStorage.clear(); 
 
     const timer = setTimeout(() => {
       navigate("/");
+      window.location.reload(); 
     }, 3000);
 
     return () => clearTimeout(timer); 

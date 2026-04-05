@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 interface CartItem {
-  itemId: number;
+  id: number;
   variantId: number;
   productName: string;
   size: string;
@@ -21,7 +21,7 @@ const CartPage = () => {
   const [cart, setCart] = useState<CartResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const userId = 1; // ⚠️ sau này lấy từ auth
+  const userId = Number(localStorage.getItem("userId")) || 1;
 
   useEffect(() => {
     fetchCart();
@@ -29,9 +29,7 @@ const CartPage = () => {
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get(
-        `https://localhost:7137/api/cart/${userId}`
-      );
+      const res = await axios.get(`https://localhost:7137/api/cart/${userId}`);
       setCart(res.data);
     } catch (err) {
       console.error("Lỗi lấy cart:", err);
@@ -40,14 +38,32 @@ const CartPage = () => {
     }
   };
 
-  const totalPrice =
-    cart?.items.reduce((sum, item) => sum + item.total, 0) || 0;
+  // --- Cập nhật số lượng item ---
+  const handleQuantity = (id: number, newQuantity: number) => {
+    if (!cart) return;
+
+    const qty = Math.max(newQuantity, 1); // số lượng tối thiểu 1
+    const updatedItems = cart.items.map(item =>
+      item.id === id
+        ? { ...item, quantity: qty, total: qty * item.price }
+        : item
+    );
+    setCart({ ...cart, items: updatedItems });
+  };
+
+  // --- Xóa sản phẩm ---
+  const handleRemove = (id: number) => {
+    if (!cart) return;
+    const updatedItems = cart.items.filter(item => item.id !== id);
+    setCart({ ...cart, items: updatedItems });
+  };
+
+  // --- Tổng tiền ---
+  const totalPrice = cart?.items.reduce((sum, item) => sum + item.total, 0) || 0;
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] px-8 py-6">
-      <h1 className="text-2xl font-black mb-6 uppercase">
-        Shopping Cart
-      </h1>
+      <h1 className="text-2xl font-black mb-6 uppercase">Shopping Cart</h1>
 
       {loading ? (
         <p className="text-gray-400">Loading...</p>
@@ -55,15 +71,13 @@ const CartPage = () => {
         <p className="text-gray-500">Giỏ hàng trống</p>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
           {/* LEFT: Danh sách sản phẩm */}
           <div className="lg:col-span-2 space-y-4">
             {cart.items.map(item => (
               <div
-                key={item.itemId}
+                key={item.id}
                 className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm"
               >
-                {/* LEFT */}
                 <div className="flex items-center gap-4">
                   <img
                     src={item.image}
@@ -71,23 +85,44 @@ const CartPage = () => {
                     className="w-20 h-24 object-cover rounded-md"
                   />
 
-                  <div>
-                    <h2 className="font-bold">{item.productName}</h2>
-                    <p className="text-gray-500">
-                      {item.price.toLocaleString()}đ
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      Size: {item.size}
-                    </p>
+                  <div className="flex flex-col justify-between">
+                    <div>
+                      <h2 className="font-bold">{item.productName}</h2>
+                      <p className="text-gray-500">{item.price.toLocaleString()}đ</p>
+                      <p className="text-xs text-gray-400">Size: {item.size}</p>
+                    </div>
+
+                    {/* Nút + / - và Xóa */}
+                    <div className="flex items-center gap-3 mt-2">
+                      <button
+                        className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
+                        onClick={() =>
+                          handleQuantity(item.id, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </button>
+                      <span className="px-4 font-medium">{item.quantity}</span>
+                      <button
+                        className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
+                        onClick={() =>
+                          handleQuantity(item.id, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </button>
+                      <button
+                        className="ml-4 px-3 py-1 border rounded bg-red-500 text-white hover:bg-red-600"
+                        onClick={() => handleRemove(item.id)}
+                      >
+                        Xóa
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                {/* RIGHT */}
                 <div className="text-right">
-                  <p>Số lượng: {item.quantity}</p>
-                  <p className="font-bold">
-                    {(item.total).toLocaleString()}đ
-                  </p>
+                  <p className="font-bold">{item.total.toLocaleString()}đ</p>
                 </div>
               </div>
             ))}
@@ -116,7 +151,6 @@ const CartPage = () => {
               Checkout
             </button>
           </div>
-
         </div>
       )}
     </div>

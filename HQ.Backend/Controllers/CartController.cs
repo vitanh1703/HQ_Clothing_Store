@@ -67,6 +67,8 @@ namespace HQ.Backend.Controllers
                         .Join(_context.ProductVariants, ci => ci.VariantId, v => v.Id, (ci, v) => new { ci, v })
                         .Join(_context.Products, joined => joined.v.ProductId, p => p.Id, (joined, p) => new
                         {
+                            Id = joined.ci.Id,
+                            VariantId = joined.v.Id,
                             ProductName = p.Name,
                             Size = joined.v.Size,
                             Price = joined.v.Price,

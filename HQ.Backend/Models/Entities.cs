@@ -94,9 +94,35 @@ public class CartItem
     public int Quantity { get; set; }
 }
 
-public class AddToCartRequest
+[Table("news")]
+public class News
 {
-    public int UserId { get; set; }
-    public int VariantId { get; set; }
-    public int Quantity { get; set; }
+    [Key]
+    public int Id { get; set; }
+    public string Category { get; set; } = null!;
+    public string Title { get; set; } = null!;
+    [Column("publish_date")]
+    public DateTime PublishDate { get; set; }
+    [Column("img_url")]
+    public string? ImgUrl { get; set; }
+    public string? Description { get; set; }
+    public string? Content { get; set; }
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+}
+
+[Table("services")]
+public class Service
+{
+    public int Id { get; set; } // Id thường là int
+
+    [Column("icon_name")]
+    public string IconName { get; set; } // Đảm bảo cột này trong DB là VARCHAR
+
+    public string Title { get; set; } // Đảm bảo là VARCHAR/TEXT
+
+    public string Description { get; set; } // Đảm bảo là VARCHAR/TEXT
+
+    [Column("order_index")]
+    public int OrderIndex { get; set; } // Cột này trong DB là int nên ở đây phải là int
 }

@@ -80,9 +80,29 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "HQ.Backend.Controllers.NewsController",
+    "Method": "GetNews",
+    "RelativePath": "api/News",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HQ.Backend.Controllers.ProductsController",
     "Method": "GetProducts",
     "RelativePath": "api/Products",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.ServicesController",
+    "Method": "GetServices",
+    "RelativePath": "api/Services",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

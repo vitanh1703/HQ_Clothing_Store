@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { authApi, productApi, cartApi, type Product } from "./api";
+import { authApi, productApi, cartApi, newsApi, servicesApi, type Product, type NewsItem, type ServiceItem } from "./api";
 import { authController } from "./controller";
 
 export const useAuth = () => {
@@ -124,4 +124,54 @@ export const useCart = () => {
   };
 
   return { addToCart, isAdding };
+};
+
+export const useNews = () => {
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchNews = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await newsApi.getAll();
+      setNews(data);
+    } catch (err: any) {
+      setError(err.message || "Không thể tải tin tức");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  return { news, loading, error, refetch: fetchNews };
+};
+
+export const useServices = () => {
+  const [services, setServices] = useState<ServiceItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchServices = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await servicesApi.getAll();
+      setServices(data);
+    } catch (err: any) {
+      setError(err.message || "Không thể tải dịch vụ");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  return { services, loading, error, refetch: fetchServices };
 };

@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "D:\\HQ_Clothing_Store\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\controllers\\servicescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\controllers\\servicescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\models\\entities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\models\\entities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -31,6 +43,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "ServicesController.cs",
+              "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\ServicesController.cs",
+              "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\ServicesController.cs",
+              "ToolTip": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\ServicesController.cs",
+              "RelativeToolTip": "HQ.Backend\\Controllers\\ServicesController.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAgwBUAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-05T09:30:51.001Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Entities.cs",
+              "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Models\\Entities.cs",
+              "RelativeDocumentMoniker": "HQ.Backend\\Models\\Entities.cs",
+              "ToolTip": "D:\\HQ_Clothing_Store\\HQ.Backend\\Models\\Entities.cs",
+              "RelativeToolTip": "HQ.Backend\\Models\\Entities.cs",
+              "ViewState": "AgIAAGYAAAAAAAAAAAAIwHUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-05T09:32:32.355Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "NewsController.cs",
+              "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\NewsController.cs",
+              "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\NewsController.cs",
+              "ToolTip": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\NewsController.cs",
+              "RelativeToolTip": "HQ.Backend\\Controllers\\NewsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-05T09:23:48.589Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "ProductsController.cs",
               "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\ProductsController.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\ProductsController.cs",
@@ -43,7 +94,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\AuthController.cs",
@@ -55,7 +106,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "CartController.cs",
               "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\CartController.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\CartController.cs",
@@ -67,7 +118,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Program.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Program.cs",

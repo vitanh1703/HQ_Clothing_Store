@@ -176,6 +176,18 @@
         }
       }
     },
+    "/api/Promotions": {
+      "get": {
+        "tags": [
+          "Promotions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Services": {
       "get": {
         "tags": [

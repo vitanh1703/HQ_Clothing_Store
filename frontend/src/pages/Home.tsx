@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import ProductCard from '../components/ProductCard';
 import NewsCard from '../components/NewsCard';
 import ServicesCard from '../components/ServicesCard';
-import { useCart, useProducts, useNews, useServices } from '../services/hooks';
+import PromotionCard from '../components/PromotionCard';
+import { useCart, useProducts, useNews, useServices, usePromotions } from '../services/hooks';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Home = () => {
   const { addToCart } = useCart();
   const { news, loading: newsLoading } = useNews();
   const { services, loading: servicesLoading } = useServices();
+  const { promotions, loading: promotionsLoading } = usePromotions();
 
   const images = [
     "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000",
@@ -159,11 +161,9 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-4 gap-8">
             {servicesLoading ? (
-              <div className="grid grid-cols-4 gap-8">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-40 bg-gray-100 animate-pulse rounded-sm"></div>
-                ))}
-              </div>
+              [...Array(4)].map((_, i) => (
+                <div key={i} className="h-40 bg-gray-100 animate-pulse rounded-sm"></div>
+              ))
             ) : (
               services.map((item) => (
                 <ServicesCard key={item.id} iconName={item.iconName} title={item.title} description={item.description} />
@@ -173,23 +173,51 @@ const Home = () => {
         </div>
       </section>
 
+      {/* --- SECTION 5: PROMOTIONS (KHUYẾN MÃI) --- */}
+      <section className="py-32 px-20 bg-[#F5F5F5]">
+        <div className="flex justify-between items-center mb-20 pb-8 border-b border-gray-200">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-3 flex items-center gap-2">
+              <span className="inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+              Đặc Biệt & HOT
+            </p>
+            <h2 className="text-6xl font-[1000] uppercase leading-tight tracking-tighter text-black">
+              Khuyến Mãi<br /><span className="text-red-500">Hôm Nay</span>
+            </h2>
+          </div>
+          <button className="text-[11px] font-black uppercase px-6 py-3 border-2 border-red-500 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all duration-300 hover:shadow-lg">
+            Xem tất cả
+          </button>
+        </div>
+        <div className="grid grid-cols-3 gap-8">
+          {promotionsLoading ? (
+            [...Array(3)].map((_, i) => (
+              <div key={i} className="h-96 bg-gray-200 animate-pulse rounded-lg"></div>
+            ))
+          ) : (
+            promotions.slice(0, 3).map((promo) => (
+              <PromotionCard key={promo.id} code={promo.code} title={promo.title} description={promo.description} discountPercent={promo.discountPercent} />
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* --- SECTION 6: NEWS (TIN TỨC & SỰ KIỆN) --- */}
       <section className="py-32 px-20 bg-white">
         <div className="flex justify-between items-end mb-16">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-2">Tạp Chí</p>
             <h2 className="text-5xl font-[1000] uppercase leading-[0.8] tracking-tighter">Tin tức<br />& Sự kiện</h2>
           </div>
-          <button className="text-[11px] font-bold uppercase border-b border-black pb-1 hover:text-gray-400">Xem tất cả</button>
+          <button onClick={() => navigate("/news")} className="text-[11px] font-bold uppercase border-b border-black pb-1 hover:text-gray-400">Xem tất cả</button>
         </div>
         <div className="grid grid-cols-3 gap-12">
           {newsLoading ? (
-            <div className="grid grid-cols-3 gap-12">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-80 bg-gray-100 animate-pulse rounded-sm"></div>
-              ))}
-            </div>
+            [...Array(3)].map((_, i) => (
+              <div key={i} className="h-80 bg-gray-100 animate-pulse rounded-sm"></div>
+            ))
           ) : (
-            news.map((newsItem) => (
+            news.slice(0, 3).map((newsItem) => (
               <NewsCard category={''} img={''} desc={''} key={newsItem.id} {...newsItem} />
             ))
           )}

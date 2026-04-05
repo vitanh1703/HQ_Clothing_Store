@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { authApi, productApi, cartApi, newsApi, servicesApi, type Product, type NewsItem, type ServiceItem } from "./api";
+import { authApi, productApi, cartApi, newsApi, servicesApi, promotionsApi, type Product, type NewsItem, type ServiceItem, type PromotionItem } from "./api";
 import { authController } from "./controller";
 
 export const useAuth = () => {
@@ -174,4 +174,29 @@ export const useServices = () => {
   }, []);
 
   return { services, loading, error, refetch: fetchServices };
+};
+
+export const usePromotions = () => {
+  const [promotions, setPromotions] = useState<PromotionItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchPromotions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await promotionsApi.getAll();
+      setPromotions(data);
+    } catch (err: any) {
+      setError(err.message || "Không thể tải khuyến mãi");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromotions();
+  }, []);
+
+  return { promotions, loading, error, refetch: fetchPromotions };
 };

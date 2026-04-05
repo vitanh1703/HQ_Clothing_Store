@@ -46,6 +46,17 @@ export interface ServiceItem {
   iconName: string;
   title: string;
   description: string;
+}
+
+export interface PromotionItem {
+  id: number;
+  code: string;
+  title: string;
+  description: string;
+  discountPercent: number;
+  imageUrl: string;
+  startDate: string;
+  endDate: string;
 }export interface AddToCartRequest {
   userId: number;
   variantId: number;
@@ -56,6 +67,13 @@ export interface ServicesCardProps {
   iconName: string;
   title: string;
   description: string;
+}
+
+export interface PromotionCardProps {
+  code: string;
+  title: string;
+  description: string;
+  discountPercent: number;
 }
 
 export const authApi = {
@@ -104,6 +122,13 @@ export const newsApi = {
 export const servicesApi = {
   getAll: async (): Promise<ServiceItem[]> => {
     const response = await axios.get(`${API_BASE}/Services`);
+    return response.data;
+  }
+};
+
+export const promotionsApi = {
+  getAll: async (): Promise<PromotionItem[]> => {
+    const response = await axios.get(`${API_BASE}/Promotions`);
     return response.data;
   }
 };

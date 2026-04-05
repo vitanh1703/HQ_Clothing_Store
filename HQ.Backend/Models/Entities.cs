@@ -114,15 +114,41 @@ public class News
 [Table("services")]
 public class Service
 {
-    public int Id { get; set; } // Id thường là int
+    public int Id { get; set; } 
 
     [Column("icon_name")]
-    public string IconName { get; set; } // Đảm bảo cột này trong DB là VARCHAR
+    public string IconName { get; set; } 
 
-    public string Title { get; set; } // Đảm bảo là VARCHAR/TEXT
+    public string Title { get; set; } 
 
-    public string Description { get; set; } // Đảm bảo là VARCHAR/TEXT
+    public string Description { get; set; } 
 
     [Column("order_index")]
-    public int OrderIndex { get; set; } // Cột này trong DB là int nên ở đây phải là int
+    public int OrderIndex { get; set; } 
+}
+
+public class Promotion
+{
+    public int Id { get; set; }
+
+    [Column("code")]
+    public string Code { get; set; }
+
+    [Column("description")]
+    public string Description { get; set; }
+
+    [Column("discount_value")]
+    public decimal DiscountValue { get; set; }
+
+    [Column("discount_type")]
+    public string DiscountType { get; set; }
+
+    [Column("start_date")]
+    public DateTime StartDate { get; set; }
+
+    [Column("end_date")]
+    public DateTime EndDate { get; set; }
+
+    [Column("status")]
+    public int Status { get; set; } 
 }

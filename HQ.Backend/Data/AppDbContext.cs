@@ -15,5 +15,6 @@ namespace HQ.Backend.Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<Service> Services { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
     }
 }

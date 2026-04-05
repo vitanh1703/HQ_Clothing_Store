@@ -2,10 +2,10 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Header'; 
-import AuthForm from './components/AuthForm';
-import Logout from './components/Logout';
-import ProductsPage from './components/ProductsPage';
-import CartPage from "./components/CartPage";
+import AuthForm from './pages/AuthForm';
+import Logout from './pages/Logout';
+import ProductsPage from './pages/ProductsPage';
+import CartPage from "./pages/CartPage";
 
 function App() {
   const location = useLocation();

@@ -8,14 +8,14 @@ const Header = () => {
     <nav className="flex items-center justify-between px-8 py-4 bg-[#F5F5F5] border-b border-gray-200">
       <div className="flex items-center gap-8 text-sm font-medium">
         <Menu className="cursor-pointer" size={20} />
-        <a href="#" className="hover:text-gray-500 transition-colors">Home</a>
-        <a href="#" className="hover:text-gray-500 transition-colors">Collections</a>
-        <a href="#" className="hover:text-gray-500 transition-colors">New</a>
+        <button onClick={() => navigate("/home")} className="hover:text-gray-500 transition-colors uppercase font-bold">Home</button>
+        <button onClick={() => navigate("/products")} className="hover:text-gray-500 transition-colors uppercase font-bold">Products</button>
+        <button onClick={() => navigate("/news")} className="hover:text-gray-500 transition-colors uppercase font-bold">News</button>
       </div>
 
       {/* Đoạn code mới - Tên nhãn hàng */}
       <div className="flex items-center">
-        <span className="text-2xl font-black tracking-tighter uppercase cursor-pointer">H&Q</span>
+        <span onClick={() => navigate("/home")} className="text-2xl font-black tracking-tighter uppercase cursor-pointer hover:opacity-70 transition-opacity">H&Q</span>
       </div>
 
       <div className="flex items-center gap-4">

@@ -34,5 +34,36 @@ namespace HQ.Backend.Controllers
 
             return Ok(products);
         }
+          // GET: api/products/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProduct(int id)
+        {
+            var product = await _context.Products
+                .Include(p => p.Variants) // ✅ bắt buộc Include
+                .Where(p => p.Id == id)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.BrandText,
+                    p.Description,
+                    p.ImageUrl,
+                    Variants = p.Variants.Select(v => new
+                    {
+                        v.Id,
+                        v.Size,
+                        v.Color,
+                        v.Price,
+                        v.StockQuantity,
+                        v.Sku
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (product == null)
+                return NotFound(new { message = "Sản phẩm không tồn tại" });
+
+            return Ok(product);
+        }
     }
 }

@@ -9,6 +9,7 @@ import CartPage from "./pages/CartPage";
 import Home from "./pages/Home";
 import NewsPage from "./pages/NewsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import ProfilePage from "./pages/ProfilePage";
 function App() {
   const location = useLocation();
   const hideNavbarPaths = ["/auth", "/logout"];
@@ -28,6 +29,7 @@ function App() {
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/news" element={<NewsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

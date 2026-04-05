@@ -76,6 +76,12 @@ export interface PromotionCardProps {
   discountPercent: number;
 }
 
+export interface ChangePasswordRequest {
+  userId: number;
+  oldPassword: string;
+  newPassword: string;
+}
+
 export const authApi = {
   login: async (loginData: any) => {
     const response = await axios.post(`${API_BASE}/Auth/login`, {
@@ -94,6 +100,10 @@ export const authApi = {
     const response = await axios.post(`${API_BASE}/Auth/google-login`, { 
       token: idToken 
     });
+    return response.data;
+  },
+  changePassword: async (data: ChangePasswordRequest) => {
+    const response = await axios.post(`${API_BASE}/auth/change-password`, data);
     return response.data;
   }
 };

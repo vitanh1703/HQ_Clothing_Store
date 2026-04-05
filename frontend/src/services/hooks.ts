@@ -62,12 +62,25 @@ export const useAuth = () => {
     }
   };
 
+  const changePassword = async (userId: number, oldPass: string, newPass: string, confirmPass: string) => {
+    const val = authController.validateChangePassword(oldPass, newPass, confirmPass);
+    if (!val.success) throw new Error(val.message);
+
+    setLoading(true);
+    try {
+      const result = await authApi.changePassword({ userId, oldPassword: oldPass, newPassword: newPass });
+      return result;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = () => {
     localStorage.clear();
     window.location.href = "/login";
   };
 
-  return { login, register, loginWithGoogle, logout, loading };
+  return { login, register, loginWithGoogle, changePassword, logout, loading };
 };
 
 export const useProducts = () => {

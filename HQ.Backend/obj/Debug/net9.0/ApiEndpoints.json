@@ -1,6 +1,22 @@
 [
   {
     "ContainingType": "HQ.Backend.Controllers.AuthController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/Auth/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.DTOs.ChangePasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.AuthController",
     "Method": "GoogleLogin",
     "RelativePath": "api/Auth/google-login",
     "HttpMethod": "POST",

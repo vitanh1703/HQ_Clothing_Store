@@ -117,5 +117,23 @@ namespace HQ.Backend.Controllers
                 return BadRequest(new { message = "Xác thực Google thất bại", error = ex.Message });
             }
         }
+
+        [HttpPost("change-password")]
+            public async Task<IActionResult> ChangePassword([FromBody] DTOs.ChangePasswordRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+            if (user == null)
+                return NotFound(new { message = "Không tìm thấy người dùng!" });
+
+            if (user.AuthProvider == "google")
+                return BadRequest(new { message = "Tài khoản đăng nhập bằng Google không thể đổi mật khẩu!" });
+
+            if (!BCrypt.Net.BCrypt.Verify(request.OldPassword, user.Password))
+                return BadRequest(new { message = "Mật khẩu cũ không chính xác!" });
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Đổi mật khẩu thành công!" });
+        }
     }
 }

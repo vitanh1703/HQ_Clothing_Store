@@ -57,6 +57,7 @@ public class Product
     public int? CategoryId { get; set; }
     [Column("supplier_id")]
     public int? SupplierId { get; set; }
+    public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
 }
 
 [Table("product_variants")]
@@ -71,6 +72,8 @@ public class ProductVariant
     public decimal Price { get; set; }
     [Column("stock_quantity")]
     public int StockQuantity { get; set; }
+
+     public string? Sku { get; set; }
 }
 
 [Table("carts")]

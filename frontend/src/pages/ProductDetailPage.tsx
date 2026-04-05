@@ -33,7 +33,7 @@ const ProductDetailPage = () => {
     if (!id) return;
 
     setLoading(true);
-    axios.get(`http://localhost:5257/api/products/${id}`)
+    axios.get(`https://localhost:7137/api/products/${id}`)
       .then(res => {
         setProduct(res.data);
         setSelectedVariant(res.data.variants?.[0] || null); // mặc định chọn variant đầu tiên

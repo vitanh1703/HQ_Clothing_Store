@@ -13,8 +13,11 @@ export const useAuth = () => {
 
     try {
       setLoading(true);
-      const data = await authApi.login({ email, password });
+      const data = await authApi.login({ email, password }); 
       return data;
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || "Đăng nhập thất bại";
+      throw new Error(errorMessage); 
     } finally {
       setLoading(false);
     }
@@ -22,21 +25,22 @@ export const useAuth = () => {
 
   const register = async (registerData: any) => {
     const validation = authController.validateRegister(registerData);
-    if (!validation.success) {
-      throw new Error(validation.message);
-    }
+    if (!validation.success) throw new Error(validation.message);
 
     try {
       setLoading(true);
       const formattedData = {
-        password: registerData.password,             
-        email: registerData.email,               
-        role: "Customer",                         
+        password: registerData.password,
+        email: registerData.email,
+        role: "Customer",
         full_name: `${registerData.name} ${registerData.lastname}`
       };
       
       const data = await authApi.register(formattedData);
       return data;
+    } catch (err: any) {
+      const msg = err.response?.data?.message || "Đăng ký thất bại";
+      throw new Error(msg);
     } finally {
       setLoading(false);
     }

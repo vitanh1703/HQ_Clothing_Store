@@ -3,8 +3,11 @@ import axios from "axios";
 const API_BASE = "https://localhost:7137/api"; 
 
 export const authApi = {
-  login: async (formData: any) => {
-    const response = await axios.post(`${API_BASE}/Auth/login`, formData);
+  login: async (loginData: any) => {
+    const response = await axios.post(`${API_BASE}/Auth/login`, {
+      Email: loginData.email,    
+      Password: loginData.password
+    });
     return response.data;
   },
 
@@ -18,4 +21,3 @@ export const authApi = {
     return response.data;
   }
 };
-

@@ -6,6 +6,7 @@ import AuthForm from './pages/AuthForm';
 import Logout from './pages/Logout';
 import ProductsPage from './pages/ProductsPage';
 import CartPage from "./pages/CartPage";
+import Home from "./pages/Home";
 
 function App() {
   const location = useLocation();
@@ -18,7 +19,8 @@ function App() {
 
       <div className="main-content">
         <Routes>
-          <Route path="/" element={<Navigate to="/auth" />} />
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/auth" element={<AuthForm />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/products" element={<ProductsPage />} />

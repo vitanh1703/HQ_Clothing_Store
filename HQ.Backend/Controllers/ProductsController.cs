@@ -1,6 +1,7 @@
 ﻿using HQ.Backend.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HQ.Backend.Controllers
 {

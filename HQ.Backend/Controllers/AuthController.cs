@@ -21,22 +21,31 @@ namespace HQ.Backend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] User user)
         {
-            if (await _context.Users.AnyAsync(u => u.email == user.email))
+            if (await _context.Users.AnyAsync(u => u.Email == user.Email))
                 return BadRequest(new { message = "Email đã được sử dụng!" });
-            user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.CreatedAt = DateTime.Now;
+            user.Status = true;
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-
             return Ok(new { message = "Đăng ký thành công!" });
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Models.LoginRequest request)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.email == request.Email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.password))
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
                 return Unauthorized(new { message = "Email hoặc mật khẩu không chính xác!" });
+            }
+
+            if (!user.Status)
+            {
+                return BadRequest(new { message = "Tài khoản của bạn đã bị khóa!" });
             }
 
             var fakeToken = "HQ-STORE-TOKEN-" + Guid.NewGuid().ToString();
@@ -48,8 +57,9 @@ namespace HQ.Backend.Controllers
                 user = new
                 {
                     id = user.Id,
-                    email = user.email,
-                    full_name = user.full_name 
+                    email = user.Email,
+                    full_name = user.FullName,
+                    role = user.Role
                 }
             });
         }
@@ -63,19 +73,21 @@ namespace HQ.Backend.Controllers
                 {
                     Audience = new List<string> { "249381559845-1s30c3kjmaeic2v35il5vjqir9930pq2.apps.googleusercontent.com" }
                 };
-
                 var payload = await GoogleJsonWebSignature.ValidateAsync(request.Token, settings);
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.email == payload.Email);
-
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == payload.Email);
                 if (user == null)
                 {
                     user = new User
                     {
-                        email = payload.Email,
-                        full_name = payload.Name,
-                        password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()),
-                        role = "Customer",
-                        created_at = DateTime.Now
+                        Email = payload.Email,
+                        FullName = payload.Name,
+                        Password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()),
+                        Role = "Customer",
+                        AuthProvider = "google",
+                        GoogleId = payload.Subject,
+                        AvatarUrl = payload.Picture,
+                        Status = true,
+                        CreatedAt = DateTime.Now
                     };
 
                     _context.Users.Add(user);
@@ -85,12 +97,13 @@ namespace HQ.Backend.Controllers
                 return Ok(new
                 {
                     message = "Đăng nhập Google thành công",
-                    token = "HQ-STORE-GOOGLE-TOKEN-" + Guid.NewGuid().ToString(), 
+                    token = "HQ-STORE-GOOGLE-TOKEN-" + Guid.NewGuid().ToString(),
                     user = new
                     {
                         id = user.Id,
-                        email = user.email,
-                        full_name = user.full_name
+                        email = user.Email,
+                        full_name = user.FullName,
+                        avatar = user.AvatarUrl
                     }
                 });
             }

@@ -1,6 +1,9 @@
 ﻿using HQ.Backend.Data;
+using HQ.Backend.DTOs;
+using HQ.Backend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HQ.Backend.Controllers
 {
@@ -13,7 +16,7 @@ namespace HQ.Backend.Controllers
         public CartController(AppDbContext context) { _context = context; }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
+        public async Task<IActionResult> AddToCart([FromBody] DTOs.AddToCartRequest request)
         {
             var variant = await _context.ProductVariants.FindAsync(request.VariantId);
             if (variant == null) return NotFound(new { message = "Sản phẩm không tồn tại!" });

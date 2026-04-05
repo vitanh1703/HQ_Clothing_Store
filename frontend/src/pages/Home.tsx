@@ -21,14 +21,6 @@ const Home = () => {
     "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1000",
   ];
 
-  // Dịch vụ (Lấy từ API)
-  // const servicesData = [
-  //   { id: 1, icon: <Truck size={32} strokeWidth={1} />, title: "Giao hàng hỏa tốc", desc: "Nhận hàng trong vòng 24h tại nội thành" },
-  //   { id: 2, icon: <ShieldCheck size={32} strokeWidth={1} />, title: "Bảo hành 12 tháng", desc: "Cam kết chất lượng trên từng đường kim mũi chỉ" },
-  //   { id: 3, icon: <RefreshCw size={32} strokeWidth={1} />, title: "Đổi trả dễ dàng", desc: "7 ngày đổi trả miễn phí nếu không vừa ý" },
-  //   { id: 4, icon: <CreditCard size={32} strokeWidth={1} />, title: "Thanh toán bảo mật", desc: "Hỗ trợ nhiều phương thức an toàn" },
-  // ];
-
   const approachImages = [
     "https://api.fastretailing.com/ugc/v1/uq/kr/SR_IMAGES/ugc_stylehint_uq_kr_photo_260401_1870192_c-480-640",
     "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000",
@@ -90,7 +82,6 @@ const Home = () => {
         </div>
       </main>
 
-      {/* --- SECTION 2: NEW THIS WEEK (SẢN PHẨM NỔI BẬT) --- */}
       <section className="px-20 pb-32 bg-white pt-24">
         <div className="flex justify-between items-end mb-12">
           <h2 className="text-5xl font-[1000] uppercase leading-[0.8] tracking-tighter">
@@ -106,14 +97,12 @@ const Home = () => {
         
         {loading ? (
           <div className="grid grid-cols-4 gap-8">
-             {/* Skeleton Loading (Tùy chọn cho đẹp) */}
              {[...Array(4)].map((_, i) => (
                <div key={i} className="aspect-3/4 bg-gray-100 animate-pulse rounded-sm"></div>
              ))}
           </div>
         ) : (
           <div className="grid grid-cols-4 gap-8">
-            {/* Lấy 4 sản phẩm đầu tiên từ API để hiển thị ở trang chủ */}
             {products.slice(0, 4).map((product) => (
               <ProductCard 
                 key={product.id} 
@@ -125,7 +114,6 @@ const Home = () => {
         )}
       </section>
 
-      {/* --- SECTION 3: APPROACH (TƯ DUY THIẾT KẾ) --- */}
       <section className="py-32 px-20 bg-[#F5F5F5]">
         <div className="max-w-4xl mx-auto text-center mb-24">
           <h2 className="text-5xl font-[1000] uppercase tracking-[-0.02em] mb-8 leading-tight">
@@ -161,7 +149,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- SECTION 4: AMENITIES (DỊCH VỤ ĐẶC QUYỀN) --- */}
       <section className="relative py-32 bg-fixed bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000')" }}>
         <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
         <div className="container mx-auto px-20 relative z-10">
@@ -186,7 +173,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- SECTION 5: NEWS (TIN TỨC & SỰ KIỆN) --- */}
       <section className="py-32 px-20 bg-white">
         <div className="flex justify-between items-end mb-16">
           <div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { cartApi } from "../services/api";
 
 interface CartItem {
   id: number;
@@ -52,10 +53,16 @@ const CartPage = () => {
   };
 
   // --- Xóa sản phẩm ---
-  const handleRemove = (id: number) => {
-    if (!cart) return;
-    const updatedItems = cart.items.filter(item => item.id !== id);
-    setCart({ ...cart, items: updatedItems });
+  const handleRemove = async (id: number) => {
+    try {
+      await cartApi.remove(id);
+      if (!cart) return;
+      const updatedItems = cart.items.filter(item => item.id !== id);
+      setCart({ ...cart, items: updatedItems });
+    } catch (err) {
+      console.error("Lỗi xóa sản phẩm:", err);
+      alert("Không thể xóa sản phẩm khỏi giỏ hàng");
+    }
   };
 
   // --- Tổng tiền ---

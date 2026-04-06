@@ -58,7 +58,7 @@ const NewsPage = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen pt-20">
+    <div className="bg-white min-h-screen">
       {/* Header */}
       <section className="px-20 py-16 bg-[#F5F5F5] border-b border-gray-200">
         <div className="flex items-center gap-4 mb-8">
@@ -126,7 +126,7 @@ const NewsPage = () => {
             <div className="flex justify-center">
               <div className="w-full max-w-2xl space-y-12">
                 {paginatedNews.map((newsItem) => (
-                  <div key={newsItem.id} className="group cursor-pointer">
+                  <div key={newsItem.id} className="group cursor-pointer" onClick={() => navigate(`/news/${newsItem.id}`)}>
                     {/* Image */}
                     <div className="relative overflow-hidden rounded-lg mb-6 h-56 bg-[#F5F5F5]">
                       <img

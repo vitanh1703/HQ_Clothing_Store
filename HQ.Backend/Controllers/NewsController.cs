@@ -32,5 +32,28 @@ namespace HQ.Backend.Controllers
 
             return Ok(news);
         }
+
+        // GET: api/news/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetNewsById(int id)
+        {
+            var news = await _context.News
+                .Where(n => n.Id == id)
+                .Select(n => new {
+                    n.Id,
+                    n.Category,
+                    n.Title,
+                    Date = n.PublishDate.ToString("dd/MM/yyyy"),
+                    Img = n.ImgUrl,
+                    Desc = n.Description,
+                    n.Content // Quan trọng: Lấy thêm nội dung chi tiết
+                })
+                .FirstOrDefaultAsync();
+
+            if (news == null)
+                return NotFound(new { message = "Không tìm thấy tin tức" });
+
+            return Ok(news);
+        }
     }
 }

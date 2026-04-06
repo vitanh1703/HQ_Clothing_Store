@@ -70,56 +70,13 @@ const WishlistPage = () => {
 
   return (
     <div className="min-h-screen bg-white text-black font-sans">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="border-t border-gray-100 bg-[#f9f9f9] py-4">
-          <nav className="max-w-7xl mx-auto px-4">
-            <div className="flex flex-nowrap overflow-x-auto md:grid md:grid-cols-6 gap-2 scrollbar-hide">
-              {["SHIRTS", "POLO SHIRTS", "SHORTS", "T-SHIRTS", "JEANS", "JACKETS"].map((category) => (
-                <a
-                  key={category}
-                  href="#"
-                  className="flex-shrink-0 min-w-[120px] bg-white border border-gray-300 py-2.5 text-center text-[12px] font-bold text-gray-800 hover:bg-black hover:text-white transition-all tracking-widest shadow-sm"
-                >
-                  {category}
-                </a>
-              ))}
-            </div>
-          </nav>
-        </div>
-      </header>
-
       <main className="max-w-7xl mx-auto py-10 px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
-        <aside className="col-span-1 space-y-8">
-          <section>
-            <h3 className="font-bold text-lg mb-4 border-b border-gray-100 pb-2">Tư cách thành viên</h3>
-            <ul className="space-y-3 text-sm text-gray-600">
-              <li className="hover:text-black cursor-pointer">Lịch sử mua hàng</li>
-              <li className="hover:text-black cursor-pointer">Phiếu giảm giá</li>
-              <li className="font-bold text-black border-l-2 border-black pl-3">Yêu thích</li>
-              <li className="hover:text-black cursor-pointer">Đánh giá đã đăng</li>
-              <li className="hover:text-black cursor-pointer">Khảo sát dịch vụ đặt hàng online</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3 className="font-bold text-lg mb-4 border-b border-gray-100 pb-2">Cài đặt hồ sơ</h3>
-            <ul className="space-y-3 text-sm text-gray-600">
-              <li className="hover:text-black cursor-pointer">Hồ sơ</li>
-              <li className="hover:text-black cursor-pointer">Sổ địa chỉ</li>
-              <li className="hover:text-black cursor-pointer">Thay đổi mật khẩu</li>
-              <li className="hover:text-black cursor-pointer">Thẻ của tôi</li>
-              <li className="hover:text-black cursor-pointer">Cài đặt tùy chọn</li>
-              <li className="hover:text-black cursor-pointer text-red-500">Hủy bỏ thành viên</li>
-            </ul>
-          </section>
-        </aside>
-
         <div className="col-span-3">
           <h1 className="text-3xl font-bold mb-6 italic">Yêu thích</h1>
 
           <div className="flex gap-8 border-b border-gray-200 mb-4">
             <button className="pb-2 border-b-2 border-black font-bold text-sm">Sản phẩm</button>
-            <button className="pb-2 text-gray-400 font-bold text-sm hover:text-black">Phong cách</button>
+            {/* <button className="pb-2 text-gray-400 font-bold text-sm hover:text-black">Phong cách</button> */}
           </div>
 
           <div className="flex justify-between items-center mb-6">

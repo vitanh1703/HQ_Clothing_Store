@@ -152,10 +152,21 @@
         }
       }
     },
-    "/api/News": {
-      "get": {
+    "/api/Cart/remove/{cartItemId}": {
+      "delete": {
         "tags": [
-          "News"
+          "Cart"
+        ],
+        "parameters": [
+          {
+            "name": "cartItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -164,21 +175,10 @@
         }
       }
     },
-    "/api/News/{id}": {
+    "/api/News": {
       "get": {
         "tags": [
           "News"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "responses": {
           "200": {

@@ -1,10 +1,12 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import type { NewsCardProps } from '../services/api';
 
-const NewsCard: React.FC<NewsCardProps> = ({ category, title, date, img, desc }) => {
+const NewsCard: React.FC<NewsCardProps & { id?: number }> = ({ id, category, title, date, img, desc }) => {
+  const navigate = useNavigate();
   return (
-    <div className="group cursor-pointer">
+    <div className="group cursor-pointer" onClick={() => id && navigate(`/news/${id}`)}>
       <div className="h-80 overflow-hidden mb-6 relative rounded-sm bg-[#F5F5F5]">
         <img
           src={img}

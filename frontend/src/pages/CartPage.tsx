@@ -1,106 +1,128 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+interface CartItem {
+  id: number;
+  variantId: number;
+  productName: string;
+  size: string;
+  price: number;
+  quantity: number;
+  total: number;
+  image: string;
+}
+
+interface CartResponse {
+  cartId: number;
+  items: CartItem[];
+}
 
 const CartPage = () => {
-  // Fake data (có thêm image)
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      name: "Basic Slim Fit T-Shirt",
-      price: 199,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1618677603286-0ec56cb6e1b5?q=80&w=844&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D/120x150"
-    },
-    {
-      id: 2,
-      name: "Oversized Hoodie",
-      price: 299,
-      quantity: 2,
-      image: "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=1372&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D/120x150"
-    },
-  ]);
+  const [cart, setCart] = useState<CartResponse | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const increase = (id: number) => {
-    setCart(cart.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    ));
+  const userId = Number(localStorage.getItem("userId")) || 1;
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  const fetchCart = async () => {
+    try {
+      const res = await axios.get(`https://localhost:7137/api/cart/${userId}`);
+      setCart(res.data);
+    } catch (err) {
+      console.error("Lỗi lấy cart:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const decrease = (id: number) => {
-    setCart(cart.map(item =>
-      item.id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
+  // --- Cập nhật số lượng item ---
+  const handleQuantity = (id: number, newQuantity: number) => {
+    if (!cart) return;
+
+    const qty = Math.max(newQuantity, 1); // số lượng tối thiểu 1
+    const updatedItems = cart.items.map(item =>
+      item.id === id
+        ? { ...item, quantity: qty, total: qty * item.price }
         : item
-    ));
+    );
+    setCart({ ...cart, items: updatedItems });
   };
 
-  const remove = (id: number) => {
-    setCart(cart.filter(item => item.id !== id));
+  // --- Xóa sản phẩm ---
+  const handleRemove = (id: number) => {
+    if (!cart) return;
+    const updatedItems = cart.items.filter(item => item.id !== id);
+    setCart({ ...cart, items: updatedItems });
   };
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  // --- Tổng tiền ---
+  const totalPrice = cart?.items.reduce((sum, item) => sum + item.total, 0) || 0;
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] px-8 py-6">
       <h1 className="text-2xl font-black mb-6 uppercase">Shopping Cart</h1>
 
-      {cart.length === 0 ? (
+      {loading ? (
+        <p className="text-gray-400">Loading...</p>
+      ) : !cart || cart.items.length === 0 ? (
         <p className="text-gray-500">Giỏ hàng trống</p>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           {/* LEFT: Danh sách sản phẩm */}
           <div className="lg:col-span-2 space-y-4">
-            {cart.map(item => (
+            {cart.items.map(item => (
               <div
                 key={item.id}
                 className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm"
               >
-                {/* LEFT: Ảnh + thông tin */}
                 <div className="flex items-center gap-4">
-                  {/* Ảnh */}
                   <img
                     src={item.image}
-                    alt={item.name}
+                    alt={item.productName}
                     className="w-20 h-24 object-cover rounded-md"
                   />
 
-                  {/* Thông tin */}
-                  <div>
-                    <h2 className="font-bold">{item.name}</h2>
-                    <p className="text-gray-500">${item.price}</p>
+                  <div className="flex flex-col justify-between">
+                    <div>
+                      <h2 className="font-bold">{item.productName}</h2>
+                      <p className="text-gray-500">{item.price.toLocaleString()}đ</p>
+                      <p className="text-xs text-gray-400">Size: {item.size}</p>
+                    </div>
+
+                    {/* Nút + / - và Xóa */}
+                    <div className="flex items-center gap-3 mt-2">
+                      <button
+                        className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
+                        onClick={() =>
+                          handleQuantity(item.id, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </button>
+                      <span className="px-4 font-medium">{item.quantity}</span>
+                      <button
+                        className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
+                        onClick={() =>
+                          handleQuantity(item.id, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </button>
+                      <button
+                        className="ml-4 px-3 py-1 border rounded bg-red-500 text-white hover:bg-red-600"
+                        onClick={() => handleRemove(item.id)}
+                      >
+                        Xóa
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                {/* RIGHT: action */}
-                <div className="flex items-center gap-6">
-                  
-                  {/* Quantity */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => decrease(item.id)}
-                      className="px-2 py-1 border"
-                    >
-                      -
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button
-                      onClick={() => increase(item.id)}
-                      className="px-2 py-1 border"
-                    >
-                      +
-                    </button>
-                  </div>
-
-                  {/* Remove */}
-                  <button
-                    onClick={() => remove(item.id)}
-                    className="text-red-500 text-sm"
-                  >
-                    Xóa
-                  </button>
+                <div className="text-right">
+                  <p className="font-bold">{item.total.toLocaleString()}đ</p>
                 </div>
               </div>
             ))}
@@ -112,24 +134,23 @@ const CartPage = () => {
 
             <div className="flex justify-between mb-2">
               <span>Tạm tính</span>
-              <span>${total}</span>
+              <span>{totalPrice.toLocaleString()}đ</span>
             </div>
 
             <div className="flex justify-between mb-4">
               <span>Shipping</span>
-              <span>$0</span>
+              <span>0đ</span>
             </div>
 
             <div className="flex justify-between font-bold text-lg mb-6">
               <span>Tổng</span>
-              <span>${total}</span>
+              <span>{totalPrice.toLocaleString()}đ</span>
             </div>
 
             <button className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800">
               Checkout
             </button>
           </div>
-
         </div>
       )}
     </div>

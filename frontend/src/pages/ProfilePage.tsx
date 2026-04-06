@@ -1,16 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { useAuth } from '../services/hooks';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { changePassword, loading: isSubmitting } = useAuth();
   const [user, setUser] = useState<any>(null);
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     const auth = localStorage.getItem("auth");
@@ -33,18 +26,6 @@ const ProfilePage = () => {
       </div>
     );
   }
-
-  const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const result = await changePassword(user.id, oldPassword, newPassword, confirmPassword);
-      toast.success(result.message || "Thành công!");
-      setIsChangePasswordOpen(false);
-      // Reset fields...
-    } catch (error: any) {
-      toast.error(error.message || "Lỗi!");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] py-12">
@@ -100,10 +81,7 @@ const ProfilePage = () => {
           <div className="mt-8 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-bold uppercase mb-4">Cài đặt tài khoản</h2>
             <div className="flex gap-4">
-              <button
-                onClick={() => setIsChangePasswordOpen(true)}
-                className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg font-bold uppercase text-sm hover:bg-gray-200 transition-colors"
-              >
+              <button className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg font-bold uppercase text-sm hover:bg-gray-200 transition-colors">
                 Đổi mật khẩu
               </button>
               <button className="bg-red-100 text-red-700 px-6 py-2 rounded-lg font-bold uppercase text-sm hover:bg-red-200 transition-colors">
@@ -113,53 +91,6 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal Đổi mật khẩu */}
-      {isChangePasswordOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md shadow-2xl">
-            <h2 className="text-2xl font-bold uppercase mb-6 text-center">Đổi mật khẩu</h2>
-            <form onSubmit={handleChangePassword} className="space-y-4">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Mật khẩu cũ</label>
-                <input 
-                  type="password" 
-                  required 
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                  className="border border-gray-300 p-3 w-full rounded-lg outline-none focus:ring-1 focus:ring-black"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Mật khẩu mới</label>
-                <input 
-                  type="password" 
-                  required 
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="border border-gray-300 p-3 w-full rounded-lg outline-none focus:ring-1 focus:ring-black"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Xác nhận mật khẩu mới</label>
-                <input 
-                  type="password" 
-                  required 
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="border border-gray-300 p-3 w-full rounded-lg outline-none focus:ring-1 focus:ring-black"
-                />
-              </div>
-              <div className="flex gap-4 mt-8">
-                <button type="button" onClick={() => setIsChangePasswordOpen(false)} className="flex-1 bg-gray-100 text-black py-3 rounded-lg font-bold uppercase hover:bg-gray-200 transition-all">Hủy</button>
-                <button type="submit" disabled={isSubmitting} className="flex-1 bg-black text-white py-3 rounded-lg font-bold uppercase hover:bg-gray-800 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed">
-                  {isSubmitting ? "Đang xử lý..." : "Xác nhận"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

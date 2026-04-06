@@ -31,17 +31,5 @@ export const authController = {
     }
 
     return { success: true };
-  },
-  validateChangePassword: (oldPass: string, newPass: string, confirmPass: string) => {
-    if (!oldPass || !newPass || !confirmPass) {
-      return { success: false, message: "Vui lòng điền đầy đủ các trường mật khẩu!" };
-    }
-    if (newPass.length < 6) {
-      return { success: false, message: "Mật khẩu mới phải từ 6 ký tự trở lên!" };
-    }
-    if (newPass !== confirmPass) {
-      return { success: false, message: "Mật khẩu xác nhận không khớp!" };
-    }
-    return { success: true };
   }
 };

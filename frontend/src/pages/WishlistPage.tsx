@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Heart, ShoppingBag, ChevronRight, Search, User, Menu } from "lucide-react";
+import { Heart, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const WishlistPage = () => {
@@ -31,24 +31,6 @@ const WishlistPage = () => {
       
       {/* --- HEADER BẮT ĐẦU --- */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        {/* Top Header: Logo & Icons */}
-        <div className="max-w-7xl mx-auto py-4 px-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Menu size={24} className="md:hidden cursor-pointer" />
-            <Link to="/" className="text-2xl font-black tracking-tighter">H&Q</Link>
-          </div>
-          
-          <div className="flex items-center gap-6">
-            <Search size={20} className="cursor-pointer hover:text-gray-500" />
-            <Heart size={20} fill="black" className="cursor-pointer" />
-            <User size={20} className="cursor-pointer hover:text-gray-500" />
-            <div className="relative cursor-pointer group">
-              <ShoppingBag size={20} />
-              <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">2</span>
-            </div>
-          </div>
-        </div>
-
         {/* Category Row: 1 Hàng Duy Nhất */}
         <div className="border-t border-gray-100 bg-[#f9f9f9] py-4">
           <nav className="max-w-7xl mx-auto px-4">

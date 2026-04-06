@@ -42,6 +42,16 @@ export interface NewsCardProps {
   img: string;
   desc: string;
 }
+export interface Category {
+  id: number;
+  name: string;
+  description?: string;
+}
+export interface NewsTitle {
+  id: number;
+  title: string;
+  category: string;
+}
 export interface ServiceItem {
   id: number;
   iconName: string;
@@ -103,6 +113,10 @@ export const productApi = {
   getAll: async (): Promise<Product[]> => {
     const response = await axios.get(`${API_BASE}/Products`);
     return response.data;
+  },
+  getCategories: async (): Promise<Category[]> => {
+    const response = await axios.get(`${API_BASE}/Products/categories`);
+    return response.data;
   }
 };
 
@@ -121,6 +135,10 @@ export const cartApi = {
 export const newsApi = {
   getAll: async () => {
     const response = await axios.get(`${API_BASE}/News`);
+    return response.data;
+  },
+  getTitles: async (): Promise<NewsTitle[]> => {
+    const response = await axios.get(`${API_BASE}/News/titles`);
     return response.data;
   }
 };

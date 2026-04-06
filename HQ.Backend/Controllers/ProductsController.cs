@@ -34,6 +34,21 @@ namespace HQ.Backend.Controllers
 
             return Ok(products);
         }
+
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _context.Categories
+                .Select(c => new {
+                    c.Id,
+                    c.Name,
+                    c.Description
+                })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
+
           // GET: api/products/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)

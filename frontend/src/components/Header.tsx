@@ -1,11 +1,16 @@
 import { Menu, ShoppingBag, User, Heart, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useCategories, useNewsTitles } from "../services/hooks";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
+  const [isNewsDropdownOpen, setIsNewsDropdownOpen] = useState(false);
+  const { categories } = useCategories();
+  const { newsTitles } = useNewsTitles();
 
   useEffect(() => {
     const checkAuth = () => {
@@ -23,17 +28,19 @@ const Header = () => {
       const target = event.target as Element;
       if (!target.closest('.relative')) {
         setIsDropdownOpen(false);
+        setIsProductsDropdownOpen(false);
+        setIsNewsDropdownOpen(false);
       }
     };
 
-    if (isDropdownOpen) {
+    if (isDropdownOpen || isProductsDropdownOpen || isNewsDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, isProductsDropdownOpen, isNewsDropdownOpen]);
 
   const handleLogout = () => {
     setIsDropdownOpen(false);
@@ -45,8 +52,67 @@ const Header = () => {
       <div className="flex items-center gap-8 text-sm font-medium">
         <Menu className="cursor-pointer" size={20} />
         <button onClick={() => navigate("/home")} className="hover:text-gray-500 transition-colors uppercase font-bold">Home</button>
-        <button onClick={() => navigate("/products")} className="hover:text-gray-500 transition-colors uppercase font-bold">Products</button>
-        <button onClick={() => navigate("/news")} className="hover:text-gray-500 transition-colors uppercase font-bold">News</button>
+        <div className="relative">
+          <button 
+            onClick={() => navigate("/products")} 
+            onMouseEnter={() => setIsProductsDropdownOpen(true)}
+            onMouseLeave={() => setIsProductsDropdownOpen(false)}
+            className="hover:text-gray-500 transition-colors uppercase font-bold"
+          >
+            Products
+          </button>
+          {isProductsDropdownOpen && (
+            <div 
+              className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50"
+              onMouseEnter={() => setIsProductsDropdownOpen(true)}
+              onMouseLeave={() => setIsProductsDropdownOpen(false)}
+            >
+              {categories.map((category) => (
+                <button 
+                  key={category.id}
+                  onClick={() => {
+                    navigate(`/products?category=${category.id}`);
+                    setIsProductsDropdownOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="relative">
+          <button 
+            onClick={() => navigate("/news")} 
+            onMouseEnter={() => setIsNewsDropdownOpen(true)}
+            onMouseLeave={() => setIsNewsDropdownOpen(false)}
+            className="hover:text-gray-500 transition-colors uppercase font-bold"
+          >
+            News
+          </button>
+          {isNewsDropdownOpen && (
+            <div 
+              className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 max-h-64 overflow-y-auto"
+              onMouseEnter={() => setIsNewsDropdownOpen(true)}
+              onMouseLeave={() => setIsNewsDropdownOpen(false)}
+            >
+              {newsTitles.map((news) => (
+                <button 
+                  key={news.id}
+                  onClick={() => {
+                    navigate(`/news/${news.id}`);
+                    setIsNewsDropdownOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                >
+                  <div className="font-medium">{news.title}</div>
+                  <div className="text-xs text-gray-500">{news.category}</div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Đoạn code mới - Tên nhãn hàng */}

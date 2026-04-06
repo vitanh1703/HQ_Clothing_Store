@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import NewsPage from "./pages/NewsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import ProfilePage from "./pages/ProfilePage";
+import WishlistPage from "./pages/WishlistPage";
 function App() {
   const location = useLocation();
   const hideNavbarPaths = ["/auth", "/logout"];
@@ -27,6 +28,7 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/profile" element={<ProfilePage />} />

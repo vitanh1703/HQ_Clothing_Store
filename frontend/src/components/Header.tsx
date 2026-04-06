@@ -55,8 +55,9 @@ const Header = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-          <Heart size={20} />
+        <button onClick={() => navigate("/wishlist")}
+          className="p-2 hover:bg-gray-200 rounded-full transition-colors">
+          <Heart size={20} className="group-hover:fill-black transition-all" />
         </button>
         <div  onClick={() => navigate("/cart")}
               className="flex items-center bg-black text-white px-4 py-2 rounded-full gap-2 cursor-pointer hover:bg-gray-800 transition-all"
@@ -95,6 +96,15 @@ const Header = () => {
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
               >
                 Thông tin cá nhân
+              </button>
+              <button 
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  navigate("/wishlist");
+                }}
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors md:hidden"
+              >
+                Yêu thích
               </button>
               <button 
                 onClick={handleLogout}

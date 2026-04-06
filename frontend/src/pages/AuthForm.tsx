@@ -15,7 +15,7 @@ const AuthForm = () => {
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
     if (savedAuth) {
-      navigate("/products");
+      navigate("/home");
     }
   }, [navigate]);
 
@@ -29,7 +29,7 @@ const AuthForm = () => {
       const data = await login(email, password);
       localStorage.setItem("auth", JSON.stringify(data));
       toast.success("Chào mừng bạn trở lại!");
-      navigate("/products");
+      navigate("/home");
     } catch (err: any) {
       toast.error(err.message || "Đăng nhập thất bại");
     }
@@ -60,7 +60,7 @@ const AuthForm = () => {
       const idToken = credentialResponse.credential;
       const data = await loginWithGoogle(idToken);
       toast.success(`Chào mừng ${data.user.full_name} trở lại!`);
-      navigate("/products");
+      navigate("/home");
     } catch (error: any) {
       toast.error(error.message || "Lỗi xác thực Google");
     }

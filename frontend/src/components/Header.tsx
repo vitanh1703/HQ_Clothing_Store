@@ -1,21 +1,57 @@
-import { Menu, ShoppingBag, User, Heart } from "lucide-react";
+import { Menu, ShoppingBag, User, Heart, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Header = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const auth = localStorage.getItem("auth");
+      setIsLoggedIn(!!auth);
+    };
+
+    checkAuth();
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.relative')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  const handleLogout = () => {
+    setIsDropdownOpen(false);
+    navigate("/logout"); 
+  };
 
   return (
     <nav className="flex items-center justify-between px-8 py-4 bg-[#F5F5F5] border-b border-gray-200">
       <div className="flex items-center gap-8 text-sm font-medium">
         <Menu className="cursor-pointer" size={20} />
-        <a href="#" className="hover:text-gray-500 transition-colors">Home</a>
-        <a href="#" className="hover:text-gray-500 transition-colors">Collections</a>
-        <a href="#" className="hover:text-gray-500 transition-colors">New</a>
+        <button onClick={() => navigate("/home")} className="hover:text-gray-500 transition-colors uppercase font-bold">Home</button>
+        <button onClick={() => navigate("/products")} className="hover:text-gray-500 transition-colors uppercase font-bold">Products</button>
+        <button onClick={() => navigate("/news")} className="hover:text-gray-500 transition-colors uppercase font-bold">News</button>
       </div>
 
       {/* Đoạn code mới - Tên nhãn hàng */}
       <div className="flex items-center">
-        <span className="text-2xl font-black tracking-tighter uppercase cursor-pointer">H&Q</span>
+        <span onClick={() => navigate("/home")} className="text-2xl font-black tracking-tighter uppercase cursor-pointer hover:opacity-70 transition-opacity">H&Q</span>
       </div>
 
       <div className="flex items-center gap-4">
@@ -30,9 +66,45 @@ const Header = () => {
             <ShoppingBag size={14} />
           </div>
         </div>
-        <button className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-          <User size={20} />
-        </button>
+        
+        {/* Account Dropdown */}
+        <div className="relative">
+          <button 
+            onClick={() => {
+              if (!isLoggedIn) {
+                navigate("/auth");
+              } else {
+                setIsDropdownOpen(!isDropdownOpen);
+              }
+            }}
+            className="flex items-center gap-1 p-2 hover:bg-gray-200 rounded-full transition-colors"
+          >
+            <User size={20} />
+            {isLoggedIn && <ChevronDown size={16} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />}
+          </button>
+          
+          {/* Dropdown Menu */}
+          {isLoggedIn && isDropdownOpen && (
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+              <button 
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  // TODO: Navigate to profile page
+                  navigate("/profile");
+                }}
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+              >
+                Thông tin cá nhân
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors text-red-600"
+              >
+                Đăng xuất
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );

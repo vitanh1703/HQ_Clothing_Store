@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import type { Variant, Product } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -29,10 +30,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+  const navigate = useNavigate();
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
+    const auth = localStorage.getItem("auth");
+    if (!auth) {
+      alert("Vui lòng đăng nhập để thực hiện mua sắm tại H&Q Store!");
+      navigate("/auth"); 
+      return;
+    }
     if (!selectedVariant) {
       alert("Vui lòng chọn size!");
       return;
@@ -91,7 +98,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <div className="group cursor-pointer w-full">
+     <div className="group cursor-pointer w-full"
+         onClick={() => navigate(`/products/${product.id}`)}
+    >
       <div className="relative aspect-3/4 bg-[#F5F5F5] rounded-sm overflow-hidden mb-4 shadow-sm border border-gray-100">
         <img 
           src={imageSrc} 

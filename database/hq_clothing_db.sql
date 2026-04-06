@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 05, 2026 lúc 09:32 AM
+-- Thời gian đã tạo: Th4 06, 2026 lúc 01:06 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -37,7 +37,9 @@ CREATE TABLE `carts` (
 --
 
 INSERT INTO `carts` (`id`, `user_id`) VALUES
-(1, 1);
+(1, 1),
+(2, 4),
+(3, 6);
 
 -- --------------------------------------------------------
 
@@ -57,8 +59,9 @@ CREATE TABLE `cart_items` (
 --
 
 INSERT INTO `cart_items` (`id`, `cart_id`, `variant_id`, `quantity`) VALUES
-(1, 1, 4, 8),
-(2, 1, 5, 1);
+(7, 2, 4, 5),
+(8, 3, 1, 1),
+(9, 3, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -85,6 +88,30 @@ INSERT INTO `categories` (`id`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `faqs`
+--
+
+CREATE TABLE `faqs` (
+  `id` int(11) NOT NULL,
+  `question` text NOT NULL,
+  `answer` text NOT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `status` tinyint(1) DEFAULT 1 COMMENT '1: Hiển thị, 0: Ẩn',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `faqs`
+--
+
+INSERT INTO `faqs` (`id`, `question`, `answer`, `sort_order`, `status`, `created_at`) VALUES
+(1, 'Chính sách đổi trả của H&Q như thế nào?', 'Bạn có thể đổi trả hàng miễn phí trong vòng 7 ngày kể từ khi nhận hàng nếu sản phẩm còn nguyên tem mác.', 1, 1, '2026-04-06 11:06:30'),
+(2, 'Làm sao để tôi chọn đúng size áo?', 'Bạn có thể tham khảo bảng quy đổi kích cỡ chi tiết trong phần mô tả của mỗi sản phẩm.', 2, 1, '2026-04-06 11:06:30'),
+(3, 'H&Q có giao hàng toàn quốc không?', 'Chúng tôi hỗ trợ giao hàng tận nơi trên toàn quốc với thời gian từ 2-4 ngày làm việc.', 3, 1, '2026-04-06 11:06:30');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `news`
 --
 
@@ -106,7 +133,14 @@ CREATE TABLE `news` (
 INSERT INTO `news` (`id`, `category`, `title`, `publish_date`, `img_url`, `description`, `content`, `created_at`) VALUES
 (1, 'Editorial', 'Xu hướng Denim tái định nghĩa phong cách 2026', '2026-05-15', 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1000', 'Khám phá cách chúng tôi kết hợp chất liệu truyền thống với những đường cắt hiện đại...', 'Nội dung chi tiết bài viết về xu hướng Denim năm 2026.', '2026-04-05 06:20:49'),
 (2, 'Sự kiện', 'H&Q Store khai trương chi nhánh thứ 10 tại Hà Nội', '2026-05-10', 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1000', 'Sự kiện ra mắt bộ sưu tập đặc biệt đi kèm những ưu đãi độc quyền dành cho khách hàng...', 'Thông tin chi tiết về buổi khai trương và danh sách quà tặng.', '2026-04-05 06:20:49'),
-(3, 'Lối sống', 'Nghệ thuật tối giản trong tủ đồ nam giới', '2026-05-05', 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000', 'Làm thế nào để xây dựng một phong cách bền vững chỉ với những món đồ cơ bản...', 'Hướng dẫn cách chọn đồ và phối đồ theo phong cách Minimalism.', '2026-04-05 06:20:49');
+(3, 'Lối sống', 'Nghệ thuật tối giản trong tủ đồ nam giới', '2026-05-05', 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000', 'Làm thế nào để xây dựng một phong cách bền vững chỉ với những món đồ cơ bản...', 'Hướng dẫn cách chọn đồ và phối đồ theo phong cách Minimalism.', '2026-04-05 06:20:49'),
+(4, 'Xu hướng', 'Top 5 màu sắc thống trị mùa hè 2026', '2026-06-01', 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b', 'Khám phá những gam màu rực rỡ giúp bạn nổi bật trong những chuyến du lịch hè.', 'Nội dung chi tiết về các bảng màu từ Neon đến Pastel...', '2026-04-05 09:49:15'),
+(5, 'BST Mới', 'Ra mắt bộ sưu tập \"H&Q Minimalist\" tháng 6', '2026-06-05', 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105', 'Sự kết hợp hoàn hảo giữa phong cách tối giản và chất liệu bền vững.', 'Chi tiết về các dòng áo thun và quần tây trong bộ sưu tập mới nhất...', '2026-04-05 09:49:15'),
+(6, 'Phối đồ', 'Bí quyết chọn đồ cho dáng người quả lê', '2026-06-10', 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f', 'Hướng dẫn cách phối đồ giúp tôn dáng và che khuyết điểm hiệu quả.', 'Các chuyên gia thời trang tại H&Q sẽ chỉ bạn cách chọn chân váy và quần...', '2026-04-05 09:49:15'),
+(7, 'Sự kiện', 'H&Q đồng hành cùng Tuần lễ Thời trang Việt Nam', '2026-06-15', 'https://images.unsplash.com/photo-1509631179647-0177331693ae', 'H&Q chính thức trở thành nhà tài trợ trang phục cho sự kiện lớn nhất năm.', 'Chúng tôi tự hào mang đến những thiết kế mang đậm bản sắc Việt...', '2026-04-05 09:49:15'),
+(8, 'Ưu đãi', 'Siêu sale giữa năm - Giảm đến 50% toàn bộ cửa hàng', '2026-06-20', 'https://images.unsplash.com/photo-1441986300917-64674bd600d8', 'Cơ hội lớn nhất để sở hữu những item hot nhất với mức giá cực hời.', 'Chương trình áp dụng cho cả mua online và tại hệ thống cửa hàng...', '2026-04-05 09:49:15'),
+(9, 'Phong cách', 'Cách bảo quản quần áo Linen luôn như mới', '2026-06-25', 'https://images.unsplash.com/photo-1544441893-675973e31d85', 'Mẹo giặt và là ủi đồ Linen để giữ được độ bền và vẻ đẹp tự nhiên.', 'Linen là chất liệu cao cấp nhưng cần sự chăm sóc đặc biệt, dưới đây là...', '2026-04-05 09:49:15'),
+(10, 'Lifestyle', 'Thời trang và môi trường: Hành trình sống xanh cùng H&Q', '2026-06-30', 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158', 'Chúng tôi đang chuyển dịch sang sử dụng 100% bao bì tự hủy sinh học.', 'H&Q cam kết giảm thiểu rác thải nhựa trong quy trình sản xuất và đóng gói...', '2026-04-05 09:49:15');
 
 -- --------------------------------------------------------
 
@@ -159,9 +193,12 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `brand_text`, `accent_color`, `hover_accent`, `image_url`, `description`, `category_id`, `supplier_id`) VALUES
-(1, 'Sơ mi Seersucker Kẻ Sọc', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484709/item/vngoods_50_484709_3x4.jpg', 'Chất liệu vải nhăn thoáng mát, phù hợp mùa hè', 2, 1),
+(1, 'Sơ mi Seersucker Kẻ Sọc', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/483762/sub/vngoods_483762_sub3_3x4.jpg', 'Chất liệu vải nhăn thoáng mát, phù hợp mùa hè', 2, 1),
 (2, 'Áo thun Slim Fit Cotton', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484709/item/vngoods_50_484709_3x4.jpg', 'Vải cotton 100% co giãn 4 chiều', 1, 1),
-(3, 'Quần Jean Slim Fit Navy', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/484709/sub/goods_484709_sub14_3x4.jpg', 'Quần Jean nam màu xanh navy thời thượng', 3, 2);
+(3, 'Quần Jean Slim Fit Navy', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/477704/sub/vngoods_477704_sub6_3x4.jpg', 'Quần Jean nam màu xanh navy thời thượng', 3, 2),
+(4, 'AirSense Áo Blazer', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/477704/item/vngoods_69_477704_3x4.jpg', NULL, NULL, NULL),
+(5, 'AIRism Cotton Áo Thun Dáng Rộng', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/465185/item/vngoods_17_465185_3x4.jpg', NULL, NULL, NULL),
+(6, 'Áo Parka Chống Tia UV Bỏ Túi', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/469292/item/vngoods_65_469292_3x4.jpg', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -318,7 +355,30 @@ INSERT INTO `users` (`id`, `password`, `email`, `role`, `auth_provider`, `google
 (1, '$2a$11$l6AwTBlpYjj/LtO6fDt4YebGr0u22bp0XOr.C5NorG4XECM1KYBKq', 'admin@hq.com', 'Admin', 'local', NULL, 'Quản trị viên', '0900000001', 'Hà Nội', NULL, 1, '2026-04-05 06:20:49'),
 (2, '$2a$11$B2BN/a9C16TVQE2YsmTMrumhI/cDIBZv0oGxiWkvwY8C7dwUiCr3G', 'diema@gmail.com', 'Customer', 'local', NULL, 'Diêm Anh', '0900000002', 'Hải Phòng', NULL, 1, '2026-04-05 06:20:49'),
 (3, '$2a$11$2eSdcFbMEOrxj8p50vjv.eC8OdmxBnA24TVP1KYc/8F4PXQl8.CpO', 'vietanh@gmail.com', 'Customer', 'local', NULL, 'Diêm Việt Anh', '0900000003', 'Hà Nội', NULL, 1, '2026-04-05 06:20:49'),
-(4, '$2a$11$ne2nAQEV8.sekykzIQ8BJ.qEJaz9FcnTIzRObfp1CoSwAfMbU3Q6W', 'diema448@gmail.com', 'Customer', 'google', '104884167290364105829', 'Diêm Việt Anh', NULL, NULL, 'https://lh3.googleusercontent.com/a/ACg8ocLHZKCZ0cWLxikxVdSzqJ7qSoORzATbHfxtSYNMH0Bi9_EhxwYF=s96-c', 1, '2026-04-05 06:51:58');
+(4, '$2a$11$ne2nAQEV8.sekykzIQ8BJ.qEJaz9FcnTIzRObfp1CoSwAfMbU3Q6W', 'diema448@gmail.com', 'Customer', 'google', '104884167290364105829', 'Diêm Việt Anh', NULL, NULL, 'https://lh3.googleusercontent.com/a/ACg8ocLHZKCZ0cWLxikxVdSzqJ7qSoORzATbHfxtSYNMH0Bi9_EhxwYF=s96-c', 1, '2026-04-05 06:51:58'),
+(5, '$2a$11$5sAC6yhhcVwa8WfLK.oKFOnHidkT3uaWFUfRqj5GB7YNACOfxyl/e', 'diema447@gmail.com', 'Customer', 'local', NULL, 'Diêm Anh', NULL, NULL, NULL, 1, '2026-04-05 13:47:23'),
+(6, '$2a$11$x09VDjSr2U90T.Uo4N3sT.C0GDk6pAoEBBbZi/43f/mNDxQidRAXe', 'diema4489@gmail.com', 'Customer', 'local', NULL, 'Diêm Anh', NULL, NULL, NULL, 1, '2026-04-06 07:11:16');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `wishlist`
+--
+
+CREATE TABLE `wishlist` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `variant_id` int(11) NOT NULL COMMENT 'Liên kết với biến thể cụ thể để biết Size và Color',
+  `added_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `wishlist`
+--
+
+INSERT INTO `wishlist` (`id`, `user_id`, `variant_id`, `added_at`) VALUES
+(1, 3, 1, '2026-04-06 11:06:14'),
+(2, 3, 3, '2026-04-06 11:06:14');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -343,6 +403,12 @@ ALTER TABLE `cart_items`
 -- Chỉ mục cho bảng `categories`
 --
 ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `faqs`
+--
+ALTER TABLE `faqs`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -418,6 +484,14 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `google_id` (`google_id`);
 
 --
+-- Chỉ mục cho bảng `wishlist`
+--
+ALTER TABLE `wishlist`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_wishlist_variant` (`user_id`,`variant_id`),
+  ADD KEY `fk_wishlist_variant` (`variant_id`);
+
+--
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
@@ -425,13 +499,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -440,10 +514,16 @@ ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT cho bảng `faqs`
+--
+ALTER TABLE `faqs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT cho bảng `news`
 --
 ALTER TABLE `news`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT cho bảng `orders`
@@ -461,7 +541,7 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT cho bảng `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `product_variants`
@@ -473,7 +553,7 @@ ALTER TABLE `product_variants`
 -- AUTO_INCREMENT cho bảng `promotions`
 --
 ALTER TABLE `promotions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `reviews`
@@ -497,7 +577,13 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT cho bảng `wishlist`
+--
+ALTER TABLE `wishlist`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -548,6 +634,13 @@ ALTER TABLE `product_variants`
 ALTER TABLE `reviews`
   ADD CONSTRAINT `fk_reviews_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `wishlist`
+--
+ALTER TABLE `wishlist`
+  ADD CONSTRAINT `fk_wishlist_user_new` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_wishlist_variant` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

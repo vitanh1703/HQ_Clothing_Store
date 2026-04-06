@@ -81,5 +81,18 @@ namespace HQ.Backend.Controllers
 
             return Ok(cartData);
         }
+
+        [HttpDelete("remove/{cartItemId}")]
+        public async Task<IActionResult> RemoveFromCart(int cartItemId)
+        {
+            var cartItem = await _context.CartItems.FindAsync(cartItemId);
+            if (cartItem == null)
+                return NotFound(new { message = "Sản phẩm trong giỏ hàng không tồn tại!" });
+
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Xóa sản phẩm khỏi giỏ hàng thành công!" });
+        }
     }
 }

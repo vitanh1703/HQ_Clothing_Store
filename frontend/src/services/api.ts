@@ -110,6 +110,11 @@ export const cartApi = {
   add: async (data: AddToCartRequest) => {
     const response = await axios.post(`${API_BASE}/Cart/add`, data);
     return response.data;
+  },
+
+  remove: async (cartItemId: number) => {
+    const response = await axios.delete(`${API_BASE}/Cart/remove/${cartItemId}`);
+    return response.data;
   }
 };
 

@@ -51,7 +51,7 @@ const Header = () => {
     <nav className="flex items-center justify-between px-8 py-4 bg-[#F5F5F5] border-b border-gray-200">
       <div className="flex items-center gap-8 text-sm font-medium">
         <Menu className="cursor-pointer" size={20} />
-        <button onClick={() => navigate("/home")} className="hover:text-gray-500 transition-colors uppercase font-bold">Home</button>
+        <button onClick={() => navigate("/home")} className="hover:text-gray-500 transition-colors uppercase font-bold">Trang chủ</button>
         <div className="relative">
           <button 
             onClick={() => navigate("/products")} 
@@ -59,7 +59,7 @@ const Header = () => {
             onMouseLeave={() => setIsProductsDropdownOpen(false)}
             className="hover:text-gray-500 transition-colors uppercase font-bold"
           >
-            Products
+            Sản phẩm
           </button>
           {isProductsDropdownOpen && (
             <div 
@@ -89,7 +89,7 @@ const Header = () => {
             onMouseLeave={() => setIsNewsDropdownOpen(false)}
             className="hover:text-gray-500 transition-colors uppercase font-bold"
           >
-            News
+            Tin tức
           </button>
           {isNewsDropdownOpen && (
             <div 

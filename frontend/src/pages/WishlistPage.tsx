@@ -91,7 +91,7 @@ const WishlistPage = () => {
           <div className="space-y-8">
             {wishlistItems.map((item) => (
               <div key={item.id} className="flex gap-6 border-b border-gray-100 pb-8 relative group">
-                <div className="w-36 h-44 bg-gray-100 flex-shrink-0 overflow-hidden rounded-xl">
+                <div className="w-36 h-44 bg-gray-100 shrink-0 overflow-hidden rounded-xl">
                   <img
                     src={item.image}
                     alt={item.name}

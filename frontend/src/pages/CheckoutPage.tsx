@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { cartApi, promotionsApi } from "../services/api";
-import type { CheckoutCartItem, CheckoutResponse, PromotionValidationResult } from "../services/api";
+import type { CheckoutCartItem, CheckoutResponse, PromotionItem, PromotionValidationResult } from "../services/api";
+import { PromoSelectionModal } from "../components/PromoSelectionModal";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ const CheckoutPage = () => {
   const [promoCode, setPromoCode] = useState("");
   const [promoMessage, setPromoMessage] = useState("");
   const [promoResult, setPromoResult] = useState<PromotionValidationResult | null>(null);
+  const [promotions, setPromotions] = useState<PromotionItem[]>([]);
+  const [showPromoModal, setShowPromoModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"bank" | "cod">("bank");
 
   const userId = Number(localStorage.getItem("userId")) || 1;
@@ -38,7 +41,32 @@ const CheckoutPage = () => {
       }
     };
 
+    const fetchPromotions = async () => {
+      try {
+        const data = await promotionsApi.getAll();
+        setPromotions(data);
+      } catch (err) {
+        console.error("Lỗi lấy danh sách mã giảm giá:", err);
+      }
+    };
+
+    const restorePromo = () => {
+      const stored = localStorage.getItem("selectedPromo");
+      if (!stored) return;
+
+      try {
+        const parsed: PromotionValidationResult = JSON.parse(stored);
+        setPromoCode(parsed.code);
+        setPromoResult(parsed);
+        setPromoMessage(`Mã ${parsed.code} đã được áp dụng.`);
+      } catch {
+        localStorage.removeItem("selectedPromo");
+      }
+    };
+
     fetchCheckout();
+    fetchPromotions();
+    restorePromo();
   }, [userId]);
 
   const totalPrice = useMemo(
@@ -73,10 +101,34 @@ const CheckoutPage = () => {
       const result = await promotionsApi.validateCode(promoCode.trim());
       setPromoResult(result);
       setPromoMessage(`Áp dụng mã ${result.code} thành công!`);
+      localStorage.setItem("selectedPromo", JSON.stringify(result));
     } catch (err: any) {
       setPromoResult(null);
       setPromoMessage(err.response?.data?.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+      localStorage.removeItem("selectedPromo");
     }
+  };
+
+  const handleSelectPromo = async (promo: PromotionItem) => {
+    setPromoCode(promo.code);
+    setShowPromoModal(false);
+    try {
+      const result = await promotionsApi.validateCode(promo.code);
+      setPromoResult(result);
+      setPromoMessage(`Áp dụng mã ${result.code} thành công!`);
+      localStorage.setItem("selectedPromo", JSON.stringify(result));
+    } catch (err: any) {
+      setPromoResult(null);
+      setPromoMessage(err.response?.data?.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+      localStorage.removeItem("selectedPromo");
+    }
+  };
+
+  const clearPromo = () => {
+    setPromoCode("");
+    setPromoResult(null);
+    setPromoMessage("");
+    localStorage.removeItem("selectedPromo");
   };
 
   const handlePlaceOrder = () => {
@@ -198,23 +250,45 @@ const CheckoutPage = () => {
           </section>
 
           <section className="mt-10">
-            <h2 className="text-xl font-bold mb-4">Mã giảm giá</h2>
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-xl font-bold mb-4">Mã giảm giá</h2>
+              <button
+                onClick={() => setShowPromoModal(true)}
+                className="text-sm font-semibold text-blue-600 hover:text-blue-800"
+              >
+                Chọn mã
+              </button>
+            </div>
             <div className="flex flex-col gap-3">
-              <div className="flex gap-2 flex-col sm:flex-row">
+              <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
                 <input
                   type="text"
                   value={promoCode}
                   onChange={e => setPromoCode(e.target.value)}
-                  placeholder="Nhập mã giảm giá"
-                  className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="Nhập mã"
+                  className="min-w-[180px] rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black"
                 />
                 <button
                   onClick={handleApplyPromo}
-                  className="w-full sm:w-auto rounded-lg bg-black text-white px-6 py-3 uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors"
+                  className="rounded-lg bg-black text-white px-4 py-2 text-sm uppercase tracking-[0.15em] hover:bg-gray-900 transition-colors"
                 >
                   Áp dụng
                 </button>
               </div>
+              {promoResult && (
+                <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="font-semibold">{promoResult.code}</span>
+                    <span>{promoResult.description}</span>
+                    <button
+                      onClick={clearPromo}
+                      className="ml-auto rounded-lg border border-green-600 bg-white px-3 py-1 text-green-600 hover:bg-green-100"
+                    >
+                      Xóa mã
+                    </button>
+                  </div>
+                </div>
+              )}
               {promoMessage && <p className="text-sm text-gray-600">{promoMessage}</p>}
             </div>
           </section>
@@ -292,6 +366,13 @@ const CheckoutPage = () => {
           </button>
         </aside>
       </div>
+
+      <PromoSelectionModal
+        isOpen={showPromoModal}
+        onClose={() => setShowPromoModal(false)}
+        promotions={promotions}
+        onSelectPromo={handleSelectPromo}
+      />
     </div>
   );
 };

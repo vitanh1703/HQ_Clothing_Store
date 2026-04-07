@@ -25,7 +25,9 @@ namespace HQ.Backend.Controllers
                     p.Id,
                     p.Code,
                     p.Description,
-                    Discount = p.DiscountType == "Percentage" ? p.DiscountValue + "%" : p.DiscountValue + "đ",
+                    p.DiscountValue,
+                    p.DiscountType,
+                    DiscountText = p.DiscountType == "Percentage" ? p.DiscountValue + "%" : p.DiscountValue + "đ",
                     StartDate = p.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = p.EndDate.ToString("dd/MM/yyyy")
                 })

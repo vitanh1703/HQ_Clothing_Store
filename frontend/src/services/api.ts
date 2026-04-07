@@ -62,12 +62,14 @@ export interface ServiceItem {
 export interface PromotionItem {
   id: number;
   code: string;
-  title: string;
   description: string;
-  discountPercent: number;
-  imageUrl: string;
+  discountValue: number;
+  discountType: string;
+  discountText: string;
   startDate: string;
   endDate: string;
+  title?: string;
+  discountPercent?: number;
 }
 
 export interface PromotionValidationResult {
@@ -117,7 +119,7 @@ export interface PromotionCardProps {
   code: string;
   title: string;
   description: string;
-  discountPercent: number;
+  discountText: string;
 }
 
 export const authApi = {

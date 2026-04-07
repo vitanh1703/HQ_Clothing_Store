@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowRight, Flame } from 'lucide-react';
 import type { PromotionCardProps } from '../services/api';
 
-const PromotionCard: React.FC<PromotionCardProps> = ({ code, title, description, discountPercent }) => {
+const PromotionCard: React.FC<PromotionCardProps> = ({ code, title, description, discountText }) => {
   return (
     <div className="group cursor-pointer h-full flex flex-col">
       <div className="relative overflow-hidden rounded-xl mb-6 bg-red-50 p-8 flex flex-col items-center justify-center shadow-lg border border-red-200">
@@ -10,7 +10,7 @@ const PromotionCard: React.FC<PromotionCardProps> = ({ code, title, description,
         <div className="mb-6 bg-red-500 text-white px-6 py-4 rounded-full shadow-lg transform group-hover:scale-110 transition-transform duration-300">
           <div className="flex items-center gap-3">
             <Flame size={24} className="fill-current animate-pulse" />
-            <span className="text-3xl font-black">{discountPercent}%</span>
+            <span className="text-3xl font-black">{discountText}</span>
           </div>
         </div>
         

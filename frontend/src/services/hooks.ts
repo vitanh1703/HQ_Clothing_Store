@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { authApi, productApi, cartApi, newsApi, servicesApi, promotionsApi, type Product, type NewsItem, type ServiceItem, type PromotionItem } from "./api";
+import { authApi, productApi, cartApi, newsApi, servicesApi, promotionsApi, type Product, type NewsItem, type ServiceItem, type PromotionItem, type Category, type NewsTitle } from "./api";
 import { authController } from "./controller";
 
 export const useAuth = () => {
@@ -199,4 +199,54 @@ export const usePromotions = () => {
   }, []);
 
   return { promotions, loading, error, refetch: fetchPromotions };
+};
+
+export const useCategories = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCategories = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await productApi.getCategories();
+      setCategories(data);
+    } catch (err: any) {
+      setError(err.message || "Không thể tải danh mục sản phẩm");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  return { categories, loading, error, refetch: fetchCategories };
+};
+
+export const useNewsTitles = () => {
+  const [newsTitles, setNewsTitles] = useState<NewsTitle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchNewsTitles = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await newsApi.getTitles();
+      setNewsTitles(data);
+    } catch (err: any) {
+      setError(err.message || "Không thể tải tiêu đề tin tức");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNewsTitles();
+  }, []);
+
+  return { newsTitles, loading, error, refetch: fetchNewsTitles };
 };

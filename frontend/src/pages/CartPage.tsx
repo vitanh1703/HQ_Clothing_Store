@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { cartApi } from "../services/api";
 
@@ -54,6 +54,9 @@ const CartPage = () => {
 
   // --- Xóa sản phẩm ---
   const handleRemove = async (id: number) => {
+    const confirmDelete = window.confirm("Bạn có muốn xóa sản phẩm khỏi giỏ hàng không?");
+    if (!confirmDelete) return;
+
     try {
       await cartApi.remove(id);
       if (!cart) return;

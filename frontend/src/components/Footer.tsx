@@ -34,7 +34,9 @@ const Footer = () => {
             <li className="hover:text-white transition-all cursor-pointer">
               <Link to="/refund-policy">Đổi trả & Bảo hành</Link>
             </li>
-            <li className="hover:text-white cursor-pointer">Giao hàng tận nơi</li>
+            <li className="hover:text-white transition-all cursor-pointer">
+              <Link to="/shipping-policy">Giao hàng tận nơi</Link>
+            </li>
           </ul>
         </div>
 

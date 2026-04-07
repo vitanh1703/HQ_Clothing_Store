@@ -82,6 +82,7 @@ export interface PromotionValidationResult {
 export interface CheckoutCartItem {
   id: number;
   variantId: number;
+  productId: number;
   productName: string;
   size: string;
   price: number;

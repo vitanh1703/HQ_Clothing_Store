@@ -1,7 +1,7 @@
 import { Menu, ShoppingBag, User, Heart, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom"; // Thêm useLocation
 import { useState, useEffect } from "react";
-import { useCategories, useNewsTitles } from "../services/hooks";
+import { useCategories, useNewsTitles, usePromotions, useServices } from "../services/hooks";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -10,8 +10,12 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
   const [isNewsDropdownOpen, setIsNewsDropdownOpen] = useState(false);
+  const [isPromotionsDropdownOpen, setIsPromotionsDropdownOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
   const { categories } = useCategories();
   const { newsTitles } = useNewsTitles();
+  const { promotions } = usePromotions();
+  const { services } = useServices();
 
   useEffect(() => {
     const checkAuth = () => {
@@ -31,17 +35,19 @@ const Header = () => {
         setIsDropdownOpen(false);
         setIsProductsDropdownOpen(false);
         setIsNewsDropdownOpen(false);
+        setIsPromotionsDropdownOpen(false);
+        setIsServicesDropdownOpen(false);
       }
     };
 
-    if (isDropdownOpen || isProductsDropdownOpen || isNewsDropdownOpen) {
+    if (isDropdownOpen || isProductsDropdownOpen || isNewsDropdownOpen || isPromotionsDropdownOpen || isServicesDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isDropdownOpen, isProductsDropdownOpen, isNewsDropdownOpen]);
+  }, [isDropdownOpen, isProductsDropdownOpen, isNewsDropdownOpen, isPromotionsDropdownOpen, isServicesDropdownOpen]);
 
   const handleLogout = () => {
     setIsDropdownOpen(false);
@@ -71,20 +77,20 @@ const Header = () => {
         
         <button onClick={() => navigate("/home")} className="hover:text-gray-500 transition-colors uppercase font-bold">Trang chủ</button>
         
-        <div className="relative">
+        <div
+          className="relative"
+          onMouseEnter={() => setIsProductsDropdownOpen(true)}
+          onMouseLeave={() => setIsProductsDropdownOpen(false)}
+        >
           <button 
             onClick={() => navigate("/products")} 
-            onMouseEnter={() => setIsProductsDropdownOpen(true)}
-            onMouseLeave={() => setIsProductsDropdownOpen(false)}
             className="hover:text-gray-500 transition-colors uppercase font-bold"
           >
             Sản phẩm
           </button>
           {isProductsDropdownOpen && (
             <div 
-              className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50"
-              onMouseEnter={() => setIsProductsDropdownOpen(true)}
-              onMouseLeave={() => setIsProductsDropdownOpen(false)}
+              className="absolute top-full left-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50"
             >
               {categories.map((category) => (
                 <button 
@@ -102,20 +108,20 @@ const Header = () => {
           )}
         </div>
 
-        <div className="relative">
+        <div
+          className="relative"
+          onMouseEnter={() => setIsNewsDropdownOpen(true)}
+          onMouseLeave={() => setIsNewsDropdownOpen(false)}
+        >
           <button 
             onClick={() => navigate("/news")} 
-            onMouseEnter={() => setIsNewsDropdownOpen(true)}
-            onMouseLeave={() => setIsNewsDropdownOpen(false)}
             className="hover:text-gray-500 transition-colors uppercase font-bold"
           >
             Tin tức
           </button>
           {isNewsDropdownOpen && (
             <div 
-              className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 max-h-64 overflow-y-auto"
-              onMouseEnter={() => setIsNewsDropdownOpen(true)}
-              onMouseLeave={() => setIsNewsDropdownOpen(false)}
+              className="absolute top-full left-0 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 max-h-64 overflow-y-auto"
             >
               {newsTitles.map((news) => (
                 <button 
@@ -128,6 +134,70 @@ const Header = () => {
                 >
                   <div className="font-medium">{news.title}</div>
                   <div className="text-xs text-gray-500">{news.category}</div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div
+          className="relative"
+          onMouseEnter={() => setIsPromotionsDropdownOpen(true)}
+          onMouseLeave={() => setIsPromotionsDropdownOpen(false)}
+        >
+          <button 
+            onClick={() => navigate("/promotions")} 
+            className="hover:text-gray-500 transition-colors uppercase font-bold"
+          >
+            Khuyến mãi
+          </button>
+          {isPromotionsDropdownOpen && (
+            <div 
+              className="absolute top-full left-0 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 max-h-64 overflow-y-auto"
+            >
+              {promotions.map((promo) => (
+                <button 
+                  key={promo.id}
+                  onClick={() => {
+                    navigate(`/promotions/${promo.id}`);
+                    setIsPromotionsDropdownOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                >
+                  <div className="font-medium">{promo.code}</div>
+                  <div className="text-xs text-gray-500">{promo.description}</div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div
+          className="relative"
+          onMouseEnter={() => setIsServicesDropdownOpen(true)}
+          onMouseLeave={() => setIsServicesDropdownOpen(false)}
+        >
+          <button 
+            onClick={() => navigate("/services")} 
+            className="hover:text-gray-500 transition-colors uppercase font-bold"
+          >
+            Dịch vụ
+          </button>
+          {isServicesDropdownOpen && (
+            <div 
+              className="absolute top-full left-0 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50"
+            >
+              {services.map((service) => (
+                <button 
+                  key={service.id}
+                  onClick={() => {
+                    navigate(`/services/${service.id}`);
+                    setIsServicesDropdownOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                >
+                  <div className="font-medium">{service.title}</div>
+                  <div className="text-xs text-gray-500">{service.description}</div>
                 </button>
               ))}
             </div>

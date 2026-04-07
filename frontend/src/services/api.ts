@@ -149,6 +149,10 @@ export const productApi = {
     const response = await axios.get(`${API_BASE}/Products`);
     return response.data;
   },
+  getByCategory: async (categoryId: number): Promise<Product[]> => {
+    const response = await axios.get(`${API_BASE}/Products/category/${categoryId}`);
+    return response.data;
+  },
   getCategories: async (): Promise<Category[]> => {
     const response = await axios.get(`${API_BASE}/Products/categories`);
     return response.data;

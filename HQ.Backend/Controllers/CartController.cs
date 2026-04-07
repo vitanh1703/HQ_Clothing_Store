@@ -81,5 +81,77 @@ namespace HQ.Backend.Controllers
 
             return Ok(cartData);
         }
+
+        [HttpGet("checkout/{userId}")]
+        public async Task<IActionResult> GetCheckout(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound(new { message = "Người dùng không tồn tại!" });
+
+            var cartData = await _context.Carts
+                .Where(c => c.UserId == userId)
+                .Select(c => new
+                {
+                    CartId = c.Id,
+                    Items = _context.CartItems
+                        .Where(ci => ci.CartId == c.Id)
+                        .Join(_context.ProductVariants, ci => ci.VariantId, v => v.Id, (ci, v) => new { ci, v })
+                        .Join(_context.Products, joined => joined.v.ProductId, p => p.Id, (joined, p) => new
+                        {
+                            Id = joined.ci.Id,
+                            VariantId = joined.v.Id,
+                            ProductName = p.Name,
+                            Size = joined.v.Size,
+                            Price = joined.v.Price,
+                            Quantity = joined.ci.Quantity,
+                            Total = joined.v.Price * joined.ci.Quantity,
+                            Image = p.ImageUrl
+                        }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (cartData == null)
+            {
+                return Ok(new
+                {
+                    cartId = 0,
+                    user = new
+                    {
+                        fullName = user.FullName,
+                        email = user.Email,
+                        phone = user.Phone,
+                        address = user.Address
+                    },
+                    items = new object[] { }
+                });
+            }
+
+            return Ok(new
+            {
+                cartId = cartData.CartId,
+                user = new
+                {
+                    fullName = user.FullName,
+                    email = user.Email,
+                    phone = user.Phone,
+                    address = user.Address
+                },
+                items = cartData.Items
+            });
+        }
+
+        [HttpDelete("remove/{cartItemId}")]
+        public async Task<IActionResult> RemoveFromCart(int cartItemId)
+        {
+            var cartItem = await _context.CartItems.FindAsync(cartItemId);
+            if (cartItem == null)
+                return NotFound(new { message = "Sản phẩm trong giỏ hàng không tồn tại!" });
+
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Xóa sản phẩm khỏi giỏ hàng thành công!" });
+        }
     }
 }

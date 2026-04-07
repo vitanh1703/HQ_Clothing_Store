@@ -80,6 +80,38 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "HQ.Backend.Controllers.CartController",
+    "Method": "GetCheckout",
+    "RelativePath": "api/Cart/checkout/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.CartController",
+    "Method": "RemoveFromCart",
+    "RelativePath": "api/Cart/remove/{cartItemId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cartItemId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HQ.Backend.Controllers.NewsController",
     "Method": "GetNews",
     "RelativePath": "api/News",
@@ -103,6 +135,26 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.NewsController",
+    "Method": "GetNewsCategories",
+    "RelativePath": "api/News/categories",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.NewsController",
+    "Method": "GetNewsTitles",
+    "RelativePath": "api/News/titles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -132,6 +184,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "HQ.Backend.Controllers.ProductsController",
+    "Method": "GetCategories",
+    "RelativePath": "api/Products/categories",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HQ.Backend.Controllers.PromotionsController",
     "Method": "GetPromotions",
     "RelativePath": "api/Promotions",
@@ -139,6 +201,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.PromotionsController",
+    "Method": "ValidatePromotion",
+    "RelativePath": "api/Promotions/validate/{code}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "code",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

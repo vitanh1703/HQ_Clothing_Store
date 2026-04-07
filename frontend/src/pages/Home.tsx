@@ -196,7 +196,13 @@ const Home = () => {
             ))
           ) : (
             promotions.slice(0, 3).map((promo) => (
-              <PromotionCard key={promo.id} code={promo.code} title={promo.title} description={promo.description} discountPercent={promo.discountPercent} />
+              <PromotionCard
+                key={promo.id}
+                code={promo.code}
+                title={promo.title ?? promo.code}
+                description={promo.description}
+                discountText={promo.discountText ?? `${promo.discountPercent ?? 0}%`}
+              />
             ))
           )}
         </div>

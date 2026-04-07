@@ -33,6 +33,31 @@ namespace HQ.Backend.Controllers
             return Ok(news);
         }
 
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetNewsCategories()
+        {
+            var categories = await _context.News
+                .Select(n => n.Category)
+                .Distinct()
+                .ToListAsync();
+
+            return Ok(categories);
+        }
+
+        [HttpGet("titles")]
+        public async Task<IActionResult> GetNewsTitles()
+        {
+            var titles = await _context.News
+                .Select(n => new {
+                    n.Id,
+                    n.Title,
+                    n.Category
+                })
+                .ToListAsync();
+
+            return Ok(titles);
+        }
+
         // GET: api/news/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetNewsById(int id)

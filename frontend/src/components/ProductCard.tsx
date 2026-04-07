@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
+import { Heart } from 'lucide-react';
 import type { Variant, Product } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,6 +8,8 @@ interface ProductCardProps {
   product: Product;
   onAddToCart: (variantId: number, quantity: number) => void;
 }
+
+const WISHLIST_KEY = "wishlistVariantIds";
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -17,13 +20,40 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
-  const displayPrice = selectedVariant 
-    ? selectedVariant.price 
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const activeVariant = selectedVariant || variants[0] || null;
+  const displayPrice = activeVariant
+    ? activeVariant.price
     : (variants.length > 0 ? Math.min(...variants.map(v => v.price)) : 0);
+
+  useEffect(() => {
+    if (!activeVariant) return;
+    const stored = localStorage.getItem(WISHLIST_KEY);
+    const wishlist: number[] = stored ? JSON.parse(stored) : [];
+    setIsFavorite(wishlist.includes(activeVariant.id));
+  }, [activeVariant]);
+
+  const updateWishlistStorage = (variantId: number, add: boolean) => {
+    const stored = localStorage.getItem(WISHLIST_KEY);
+    const wishlist: number[] = stored ? JSON.parse(stored) : [];
+    const next = add
+      ? Array.from(new Set([...wishlist, variantId]))
+      : wishlist.filter((id) => id !== variantId);
+    localStorage.setItem(WISHLIST_KEY, JSON.stringify(next));
+    setIsFavorite(add);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!activeVariant) return;
+    updateWishlistStorage(activeVariant.id, !isFavorite);
+  };
 
   const handleQuantity = (type: 'plus' | 'minus') => {
     if (type === 'plus') {
-      const maxStock = selectedVariant?.stockQuantity || 99;
+      const maxStock = activeVariant?.stockQuantity || 99;
       if (quantity < maxStock) setQuantity(prev => prev + 1);
     } else {
       if (quantity > 1) setQuantity(prev => prev - 1);
@@ -37,24 +67,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const auth = localStorage.getItem("auth");
     if (!auth) {
       alert("Vui lòng đăng nhập để thực hiện mua sắm tại H&Q Store!");
-      navigate("/auth"); 
+      navigate("/auth");
       return;
     }
-    if (!selectedVariant) {
+    if (!activeVariant) {
       alert("Vui lòng chọn size!");
       return;
     }
-    
+
     const button = buttonRef.current;
     if (!button || button.classList.contains('active')) return;
 
-    // Gửi dữ liệu lên API thông qua callback từ Page
-    onAddToCart(selectedVariant.id, quantity);
+    onAddToCart(activeVariant.id, quantity);
 
-    // Kích hoạt Animation GSAP
     button.classList.add('active');
     const tl = gsap.timeline();
-    
+
     tl.to(button, {
       keyframes: [
         { '--background-scale': 0.97, duration: 0.15 },
@@ -62,30 +90,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
       ],
     }).to(button, {
       keyframes: [
-        { 
-          '--shirt-scale': 1, 
-          '--shirt-y': '-42px', 
-          '--cart-x': '0px', 
-          '--cart-scale': 1, 
-          duration: 0.4, 
-          ease: 'power1.in' 
+        {
+          '--shirt-scale': 1,
+          '--shirt-y': '-42px',
+          '--cart-x': '0px',
+          '--cart-scale': 1,
+          duration: 0.4,
+          ease: 'power1.in'
         },
         { '--shirt-y': '-40px', duration: 0.3 },
         { '--shirt-y': '16px', '--shirt-scale': 0.9, duration: 0.25 },
-        { 
-          '--shirt-scale': 0, 
-          duration: 0.3, 
+        {
+          '--shirt-scale': 0,
+          duration: 0.3,
           onComplete: () => {
-            setTimeout(() => { 
+            setTimeout(() => {
               if (button) {
                 button.classList.remove('active');
-                // Reset lại các biến CSS về mặc định sau khi xong
-                gsap.set(button, { 
-                  '--shirt-y': '-42px', 
-                  '--shirt-scale': 0, 
-                  '--cart-x': '-120px', 
+                gsap.set(button, {
+                  '--shirt-y': '-42px',
+                  '--shirt-scale': 0,
+                  '--cart-x': '-120px',
                   '--cart-scale': 0.6,
-                  '--text-o': 1 
+                  '--text-o': 1
                 });
               }
             }, 2000);
@@ -102,24 +129,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
          onClick={() => navigate(`/products/${product.id}`)}
     >
       <div className="relative aspect-3/4 bg-[#F5F5F5] rounded-sm overflow-hidden mb-4 shadow-sm border border-gray-100">
-        <img 
-          src={imageSrc} 
-          alt={name} 
-          className="w-full h-full object-cover grayscale-[0.1] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out" 
+        <img
+          src={imageSrc}
+          alt={name}
+          className="w-full h-full object-cover grayscale-[0.1] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out"
         />
-        
-        {/* Overlay điều khiển xuất hiện khi Hover */}
+
+        <button
+          onClick={handleToggleFavorite}
+          className="absolute right-3 top-3 z-10 rounded-full bg-white/90 p-2 text-red-500 shadow-md transition hover:scale-105"
+          aria-label={isFavorite ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
+        >
+          <Heart fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" size={18} />
+        </button>
+
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
-          
-          {/* 1. Chọn Size từ danh sách Variants */}
           <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
             {variants.map((v) => (
               <button
                 key={v.id}
                 onClick={(e) => { e.stopPropagation(); setSelectedVariant(v); }}
                 className={`w-9 h-9 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
-                  ${selectedVariant?.id === v.id 
-                    ? 'bg-black text-white border-black' 
+                  ${activeVariant?.id === v.id
+                    ? 'bg-black text-white border-black'
                     : 'bg-white/90 text-black border-transparent hover:border-black'}`}
               >
                 {v.size}
@@ -127,7 +159,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
             ))}
           </div>
 
-          {/* 2. Chọn Số lượng */}
           <div className="flex items-center bg-white/95 rounded-sm mb-3 w-full justify-between px-3 py-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 shadow-sm">
             <span className="text-[9px] font-bold uppercase text-gray-500 tracking-wider">Số lượng</span>
             <div className="flex items-center gap-4">
@@ -137,13 +168,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           </div>
 
-          {/* 3. Nút Add to Cart với Animation */}
-          <button 
+          <button
             ref={buttonRef}
             onClick={handleAddToCart}
             className="add-to-cart w-full relative h-11.25 rounded-sm bg-black text-white text-[10px] font-bold uppercase overflow-hidden tracking-widest transition-all duration-300 hover:bg-zinc-900"
             style={{
-                // Khởi tạo các biến CSS cho GSAP
                 '--shirt-y': '-42px',
                 '--shirt-scale': 0,
                 '--cart-x': '-120px',
@@ -153,23 +182,21 @@ const ProductCard: React.FC<ProductCardProps> = ({
             } as React.CSSProperties}
           >
             <span className="relative z-10 block transition-opacity duration-300" style={{ opacity: 'var(--text-o)' }}>
-              {selectedVariant ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Size'}
+              {activeVariant ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Size'}
             </span>
-            
-            {/* Shirt Icon */}
-            <div className="shirt pointer-events-none absolute left-1/2 top-0 -ml-3 origin-bottom" 
-                 style={{ 
-                    transform: 'translateY(var(--shirt-y)) scale(var(--shirt-scale))', 
-                    opacity: 'var(--shirt-scale)' 
+
+            <div className="shirt pointer-events-none absolute left-1/2 top-0 -ml-3 origin-bottom"
+                 style={{
+                    transform: 'translateY(var(--shirt-y)) scale(var(--shirt-scale))',
+                    opacity: 'var(--shirt-scale)'
                  }}>
                 <svg className="w-6 h-6 fill-white" viewBox="0 0 24 24"><path d="M4.99997 3L8.99997 1.5C8.99997 1.5 10.6901 3 12 3C13.3098 3 15 1.5 15 1.5L19 3L22.5 8L19.5 10.5L19 9.5L17.1781 18.6093C17.062 19.1901 16.778 19.7249 16.3351 20.1181C15.4265 20.925 13.7133 22.3147 12 23C10.2868 22.3147 8.57355 20.925 7.66487 20.1181C7.22198 19.7249 6.93798 19.1901 6.82183 18.6093L4.99997 9.5L4.5 10.5L1.5 8L4.99997 3Z" /></svg>
             </div>
 
-            {/* Cart Icon */}
             <div className="cart pointer-events-none absolute left-1/2 top-1/2 -ml-4.5 -mt-3.25"
-                 style={{ 
-                    transform: 'translateX(var(--cart-x)) scale(var(--cart-scale))', 
-                    opacity: 'var(--cart-scale)' 
+                 style={{
+                    transform: 'translateX(var(--cart-x)) scale(var(--cart-scale))',
+                    opacity: 'var(--cart-scale)'
                  }}>
                 <svg className="w-9 h-6.5 fill-none stroke-white stroke-2" viewBox="0 0 36 26"><path d="M1 2.5H6L10 18.5H25.5L28.5 7.5L7.5 7.5" /><circle cx="11.5" cy="23" r="2" fill="currentColor" stroke="none" /><circle cx="24" cy="23" r="2" fill="currentColor" stroke="none" /></svg>
             </div>
@@ -177,7 +204,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      {/* Thông tin sản phẩm bên dưới ảnh */}
       <div className="flex justify-between items-start px-0.5">
         <div className="flex flex-col gap-1">
           <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.15em] leading-none">

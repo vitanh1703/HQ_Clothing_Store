@@ -38,6 +38,15 @@ public class LoginRequest
     public string Password { get; set; } = null!;
 }
 
+[Table("categories")]
+public class Category
+{
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string? Description { get; set; }
+}
+
 [Table("products")]
 public class Product
 {

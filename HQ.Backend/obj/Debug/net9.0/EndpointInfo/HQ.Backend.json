@@ -152,6 +152,29 @@
         }
       }
     },
+    "/api/Cart/checkout/{userId}": {
+      "get": {
+        "tags": [
+          "Cart"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Cart/remove/{cartItemId}": {
       "delete": {
         "tags": [
@@ -285,6 +308,28 @@
       "get": {
         "tags": [
           "Promotions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Promotions/validate/{code}": {
+      "get": {
+        "tags": [
+          "Promotions"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {

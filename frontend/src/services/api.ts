@@ -62,13 +62,48 @@ export interface ServiceItem {
 export interface PromotionItem {
   id: number;
   code: string;
-  title: string;
   description: string;
-  discountPercent: number;
-  imageUrl: string;
+  discountValue: number;
+  discountType: string;
+  discountText: string;
   startDate: string;
   endDate: string;
-}export interface AddToCartRequest {
+  title?: string;
+  discountPercent?: number;
+}
+
+export interface PromotionValidationResult {
+  code: string;
+  description: string;
+  discountValue: number;
+  discountType: string;
+}
+
+export interface CheckoutCartItem {
+  id: number;
+  variantId: number;
+  productName: string;
+  size: string;
+  price: number;
+  quantity: number;
+  total: number;
+  image: string;
+}
+
+export interface CheckoutUser {
+  fullName: string;
+  email: string;
+  phone?: string;
+  address?: string;
+}
+
+export interface CheckoutResponse {
+  cartId: number;
+  user: CheckoutUser;
+  items: CheckoutCartItem[];
+}
+
+export interface AddToCartRequest {
   userId: number;
   variantId: number;
   quantity: number;
@@ -84,7 +119,7 @@ export interface PromotionCardProps {
   code: string;
   title: string;
   description: string;
-  discountPercent: number;
+  discountText: string;
 }
 
 export const authApi = {
@@ -129,6 +164,11 @@ export const cartApi = {
   remove: async (cartItemId: number) => {
     const response = await axios.delete(`${API_BASE}/Cart/remove/${cartItemId}`);
     return response.data;
+  },
+
+  getCheckout: async (userId: number): Promise<CheckoutResponse> => {
+    const response = await axios.get(`${API_BASE}/Cart/checkout/${userId}`);
+    return response.data;
   }
 };
 
@@ -153,6 +193,11 @@ export const servicesApi = {
 export const promotionsApi = {
   getAll: async (): Promise<PromotionItem[]> => {
     const response = await axios.get(`${API_BASE}/Promotions`);
+    return response.data;
+  },
+
+  validateCode: async (code: string): Promise<PromotionValidationResult> => {
+    const response = await axios.get(`${API_BASE}/Promotions/validate/${encodeURIComponent(code)}`);
     return response.data;
   }
 };

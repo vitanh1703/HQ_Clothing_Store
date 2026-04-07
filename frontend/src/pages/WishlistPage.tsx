@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { Heart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import { useProducts, useCart } from "../services/hooks";
 import type { Product, Variant } from "../services/api";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type WishlistItem = {
   id: number;
@@ -15,9 +17,10 @@ type WishlistItem = {
   description: string;
 };
 
-const DEFAULT_WISHLIST = [4, 5]; // sample variant ids from backend
+const DEFAULT_WISHLIST = [4, 5];
 
 const WishlistPage = () => {
+  const navigate = useNavigate();
   const { products, loading, error } = useProducts();
   const { addToCart, isAdding } = useCart();
 
@@ -62,72 +65,129 @@ const WishlistPage = () => {
 
   const handleRemoveFavorite = (variantId: number) => {
     saveWishlist(wishlistVariantIds.filter((id) => id !== variantId));
+    toast.info("Đã xóa khỏi danh sách yêu thích");
   };
 
-  const handleAddToCart = async (variantId: number) => {
-    await addToCart(variantId, 1);
+  const handleAddToCart = async (variantId: number, productName: string) => {
+    try {
+      await addToCart(variantId, 1);
+      toast.success(`Đã thêm "${productName}" vào giỏ hàng!`, {
+        icon: <ShoppingCart size={18} className="text-green-500" />
+      });
+    } catch (err) {
+      toast.error("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
+    }
+  };
+
+  const handleProductClick = (productId: number) => {
+    navigate(`/products/${productId}`);
   };
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans">
-      <main className="max-w-7xl mx-auto py-10 px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
-        <div className="col-span-3">
-          <h1 className="text-3xl font-bold mb-6 italic">Yêu thích</h1>
-
-          <div className="flex gap-8 border-b border-gray-200 mb-4">
-            <button className="pb-2 border-b-2 border-black font-bold text-sm">Sản phẩm</button>
+    <div className="min-h-screen bg-white text-black font-sans pb-20">
+      <main className="max-w-6xl mx-auto py-12 px-6">
+        <header className="mb-12 border-b border-gray-100 pb-6 flex justify-between items-end">
+          <div>
+            <h1 className="text-4xl font-black uppercase tracking-tighter italic">Yêu thích</h1>
+            <p className="text-xs text-gray-400 mt-2 font-bold uppercase tracking-widest">
+              Bạn đang có {wishlistItems.length} món đồ trong danh sách
+            </p>
           </div>
+          <button 
+            onClick={() => navigate('/products')}
+            className="text-[10px] font-black uppercase border-b-2 border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition-all"
+          >
+            Tiếp tục mua sắm
+          </button>
+        </header>
 
-          <div className="flex justify-between items-center mb-6">
-            <p className="text-sm">Kết quả: {wishlistItems.length} sản phẩm</p> 
+        {loading && (
+          <div className="flex justify-center py-20">
+            <div className="animate-pulse font-black uppercase tracking-[0.3em] text-gray-300">Đang tải dữ liệu...</div>
           </div>
+        )}
+        
+        {error && <p className="text-center text-red-500 font-bold uppercase py-10">{error}</p>}
+        
+        {!loading && !wishlistItems.length && (
+          <div className="text-center py-20 space-y-4">
+            <p className="text-gray-400 italic">Danh sách yêu thích của bạn hiện đang trống.</p>
+            <button 
+              onClick={() => navigate('/products')}
+              className="inline-block bg-black text-white px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-all"
+            >
+              Khám phá sản phẩm
+            </button>
+          </div>
+        )}
 
-          {loading && <p className="text-sm text-gray-500">Đang tải wishlist...</p>}
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          {!loading && !wishlistItems.length && (
-            <p className="text-sm text-gray-500">Không có sản phẩm yêu thích nào. Hãy thêm vào wishlist từ trang sản phẩm.</p>
-          )}
+        <div className="grid grid-cols-1 gap-10">
+          {wishlistItems.map((item) => (
+            <div key={item.id} className="flex flex-col md:flex-row gap-8 border-b border-gray-100 pb-10 relative group">
+              
+              {/* 1. HÌNH ẢNH CÓ LINK */}
+              <div 
+                onClick={() => handleProductClick(item.productId)}
+                className="w-full md:w-44 h-56 bg-gray-50 shrink-0 overflow-hidden rounded-2xl shadow-sm cursor-pointer"
+              >
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
 
-          <div className="space-y-8">
-            {wishlistItems.map((item) => (
-              <div key={item.id} className="flex gap-6 border-b border-gray-100 pb-8 relative group">
-                <div className="w-36 h-44 bg-gray-100 shrink-0 overflow-hidden rounded-xl">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-
-                <div className="flex-1 space-y-2">
-                  <h2 className="font-bold text-lg leading-tight">{item.name}</h2>
-                  <p className="text-xs text-gray-500">Mã sản phẩm: {item.sku}</p>
-                  <p className="text-xs text-gray-500">Màu sắc: {item.color}</p>
-                  <p className="text-xs text-gray-500">Kích cỡ: {item.size}</p>
-                  <p className="text-lg font-black mt-2">{item.price.toLocaleString("vi-VN")} VND</p>
-                  <p className="text-[11px] text-gray-400 italic">{item.description}</p>
-                </div>
-
-                <button
-                  onClick={() => handleRemoveFavorite(item.id)}
-                  className="absolute top-3 right-3 p-2 text-red-500 hover:text-red-700 transition"
-                  aria-label="Xóa khỏi yêu thích"
-                >
-                  <Heart size={22} fill="red" className="text-red-500" />
-                </button>
-
-                <div className="absolute bottom-4 right-0">
-                  <button
-                    onClick={() => handleAddToCart(item.id)}
-                    disabled={isAdding}
-                    className="bg-black text-white px-6 py-2 text-[10px] font-bold rounded-full hover:bg-gray-900 transition-all uppercase tracking-widest shadow-md active:scale-95 disabled:opacity-60"
+              <div className="flex-1 flex flex-col justify-between py-2">
+                <div className="space-y-3">
+                  {/* 2. TÊN SẢN PHẨM CÓ LINK */}
+                  <div 
+                    onClick={() => handleProductClick(item.productId)}
+                    className="inline-block cursor-pointer"
                   >
-                    Thêm vào giỏ hàng
-                  </button>
+                    <h2 className="font-black text-2xl uppercase tracking-tight hover:text-gray-600 transition-colors leading-none">
+                      {item.name}
+                    </h2>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-x-6 gap-y-2">
+                    <p className="text-[10px] font-bold uppercase text-gray-400">SKU: <span className="text-black">{item.sku}</span></p>
+                    <p className="text-[10px] font-bold uppercase text-gray-400">Màu: <span className="text-black">{item.color}</span></p>
+                    <p className="text-[10px] font-bold uppercase text-gray-400">Size: <span className="text-black">{item.size}</span></p>
+                  </div>
+                  
+                  <p className="text-[11px] text-gray-500 leading-relaxed max-w-xl italic">
+                    {item.description}
+                  </p>
+                </div>
+
+                <div className="mt-6 flex items-center justify-between">
+                  <p className="text-2xl font-black tracking-tighter italic">
+                    {item.price.toLocaleString("vi-VN")} <span className="text-sm not-italic font-bold ml-1">VND</span>
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+
+              {/* NÚT XÓA */}
+              <button
+                onClick={() => handleRemoveFavorite(item.id)}
+                className="absolute top-0 right-0 p-2 text-gray-300 hover:text-red-500 transition-colors"
+                title="Xóa khỏi yêu thích"
+              >
+                <Heart size={20} fill="currentColor" />
+              </button>
+
+              {/* NÚT THÊM GIỎ HÀNG */}
+              <div className="md:absolute md:bottom-10 md:right-0">
+                <button
+                  onClick={() => handleAddToCart(item.id, item.name)}
+                  disabled={isAdding}
+                  className="w-full md:w-auto bg-black text-white px-10 py-4 text-[11px] font-black rounded-full hover:bg-gray-800 transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95 disabled:opacity-50"
+                >
+                  {isAdding ? "Đang thêm..." : "Thêm vào giỏ hàng"}
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </main>
     </div>

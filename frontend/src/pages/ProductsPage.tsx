@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"; // Thêm useEffect
 import { ChevronDown, Search } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { useProducts, useCart } from "../services/hooks";
@@ -5,44 +6,61 @@ import { useProducts, useCart } from "../services/hooks";
 const ProductsPage = () => {
   const { products, loading, error } = useProducts();
   const { addToCart, isAdding } = useCart();
+  
+  // State quản lý ẩn hiện
+  const [showFilters, setShowFilters] = useState(true);
+
+  // LẮNG NGHE TÍN HIỆU TỪ HEADER
+  useEffect(() => {
+    const handleToggle = () => {
+      setShowFilters(prev => !prev);
+    };
+
+    window.addEventListener("toggle-products-sidebar", handleToggle);
+    return () => window.removeEventListener("toggle-products-sidebar", handleToggle);
+  }, []);
 
   const filters = ["Size", "Availability", "Category", "Colors", "Price Range", "Collections", "Tags", "Ratings"];
   const categories = ["NEW", "SHIRTS", "POLO SHIRTS", "SHORTS", "SUITS", "BEST SELLERS", "T-SHIRTS", "JEANS", "JACKETS", "COATS"];
 
-  if (error) return (
-    <div className="h-screen flex items-center justify-center text-red-500 font-bold uppercase tracking-widest">
-      Error: {error}
-    </div>
-  );
+  if (error) return <div className="h-screen flex items-center justify-center text-red-500 uppercase font-bold">Error: {error}</div>;
 
   return (
     <div className="bg-[#F5F5F5] h-screen overflow-hidden flex flex-col font-sans px-8 py-4">
+      {/* HEADER TRANG (Breadcrumb) */}
       <header className="mb-4 shrink-0">
         <div className="text-[10px] text-gray-400 font-normal tracking-tight uppercase">Home / Products</div>
-        <h1 className="text-xl font-bold text-[#333] uppercase tracking-normal mt-0.5">PRODUCTS</h1>
+        <h1 className="text-xl font-bold text-[#333] uppercase mt-0.5 tracking-tight text-left">PRODUCTS</h1>
       </header>
 
-      <div className="flex gap-12 flex-1 overflow-hidden">
-        {/* SIDEBAR FILTERS */}
-        <aside className="w-64 space-y-8 shrink-0 overflow-y-auto pr-2 scrollbar-hide">
-          <h3 className="font-bold uppercase text-xs tracking-widest mb-6">Filters</h3>
-          <div className="space-y-4">
-            <p className="text-[10px] font-bold uppercase text-gray-800">Size</p>
-            <div className="flex flex-wrap gap-2">
-              {["XS", "S", "M", "L", "XL", "2X"].map((s) => (
-                <button key={s} className="w-10 h-10 border border-gray-300 text-[10px] font-bold hover:bg-black hover:text-white transition-all bg-white">{s}</button>
-              ))}
+      <div className="flex gap-12 flex-1 overflow-hidden relative">
+        
+        {/* SIDEBAR FILTERS - Thêm animation trượt */}
+        <aside 
+          className={`space-y-8 shrink-0 overflow-y-auto pr-2 scrollbar-hide transition-all duration-500 ease-in-out
+            ${showFilters ? "w-64 opacity-100 translate-x-0" : "w-0 opacity-0 -translate-x-10 pointer-events-none"}`}
+        >
+          <div className={`${showFilters ? "block" : "hidden"} min-w-[250px]`}>
+            <h3 className="font-bold uppercase text-xs tracking-widest mb-6 text-left">Filters</h3>
+            <div className="space-y-4">
+              <p className="text-[10px] font-bold uppercase text-gray-800 text-left">Size</p>
+              <div className="flex flex-wrap gap-2">
+                {["XS", "S", "M", "L", "XL", "2X"].map((s) => (
+                  <button key={s} className="w-10 h-10 border border-gray-300 text-[10px] font-bold hover:bg-black hover:text-white transition-all bg-white">{s}</button>
+                ))}
+              </div>
             </div>
+            {filters.slice(1).map((f) => (
+              <div key={f} className="flex justify-between items-center py-4 border-t border-gray-200 cursor-pointer hover:opacity-70">
+                <span className="text-[10px] font-bold uppercase tracking-widest">{f}</span>
+                <ChevronDown size={14} className="text-gray-400" />
+              </div>
+            ))}
           </div>
-          {filters.slice(1).map((f) => (
-            <div key={f} className="flex justify-between items-center py-4 border-t border-gray-200 cursor-pointer hover:opacity-70">
-              <span className="text-[10px] font-bold uppercase tracking-widest">{f}</span>
-              <ChevronDown size={14} className="text-gray-400" />
-            </div>
-          ))}
         </aside>
 
-        <main className="flex-1 flex flex-col overflow-hidden">
+        {/* MAIN CONTENT */}
+        <main className="flex-1 flex flex-col overflow-hidden transition-all duration-500">
           <div className="flex items-start justify-between mb-8 gap-4 shrink-0">
             <div className="relative w-1/2">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
@@ -55,31 +73,21 @@ const ProductsPage = () => {
             </div>
           </div>
 
+          {/* GRID SẢN PHẨM - Tự động giãn cột khi ẩn filter */}
           <div className="flex-1 overflow-y-auto pr-2 pb-20 scrollbar-thin">
             {loading ? (
-              <div className="text-center py-10 font-bold uppercase tracking-widest text-gray-400 animate-pulse">Loading...</div>
+              <div className="text-center py-10 font-bold uppercase tracking-widest text-gray-400 animate-pulse text-left">Loading...</div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
+              <div className={`grid gap-x-8 gap-y-12 transition-all duration-500
+                ${showFilters ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3" : "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"}`}>
                 {products.map((item) => (
-                  <ProductCard 
-                    key={item.id}
-                    product={item} 
-                    onAddToCart={addToCart}
-                  />
+                  <ProductCard key={item.id} product={item} onAddToCart={addToCart} />
                 ))}
               </div>
             )}
           </div>
         </main>
       </div>
-  
-      {isAdding && (
-        <div className="fixed inset-0 bg-black/10 z-50 flex items-center justify-center pointer-events-none">
-           <div className="bg-white p-4 rounded-full shadow-lg">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
-           </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -64,7 +64,7 @@ const Footer = () => {
                 className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
               >
                 <FaEnvelope size={16} className="group-hover:scale-110 transition-transform" /> 
-                <span>Email: contact@hqstore.vn</span>
+                <span>Email: info@hqstore.vn</span>
               </a>
             </li>
 

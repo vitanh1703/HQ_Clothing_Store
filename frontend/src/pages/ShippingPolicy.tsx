@@ -15,7 +15,7 @@ const ShippingPolicy = () => {
           <section>
             <h2 className="text-xl font-bold text-black mb-4">1. Phạm vi giao hàng</h2>
             <p>
-              H&Q Store hỗ trợ giao hàng tận nơi trên toàn quốc (63 tỉnh thành). Chúng tôi hợp tác với các đơn vị vận chuyển uy tín như Giao Hàng Tiết Kiệm, Viettel Post, J&T Express để đảm bảo sản phẩm đến tay bạn an toàn và nhanh chóng nhất.
+              H&Q Store hỗ trợ giao hàng tận nơi trên toàn quốc (34 tỉnh thành). Chúng tôi hợp tác với các đơn vị vận chuyển uy tín như Giao Hàng Tiết Kiệm, Viettel Post, J&T Express để đảm bảo sản phẩm đến tay bạn an toàn và nhanh chóng nhất.
             </p>
           </section>
 

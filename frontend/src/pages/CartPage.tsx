@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { cartApi } from "../services/api";
+import { cartApi, promotionsApi } from "../services/api";
+import type { PromotionValidationResult } from "../services/api";
 
 interface CartItem {
   id: number;
@@ -23,6 +24,10 @@ const CartPage = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState<CartResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoMessage, setPromoMessage] = useState("");
+  const [promoResult, setPromoResult] = useState<PromotionValidationResult | null>(null);
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false);
 
   const userId = Number(localStorage.getItem("userId")) || 1;
 
@@ -70,8 +75,32 @@ const CartPage = () => {
     }
   };
 
-  // --- Tổng tiền ---
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) {
+      setPromoMessage("Vui lòng nhập mã giảm giá.");
+      return;
+    }
+
+    setIsApplyingPromo(true);
+    try {
+      const result = await promotionsApi.validateCode(promoCode.trim());
+      setPromoResult(result);
+      setPromoMessage(`Áp dụng mã ${result.code} thành công!`);
+    } catch (err: any) {
+      setPromoResult(null);
+      setPromoMessage(err.response?.data?.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+    } finally {
+      setIsApplyingPromo(false);
+    }
+  };
+
   const totalPrice = cart?.items.reduce((sum, item) => sum + item.total, 0) || 0;
+  const discountAmount = promoResult
+    ? promoResult.discountType === "Percentage"
+      ? Math.round((totalPrice * promoResult.discountValue) / 100)
+      : Math.min(promoResult.discountValue, totalPrice)
+    : 0;
+  const totalAfterDiscount = totalPrice - discountAmount;
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] px-8 py-6">
@@ -144,10 +173,40 @@ const CartPage = () => {
           <div className="bg-white p-6 rounded-lg shadow-sm h-fit">
             <h2 className="font-bold mb-4">Order Summary</h2>
 
+            <div className="mb-4">
+              <label className="text-sm font-semibold text-gray-700">Mã giảm giá</label>
+              <div className="mt-2 flex gap-2">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={e => setPromoCode(e.target.value)}
+                  placeholder="Nhập mã giảm giá"
+                  className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:ring-2 focus:ring-black"
+                />
+                <button
+                  onClick={handleApplyPromo}
+                  disabled={isApplyingPromo}
+                  className="rounded-lg bg-black px-4 py-3 text-white uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors disabled:opacity-50"
+                >
+                  {isApplyingPromo ? "Áp dụng..." : "Áp dụng"}
+                </button>
+              </div>
+              {promoMessage && (
+                <p className="mt-3 text-sm text-gray-600">{promoMessage}</p>
+              )}
+            </div>
+
             <div className="flex justify-between mb-2">
               <span>Tạm tính</span>
               <span>{totalPrice.toLocaleString()}đ</span>
             </div>
+
+            {discountAmount > 0 && (
+              <div className="flex justify-between mb-2 text-green-600">
+                <span>Giảm giá</span>
+                <span>-{discountAmount.toLocaleString()}đ</span>
+              </div>
+            )}
 
             <div className="flex justify-between mb-4">
               <span>Shipping</span>
@@ -156,7 +215,7 @@ const CartPage = () => {
 
             <div className="flex justify-between font-bold text-lg mb-6">
               <span>Tổng</span>
-              <span>{totalPrice.toLocaleString()}đ</span>
+              <span>{totalAfterDiscount.toLocaleString()}đ</span>
             </div>
 
             <button

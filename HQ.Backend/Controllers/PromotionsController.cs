@@ -20,12 +20,12 @@ namespace HQ.Backend.Controllers
         public async Task<IActionResult> GetPromotions()
         {
             var promotions = await _context.Promotions
-                .Where(p => p.Status == 1 && p.EndDate >= DateTime.Now) // D�ng Status thay cho Active
+                .Where(p => p.Status == 1 && p.EndDate >= DateTime.Now) // Dùng Status thay cho Active
                 .Select(p => new {
                     p.Id,
                     p.Code,
                     p.Description,
-                    Discount = p.DiscountType == "Percentage" ? p.DiscountValue + "%" : p.DiscountValue + "�",
+                    Discount = p.DiscountType == "Percentage" ? p.DiscountValue + "%" : p.DiscountValue + "đ",
                     StartDate = p.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = p.EndDate.ToString("dd/MM/yyyy")
                 })
@@ -33,6 +33,27 @@ namespace HQ.Backend.Controllers
                 .ToListAsync();
 
             return Ok(promotions);
+        }
+
+        [HttpGet("validate/{code}")]
+        public async Task<IActionResult> ValidatePromotion(string code)
+        {
+            var promotion = await _context.Promotions
+                .Where(p => p.Status == 1 && p.EndDate >= DateTime.Now && p.Code == code)
+                .Select(p => new {
+                    p.Code,
+                    p.Description,
+                    p.DiscountValue,
+                    p.DiscountType
+                })
+                .FirstOrDefaultAsync();
+
+            if (promotion == null)
+            {
+                return NotFound(new { message = "Mã giảm giá không hợp lệ hoặc đã hết hạn." });
+            }
+
+            return Ok(promotion);
         }
     }
 }

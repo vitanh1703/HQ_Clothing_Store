@@ -387,10 +387,10 @@ C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.build.json
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.development.json
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.csproj.Up2Date
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.dll
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\refint\HQ.Backend.dll
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.pdb
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.genruntimeconfig.cache
 C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\ref\HQ.Backend.dll
+C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

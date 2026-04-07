@@ -70,6 +70,13 @@ export interface PromotionItem {
   endDate: string;
 }
 
+export interface PromotionValidationResult {
+  code: string;
+  description: string;
+  discountValue: number;
+  discountType: string;
+}
+
 export interface CheckoutCartItem {
   id: number;
   variantId: number;
@@ -184,6 +191,11 @@ export const servicesApi = {
 export const promotionsApi = {
   getAll: async (): Promise<PromotionItem[]> => {
     const response = await axios.get(`${API_BASE}/Promotions`);
+    return response.data;
+  },
+
+  validateCode: async (code: string): Promise<PromotionValidationResult> => {
+    const response = await axios.get(`${API_BASE}/Promotions/validate/${encodeURIComponent(code)}`);
     return response.data;
   }
 };

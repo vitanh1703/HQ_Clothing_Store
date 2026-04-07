@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { cartApi } from "../services/api";
-import type { CheckoutCartItem, CheckoutResponse } from "../services/api";
+import { cartApi, promotionsApi } from "../services/api";
+import type { CheckoutCartItem, CheckoutResponse, PromotionValidationResult } from "../services/api";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -13,6 +13,10 @@ const CheckoutPage = () => {
     phone: "",
     address: "",
   });
+  const [promoCode, setPromoCode] = useState("");
+  const [promoMessage, setPromoMessage] = useState("");
+  const [promoResult, setPromoResult] = useState<PromotionValidationResult | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"bank" | "cod">("bank");
 
   const userId = Number(localStorage.getItem("userId")) || 1;
 
@@ -43,8 +47,36 @@ const CheckoutPage = () => {
     [checkoutData]
   );
 
+  const discountAmount = useMemo(() => {
+    if (!promoResult) return 0;
+    if (promoResult.discountType === "Percentage") {
+      return Math.round((totalPrice * promoResult.discountValue) / 100);
+    }
+    return Math.min(promoResult.discountValue, totalPrice);
+  }, [promoResult, totalPrice]);
+
+  const shippingCost = 0;
+  const taxAmount = 0;
+  const totalAfterDiscount = totalPrice - discountAmount + shippingCost + taxAmount;
+
   const handleChange = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) {
+      setPromoMessage("Vui lòng nhập mã giảm giá.");
+      return;
+    }
+
+    try {
+      const result = await promotionsApi.validateCode(promoCode.trim());
+      setPromoResult(result);
+      setPromoMessage(`Áp dụng mã ${result.code} thành công!`);
+    } catch (err: any) {
+      setPromoResult(null);
+      setPromoMessage(err.response?.data?.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+    }
   };
 
   const handlePlaceOrder = () => {
@@ -52,7 +84,8 @@ const CheckoutPage = () => {
       return alert("Không có sản phẩm nào để thanh toán.");
     }
 
-    alert("Đã tạo đơn hàng thành công! Cảm ơn bạn đã mua sắm.");
+    const methodLabel = paymentMethod === "bank" ? "Ngân hàng" : "Thanh toán khi nhận hàng";
+    alert(`Đã tạo đơn hàng thành công! Phương thức thanh toán: ${methodLabel}. Cảm ơn bạn đã mua sắm.`);
     navigate("/home");
   };
 
@@ -163,6 +196,62 @@ const CheckoutPage = () => {
               ))}
             </div>
           </section>
+
+          <section className="mt-10">
+            <h2 className="text-xl font-bold mb-4">Mã giảm giá</h2>
+            <div className="flex flex-col gap-3">
+              <div className="flex gap-2 flex-col sm:flex-row">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={e => setPromoCode(e.target.value)}
+                  placeholder="Nhập mã giảm giá"
+                  className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-black"
+                />
+                <button
+                  onClick={handleApplyPromo}
+                  className="w-full sm:w-auto rounded-lg bg-black text-white px-6 py-3 uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors"
+                >
+                  Áp dụng
+                </button>
+              </div>
+              {promoMessage && <p className="text-sm text-gray-600">{promoMessage}</p>}
+            </div>
+          </section>
+
+          <section className="mt-10">
+            <h2 className="text-xl font-bold mb-4">Phương thức thanh toán</h2>
+            <div className="space-y-3 text-sm text-gray-700">
+              <label className="flex items-center gap-3 rounded-xl border border-gray-300 p-4 cursor-pointer">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="bank"
+                  checked={paymentMethod === "bank"}
+                  onChange={() => setPaymentMethod("bank")}
+                  className="h-4 w-4"
+                />
+                <div>
+                  <p className="font-semibold">Ngân hàng</p>
+                  <p className="text-gray-500">Thanh toán trước qua chuyển khoản</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 rounded-xl border border-gray-300 p-4 cursor-pointer">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cod"
+                  checked={paymentMethod === "cod"}
+                  onChange={() => setPaymentMethod("cod")}
+                  className="h-4 w-4"
+                />
+                <div>
+                  <p className="font-semibold">Thanh toán khi nhận hàng</p>
+                  <p className="text-gray-500">Thanh toán trực tiếp cho nhân viên giao hàng</p>
+                </div>
+              </label>
+            </div>
+          </section>
         </div>
 
         <aside className="bg-white p-8 rounded-xl shadow-sm space-y-6">
@@ -177,9 +266,15 @@ const CheckoutPage = () => {
                 <span>Phí vận chuyển</span>
                 <span>0đ</span>
               </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Giảm giá</span>
+                  <span>-{discountAmount.toLocaleString()}đ</span>
+                </div>
+              )}
               <div className="flex justify-between font-bold text-lg pt-3 border-t border-gray-200">
                 <span>Thanh toán</span>
-                <span>{totalPrice.toLocaleString()}đ</span>
+                <span>{totalAfterDiscount.toLocaleString()}đ</span>
               </div>
             </div>
           </div>

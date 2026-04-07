@@ -316,6 +316,28 @@
         }
       }
     },
+    "/api/Promotions/validate/{code}": {
+      "get": {
+        "tags": [
+          "Promotions"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Services": {
       "get": {
         "tags": [

@@ -204,6 +204,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "HQ.Backend.Controllers.PromotionsController",
+    "Method": "ValidatePromotion",
+    "RelativePath": "api/Promotions/validate/{code}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "code",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HQ.Backend.Controllers.ServicesController",
     "Method": "GetServices",
     "RelativePath": "api/Services",

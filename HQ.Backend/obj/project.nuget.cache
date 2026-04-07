@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ubo+XHvf9TI=",
+  "dgSpecHash": "rcDvxQKEmP4=",
   "success": true,
-  "projectFilePath": "C:\\Webnangcap\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+  "projectFilePath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\haonguyen\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\haonguyen\\.nuget\\packages\\google.apis\\1.73.0\\google.apis.1.73.0.nupkg.sha512",

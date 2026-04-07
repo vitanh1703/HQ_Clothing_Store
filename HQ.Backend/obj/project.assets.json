@@ -3532,11 +3532,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Webnangcap\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+      "projectUniqueName": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "projectName": "HQ.Backend",
-      "projectPath": "C:\\Webnangcap\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+      "projectPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "packagesPath": "C:\\Users\\haonguyen\\.nuget\\packages\\",
-      "outputPath": "C:\\Webnangcap\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+      "outputPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

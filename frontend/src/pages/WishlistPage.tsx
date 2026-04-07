@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Heart, ChevronRight } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useProducts, useCart } from "../services/hooks";
 import type { Product, Variant } from "../services/api";
 

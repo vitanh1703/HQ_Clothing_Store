@@ -81,6 +81,22 @@
   },
   {
     "ContainingType": "HQ.Backend.Controllers.CartController",
+    "Method": "GetCheckout",
+    "RelativePath": "api/Cart/checkout/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.CartController",
     "Method": "RemoveFromCart",
     "RelativePath": "api/Cart/remove/{cartItemId}",
     "HttpMethod": "DELETE",

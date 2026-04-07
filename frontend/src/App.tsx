@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import NewsPage from "./pages/NewsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import NewsDetailPage from "./pages/NewsDetailPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import ProfilePage from "./pages/ProfilePage";
 import WishlistPage from "./pages/WishlistPage";
 
@@ -32,6 +33,7 @@ function App() {
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />

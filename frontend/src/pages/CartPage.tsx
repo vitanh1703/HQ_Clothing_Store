@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { cartApi } from "../services/api";
 
@@ -19,6 +20,7 @@ interface CartResponse {
 }
 
 const CartPage = () => {
+  const navigate = useNavigate();
   const [cart, setCart] = useState<CartResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -157,7 +159,10 @@ const CartPage = () => {
               <span>{totalPrice.toLocaleString()}đ</span>
             </div>
 
-            <button className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800">
+            <button
+              className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800"
+              onClick={() => navigate("/checkout")}
+            >
               Checkout
             </button>
           </div>

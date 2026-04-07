@@ -3526,23 +3526,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\HP\\.nuget\\packages\\": {},
+    "C:\\Users\\haonguyen\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+      "projectUniqueName": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "projectName": "HQ.Backend",
-      "projectPath": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-      "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "E:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+      "projectPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+      "packagesPath": "C:\\Users\\haonguyen\\.nuget\\packages\\",
+      "outputPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\haonguyen\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3621,7 +3621,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

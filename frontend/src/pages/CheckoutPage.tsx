@@ -1,0 +1,204 @@
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { cartApi } from "../services/api";
+import type { CheckoutCartItem, CheckoutResponse } from "../services/api";
+
+const CheckoutPage = () => {
+  const navigate = useNavigate();
+  const [checkoutData, setCheckoutData] = useState<CheckoutResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
+
+  const userId = Number(localStorage.getItem("userId")) || 1;
+
+  useEffect(() => {
+    const fetchCheckout = async () => {
+      try {
+        const data = await cartApi.getCheckout(userId);
+        setCheckoutData(data);
+        setForm({
+          fullName: data.user.fullName,
+          email: data.user.email,
+          phone: data.user.phone || "",
+          address: data.user.address || "",
+        });
+      } catch (err) {
+        console.error("Lỗi khi lấy dữ liệu checkout:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCheckout();
+  }, [userId]);
+
+  const totalPrice = useMemo(
+    () =>
+      checkoutData?.items.reduce((sum, item) => sum + item.total, 0) ?? 0,
+    [checkoutData]
+  );
+
+  const handleChange = (field: string, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePlaceOrder = () => {
+    if (!checkoutData || checkoutData.items.length === 0) {
+      return alert("Không có sản phẩm nào để thanh toán.");
+    }
+
+    alert("Đã tạo đơn hàng thành công! Cảm ơn bạn đã mua sắm.");
+    navigate("/home");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải thông tin checkout...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!checkoutData) {
+    return (
+      <div className="min-h-screen p-10 bg-[#F5F5F5]">
+        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-10 text-center">
+          <p className="text-lg text-gray-700">Không tìm thấy thông tin đặt hàng. Vui lòng kiểm tra lại giỏ hàng.</p>
+          <button
+            onClick={() => navigate("/cart")}
+            className="mt-6 px-6 py-3 bg-black text-white rounded-lg uppercase tracking-[0.2em]"
+          >
+            Quay lại giỏ hàng
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F5F5F5] px-6 py-8">
+      <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+        <div className="bg-white p-8 rounded-xl shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-black uppercase">Checkout</h1>
+              <p className="text-gray-500 mt-1">Xác nhận thông tin đơn hàng và địa chỉ giao hàng.</p>
+            </div>
+            <button
+              onClick={() => navigate("/cart")}
+              className="text-sm uppercase tracking-[0.2em] text-gray-600 hover:text-black"
+            >
+              Quay lại giỏ hàng
+            </button>
+          </div>
+
+          <section className="mb-10">
+            <h2 className="text-xl font-bold mb-4">Thông tin người đặt</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="flex flex-col text-sm text-gray-700">
+                Họ và tên
+                <input
+                  type="text"
+                  value={form.fullName}
+                  onChange={e => handleChange("fullName", e.target.value)}
+                  className="mt-2 rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </label>
+              <label className="flex flex-col text-sm text-gray-700">
+                Email
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={e => handleChange("email", e.target.value)}
+                  className="mt-2 rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </label>
+              <label className="flex flex-col text-sm text-gray-700">
+                Số điện thoại
+                <input
+                  type="tel"
+                  value={form.phone}
+                  onChange={e => handleChange("phone", e.target.value)}
+                  className="mt-2 rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </label>
+              <label className="flex flex-col text-sm text-gray-700 md:col-span-2">
+                Địa chỉ giao hàng
+                <input
+                  type="text"
+                  value={form.address}
+                  onChange={e => handleChange("address", e.target.value)}
+                  className="mt-2 rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </label>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-4">Sản phẩm trong đơn</h2>
+            <div className="space-y-4">
+              {checkoutData.items.map((item: CheckoutCartItem) => (
+                <div key={item.id} className="flex flex-col gap-4 rounded-xl border border-gray-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-4">
+                    <img src={item.image} alt={item.productName} className="h-20 w-20 rounded-lg object-cover" />
+                    <div>
+                      <p className="font-bold">{item.productName}</p>
+                      <p className="text-gray-500 text-sm">Size: {item.size}</p>
+                      <p className="text-gray-500 text-sm">Số lượng: {item.quantity}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold">{item.total.toLocaleString()}đ</p>
+                    <p className="text-sm text-gray-500">{item.price.toLocaleString()}đ / cái</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <aside className="bg-white p-8 rounded-xl shadow-sm space-y-6">
+          <div>
+            <h2 className="text-xl font-bold uppercase mb-4">Tổng đơn hàng</h2>
+            <div className="space-y-3 text-sm text-gray-700">
+              <div className="flex justify-between">
+                <span>Tạm tính</span>
+                <span>{totalPrice.toLocaleString()}đ</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Phí vận chuyển</span>
+                <span>0đ</span>
+              </div>
+              <div className="flex justify-between font-bold text-lg pt-3 border-t border-gray-200">
+                <span>Thanh toán</span>
+                <span>{totalPrice.toLocaleString()}đ</span>
+              </div>
+            </div>
+          </div>
+          <button
+            className="w-full bg-black text-white uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-gray-900 transition-colors"
+            onClick={handlePlaceOrder}
+          >
+            Hoàn tất thanh toán
+          </button>
+          <button
+            onClick={() => navigate("/cart")}
+            className="w-full border border-gray-300 text-gray-700 uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-gray-50 transition-colors"
+          >
+            Quay lại giỏ hàng
+          </button>
+        </aside>
+      </div>
+    </div>
+  );
+};
+
+export default CheckoutPage;

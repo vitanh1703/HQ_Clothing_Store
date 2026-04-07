@@ -15,12 +15,59 @@ const Footer = () => {
 
         {/* Cột 2: Mạng xã hội */}
         <div className="space-y-4">
-          <h3 className="text-white font-bold uppercase tracking-wider">Kết nối</h3>
+          <h3 className="text-white font-bold uppercase tracking-wider text-left">Kết nối với H&Q</h3>
           <ul className="space-y-3 text-sm">
-            <li className="flex items-center gap-2 hover:text-white cursor-pointer"><FaFacebook size={16} /> Facebook</li>
-            <li className="flex items-center gap-2 hover:text-white cursor-pointer"><FaInstagram size={16} /> Instagram</li>
-            <li className="flex items-center gap-2 hover:text-white cursor-pointer"><FaYoutube size={16} /> Youtube</li>
-            <li className="flex items-center gap-2 hover:text-white cursor-pointer"><FaEnvelope size={16} /> Email</li>
+            
+            {/* 1. Facebook - Mở tab mới */}
+            <li>
+              <a 
+                href="https://facebook.com/hqstore.vn" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
+              >
+                <FaFacebook size={16} className="group-hover:scale-110 transition-transform" /> 
+                <span>Facebook</span>
+              </a>
+            </li>
+
+            {/* 2. Instagram - Mở tab mới */}
+            <li>
+              <a 
+                href="https://instagram.com/hqstore.vn" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
+              >
+                <FaInstagram size={16} className="group-hover:scale-110 transition-transform" /> 
+                <span>Instagram</span>
+              </a>
+            </li>
+
+            {/* 3. Youtube - Mở tab mới */}
+            <li>
+              <a 
+                href="https://youtube.com/@hqstore" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
+              >
+                <FaYoutube size={16} className="group-hover:scale-110 transition-transform" /> 
+                <span>Youtube</span>
+              </a>
+            </li>
+
+            {/* 4. Email - Tự động mở ứng dụng gửi thư (Outlook/Gmail) */}
+            <li>
+              <a 
+                href="mailto:contact@hqstore.vn" 
+                className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
+              >
+                <FaEnvelope size={16} className="group-hover:scale-110 transition-transform" /> 
+                <span>Email: contact@hqstore.vn</span>
+              </a>
+            </li>
+
           </ul>
         </div>
 

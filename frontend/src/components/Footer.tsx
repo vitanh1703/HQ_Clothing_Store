@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaFacebook, FaInstagram, FaYoutube, FaEnvelope } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -27,7 +28,9 @@ const Footer = () => {
         <div className="space-y-4">
           <h3 className="text-white font-bold uppercase tracking-wider">Chính sách</h3>
           <ul className="space-y-2 text-sm">
-            <li className="hover:text-white cursor-pointer">Chính sách bảo mật</li>
+            <li className="hover:text-white cursor-pointer transition-all">
+              <Link to="/privacy-policy">Chính sách bảo mật</Link>
+            </li>
             <li className="hover:text-white cursor-pointer">Đổi trả & Bảo hành</li>
             <li className="hover:text-white cursor-pointer">Giao hàng tận nơi</li>
           </ul>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import ProductCard from "../components/ProductCard";
+import SidebarFilters from "../components/SidebarFilters";
 import { useProducts, useCart } from "../services/hooks";
 
 const ProductsPage = () => {
@@ -36,32 +37,12 @@ const ProductsPage = () => {
 
       <div className="flex gap-12 flex-1 overflow-hidden relative">
         
-        {/* SIDEBAR FILTERS - Chỉ hiện khi ấn nút Menu trên Header */}
+        {/* SIDEBAR FILTERS - ĐÃ THAY THẾ BẰNG COMPONENT MỚI */}
         <aside 
           className={`shrink-0 overflow-y-auto scrollbar-hide transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
             ${showFilters ? "w-64 opacity-100 translate-x-0" : "w-0 opacity-0 -translate-x-10 pointer-events-none"}`}
         >
-          <div className="min-w-[240px]">
-            <h3 className="font-black uppercase text-[11px] tracking-[0.25em] mb-8 text-black border-b-2 border-black pb-2 w-fit">Filters</h3>
-            
-            <div className="mb-10">
-              <p className="text-[10px] font-black uppercase text-gray-900 mb-4 tracking-widest text-left">Size</p>
-              <div className="grid grid-cols-3 gap-2">
-                {["XS", "S", "M", "L", "XL", "2X"].map((s) => (
-                  <button key={s} className="aspect-square border border-gray-200 text-[10px] font-bold hover:bg-black hover:text-white transition-all bg-white flex items-center justify-center">{s}</button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              {filters.slice(1).map((f) => (
-                <div key={f} className="flex justify-between items-center py-5 border-b border-gray-100 cursor-pointer group hover:pl-2 transition-all">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-600 group-hover:text-black">{f}</span>
-                  <ChevronDown size={12} className="text-gray-300 group-hover:text-black" />
-                </div>
-              ))}
-            </div>
-          </div>
+          <SidebarFilters /> {/* 2. Gọi nó ở đây */}
         </aside>
 
         {/* MAIN CONTENT - GRID SẢN PHẨM */}

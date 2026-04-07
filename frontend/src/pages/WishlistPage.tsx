@@ -76,14 +76,10 @@ const WishlistPage = () => {
 
           <div className="flex gap-8 border-b border-gray-200 mb-4">
             <button className="pb-2 border-b-2 border-black font-bold text-sm">Sản phẩm</button>
-            {/* <button className="pb-2 text-gray-400 font-bold text-sm hover:text-black">Phong cách</button> */}
           </div>
 
           <div className="flex justify-between items-center mb-6">
-            <p className="text-sm">Kết quả: {wishlistItems.length} sản phẩm</p>
-            <button className="flex items-center gap-1 text-sm font-bold border-b border-black">
-              Sắp xếp theo <ChevronRight size={14} className="rotate-90" />
-            </button>
+            <p className="text-sm">Kết quả: {wishlistItems.length} sản phẩm</p> 
           </div>
 
           {loading && <p className="text-sm text-gray-500">Đang tải wishlist...</p>}

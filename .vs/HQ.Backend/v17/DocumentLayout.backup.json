@@ -3,7 +3,22 @@
   "WorkspaceRootPath": "E:\\HQ_Clothing_Store\\",
   "Documents": [
     {
+<<<<<<< HEAD
       "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|e:\\hq_clothing_store\\hq.backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+=======
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\9.0.306\\Sdks\\Microsoft.NET.Sdk.StaticWebAssets\\targets\\Microsoft.NET.Sdk.StaticWebAssets.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+>>>>>>> 85ca15fd75bc63f4945f4cdb910313ad32755341
       "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -37,6 +52,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
+<<<<<<< HEAD
           "SelectedChildIndex": 3,
           "Children": [
             {
@@ -51,6 +67,24 @@
             {
               "$type": "Document",
               "DocumentIndex": 4,
+=======
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Microsoft.NET.Sdk.StaticWebAssets.targets",
+              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\9.0.306\\Sdks\\Microsoft.NET.Sdk.StaticWebAssets\\targets\\Microsoft.NET.Sdk.StaticWebAssets.targets",
+              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\9.0.306\\Sdks\\Microsoft.NET.Sdk.StaticWebAssets\\targets\\Microsoft.NET.Sdk.StaticWebAssets.targets",
+              "ViewState": "AgIAAJACAAAAAAAAAIAwwKYCAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2026-04-07T12:15:23.724Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+>>>>>>> 85ca15fd75bc63f4945f4cdb910313ad32755341
               "Title": "NewsController.cs",
               "DocumentMoniker": "E:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\NewsController.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\NewsController.cs",
@@ -74,7 +108,11 @@
             },
             {
               "$type": "Document",
+<<<<<<< HEAD
               "DocumentIndex": 0,
+=======
+              "DocumentIndex": 3,
+>>>>>>> 85ca15fd75bc63f4945f4cdb910313ad32755341
               "Title": "AuthController.cs",
               "DocumentMoniker": "E:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\AuthController.cs",
@@ -87,7 +125,11 @@
             },
             {
               "$type": "Document",
+<<<<<<< HEAD
               "DocumentIndex": 1,
+=======
+              "DocumentIndex": 4,
+>>>>>>> 85ca15fd75bc63f4945f4cdb910313ad32755341
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "E:\\HQ_Clothing_Store\\HQ.Backend\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Data\\AppDbContext.cs",
@@ -111,7 +153,11 @@
             },
             {
               "$type": "Document",
+<<<<<<< HEAD
               "DocumentIndex": 3,
+=======
+              "DocumentIndex": 1,
+>>>>>>> 85ca15fd75bc63f4945f4cdb910313ad32755341
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\HQ_Clothing_Store\\HQ.Backend\\Program.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Program.cs",

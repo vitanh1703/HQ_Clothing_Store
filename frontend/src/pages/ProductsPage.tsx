@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react"; // Thêm useEffect
-import { ChevronDown, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { useProducts, useCart } from "../services/hooks";
 
 const ProductsPage = () => {
   const { products, loading, error } = useProducts();
-  const { addToCart, isAdding } = useCart();
+  const { addToCart } = useCart();
   
-  // State quản lý ẩn hiện
-  const [showFilters, setShowFilters] = useState(true);
+  // ĐÃ SỬA: Đổi true thành false để vào trang là ẩn Sidebar ngay
+  const [showFilters, setShowFilters] = useState(false);
 
-  // LẮNG NGHE TÍN HIỆU TỪ HEADER
+  // Lắng nghe tín hiệu từ Header
   useEffect(() => {
     const handleToggle = () => {
       setShowFilters(prev => !prev);
@@ -20,68 +20,64 @@ const ProductsPage = () => {
     return () => window.removeEventListener("toggle-products-sidebar", handleToggle);
   }, []);
 
-  const filters = ["Size", "Availability", "Category", "Colors", "Price Range", "Collections", "Tags", "Ratings"];
-  const categories = ["NEW", "SHIRTS", "POLO SHIRTS", "SHORTS", "SUITS", "BEST SELLERS", "T-SHIRTS", "JEANS", "JACKETS", "COATS"];
+  const filters = ["Size", "Availability", "Category", "Colors", "Price Range", "Collections", "Ratings"];
 
-  if (error) return <div className="h-screen flex items-center justify-center text-red-500 uppercase font-bold">Error: {error}</div>;
+  if (error) return <div className="h-screen flex items-center justify-center text-red-500 uppercase font-black tracking-tight">Error: {error}</div>;
 
   return (
-    <div className="bg-[#F5F5F5] h-screen overflow-hidden flex flex-col font-sans px-8 py-4">
-      {/* HEADER TRANG (Breadcrumb) */}
-      <header className="mb-4 shrink-0">
-        <div className="text-[10px] text-gray-400 font-normal tracking-tight uppercase">Home / Products</div>
-        <h1 className="text-xl font-bold text-[#333] uppercase mt-0.5 tracking-tight text-left">PRODUCTS</h1>
+    <div className="bg-[#F8F8F8] h-screen overflow-hidden flex flex-col font-sans px-10 py-6">
+      {/* HEADER TRANG - Breadcrumb tối giản và sang trọng */}
+      <header className="mb-8 shrink-0">
+        <div className="text-[9px] text-gray-400 font-bold tracking-[0.2em] uppercase mb-1">Home / Shop</div>
+        <div className="flex justify-between items-end border-b border-gray-200 pb-4">
+          <h1 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tighter italic">SẢN PHẨM</h1>
+        </div>
       </header>
 
       <div className="flex gap-12 flex-1 overflow-hidden relative">
         
-        {/* SIDEBAR FILTERS - Thêm animation trượt */}
+        {/* SIDEBAR FILTERS - Chỉ hiện khi ấn nút Menu trên Header */}
         <aside 
-          className={`space-y-8 shrink-0 overflow-y-auto pr-2 scrollbar-hide transition-all duration-500 ease-in-out
+          className={`shrink-0 overflow-y-auto scrollbar-hide transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
             ${showFilters ? "w-64 opacity-100 translate-x-0" : "w-0 opacity-0 -translate-x-10 pointer-events-none"}`}
         >
-          <div className={`${showFilters ? "block" : "hidden"} min-w-[250px]`}>
-            <h3 className="font-bold uppercase text-xs tracking-widest mb-6 text-left">Filters</h3>
-            <div className="space-y-4">
-              <p className="text-[10px] font-bold uppercase text-gray-800 text-left">Size</p>
-              <div className="flex flex-wrap gap-2">
+          <div className="min-w-[240px]">
+            <h3 className="font-black uppercase text-[11px] tracking-[0.25em] mb-8 text-black border-b-2 border-black pb-2 w-fit">Filters</h3>
+            
+            <div className="mb-10">
+              <p className="text-[10px] font-black uppercase text-gray-900 mb-4 tracking-widest text-left">Size</p>
+              <div className="grid grid-cols-3 gap-2">
                 {["XS", "S", "M", "L", "XL", "2X"].map((s) => (
-                  <button key={s} className="w-10 h-10 border border-gray-300 text-[10px] font-bold hover:bg-black hover:text-white transition-all bg-white">{s}</button>
+                  <button key={s} className="aspect-square border border-gray-200 text-[10px] font-bold hover:bg-black hover:text-white transition-all bg-white flex items-center justify-center">{s}</button>
                 ))}
               </div>
             </div>
-            {filters.slice(1).map((f) => (
-              <div key={f} className="flex justify-between items-center py-4 border-t border-gray-200 cursor-pointer hover:opacity-70">
-                <span className="text-[10px] font-bold uppercase tracking-widest">{f}</span>
-                <ChevronDown size={14} className="text-gray-400" />
-              </div>
-            ))}
-          </div>
-        </aside>
 
-        {/* MAIN CONTENT */}
-        <main className="flex-1 flex flex-col overflow-hidden transition-all duration-500">
-          <div className="flex items-start justify-between mb-8 gap-4 shrink-0">
-            <div className="relative w-1/2">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-              <input type="text" placeholder="Search" className="w-full pl-10 pr-4 py-2.5 bg-[#E2E2E2] border-none outline-none text-xs text-gray-500 rounded-sm" />
-            </div>
-            <div className="grid grid-cols-5 gap-1 shrink-0">
-              {categories.map(c => (
-                <button key={c} className="px-3 py-1 text-[9px] border border-gray-200 bg-white font-bold hover:bg-black hover:text-white transition-all uppercase min-w-22.5 h-7 flex items-center justify-center shadow-sm">{c}</button>
+            <div className="space-y-1">
+              {filters.slice(1).map((f) => (
+                <div key={f} className="flex justify-between items-center py-5 border-b border-gray-100 cursor-pointer group hover:pl-2 transition-all">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-600 group-hover:text-black">{f}</span>
+                  <ChevronDown size={12} className="text-gray-300 group-hover:text-black" />
+                </div>
               ))}
             </div>
           </div>
+        </aside>
 
-          {/* GRID SẢN PHẨM - Tự động giãn cột khi ẩn filter */}
-          <div className="flex-1 overflow-y-auto pr-2 pb-20 scrollbar-thin">
+        {/* MAIN CONTENT - GRID SẢN PHẨM */}
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto pr-4 pb-24 scrollbar-thin">
             {loading ? (
-              <div className="text-center py-10 font-bold uppercase tracking-widest text-gray-400 animate-pulse text-left">Loading...</div>
+              <div className="flex h-full items-center justify-center text-[11px] font-black uppercase tracking-[0.4em] text-gray-300 animate-pulse">Loading Collection...</div>
             ) : (
-              <div className={`grid gap-x-8 gap-y-12 transition-all duration-500
-                ${showFilters ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3" : "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"}`}>
+              <div className={`grid gap-x-10 gap-y-14 transition-all duration-700
+                ${showFilters 
+                  ? "grid-cols-1 lg:grid-cols-2 xl:grid-cols-3" 
+                  : "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}>
                 {products.map((item) => (
-                  <ProductCard key={item.id} product={item} onAddToCart={addToCart} />
+                  <div key={item.id} className="hover:-translate-y-2 transition-transform duration-500">
+                    <ProductCard product={item} onAddToCart={addToCart} />
+                  </div>
                 ))}
               </div>
             )}

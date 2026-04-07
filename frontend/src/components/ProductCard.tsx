@@ -44,9 +44,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
     setIsFavorite(add);
   };
 
+  const navigate = useNavigate();
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const auth = localStorage.getItem("auth");
+    if (!auth) {
+      alert("Vui lòng đăng nhập để thêm vào yêu thích!");
+      navigate("/auth");
+      return;
+    }
     if (!activeVariant) return;
     updateWishlistStorage(activeVariant.id, !isFavorite);
   };
@@ -60,7 +67,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const navigate = useNavigate();
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();

@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaFacebook, FaInstagram, FaYoutube, FaEnvelope } from "react-icons/fa6";
 import { Link } from 'react-router-dom';
 

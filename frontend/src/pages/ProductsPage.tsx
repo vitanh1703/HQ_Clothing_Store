@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import SidebarFilters from "../components/SidebarFilters";
 import { useProducts, useCart } from "../services/hooks";
@@ -7,11 +6,8 @@ import { useProducts, useCart } from "../services/hooks";
 const ProductsPage = () => {
   const { products, loading, error } = useProducts();
   const { addToCart } = useCart();
-  
-  // ĐÃ SỬA: Đổi true thành false để vào trang là ẩn Sidebar ngay
   const [showFilters, setShowFilters] = useState(false);
 
-  // Lắng nghe tín hiệu từ Header
   useEffect(() => {
     const handleToggle = () => {
       setShowFilters(prev => !prev);
@@ -20,8 +16,6 @@ const ProductsPage = () => {
     window.addEventListener("toggle-products-sidebar", handleToggle);
     return () => window.removeEventListener("toggle-products-sidebar", handleToggle);
   }, []);
-
-  const filters = ["Size", "Availability", "Category", "Colors", "Price Range", "Collections", "Ratings"];
 
   if (error) return <div className="h-screen flex items-center justify-center text-red-500 uppercase font-black tracking-tight">Error: {error}</div>;
 

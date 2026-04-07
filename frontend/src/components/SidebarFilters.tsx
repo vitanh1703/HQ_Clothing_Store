@@ -21,7 +21,7 @@ const SidebarFilters = () => {
   ];
 
   return (
-    <div className="min-w-[240px] space-y-2 pb-20">
+    <div className="min-w-60 space-y-2 pb-20">
       <h3 className="font-black uppercase text-[11px] tracking-[0.25em] mb-8 text-black border-b-2 border-black pb-2 w-fit">
         Filters
       </h3>

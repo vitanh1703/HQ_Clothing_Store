@@ -112,8 +112,8 @@ const Header = () => {
               Tin tức
             </button>
 
-            <button onClick={() => { navigate("/promotions"); setIsNavMenuOpen(false); }} className={`hover:text-black transition-colors shrink-0 ${location.pathname.startsWith('/promotions') ? 'text-black' : ''}`}>
-              Khuyến mãi
+            <button onClick={() => { navigate("/aboutus"); setIsNavMenuOpen(false); }} className={`hover:text-black transition-colors shrink-0 ${location.pathname.startsWith('/aboutus') ? 'text-black' : ''}`}>
+              About us
             </button>
 
             <button onClick={() => navigate("/faq")} className="hover:text-gray-500 transition-colors ">

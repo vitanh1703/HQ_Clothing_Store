@@ -1,7 +1,24 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj": {}
+=======
+<<<<<<< HEAD
+    "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj": {}
+  },
+  "projects": {
+    "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+        "projectName": "HQ.Backend",
+        "projectPath": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
+        "outputPath": "E:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+=======
+    "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj": {}
+>>>>>>> 1b0e9cd223a57f0641a6729d087c09663a8766a6
   },
   "projects": {
     "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj": {
@@ -9,15 +26,30 @@
       "restore": {
         "projectUniqueName": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
         "projectName": "HQ.Backend",
+<<<<<<< HEAD
         "projectPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
         "packagesPath": "C:\\Users\\haonguyen\\.nuget\\packages\\",
         "outputPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+=======
+        "projectPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+        "packagesPath": "C:\\Users\\diema\\.nuget\\packages\\",
+        "outputPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+>>>>>>> 779257943eba4b6768bef5ec827feb5c4a9c6a7b
+>>>>>>> 1b0e9cd223a57f0641a6729d087c09663a8766a6
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
+<<<<<<< HEAD
           "C:\\Users\\haonguyen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+=======
+<<<<<<< HEAD
+          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
+=======
+          "C:\\Users\\diema\\AppData\\Roaming\\NuGet\\NuGet.Config",
+>>>>>>> 779257943eba4b6768bef5ec827feb5c4a9c6a7b
+>>>>>>> 1b0e9cd223a57f0641a6729d087c09663a8766a6
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -96,7 +128,11 @@
               "privateAssets": "all"
             }
           },
+<<<<<<< HEAD
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+=======
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+>>>>>>> 779257943eba4b6768bef5ec827feb5c4a9c6a7b
         }
       }
     }

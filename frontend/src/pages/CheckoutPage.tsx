@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { cartApi, promotionsApi } from "../services/api";
 import type { CheckoutCartItem, CheckoutResponse, PromotionItem, PromotionValidationResult } from "../services/api";
 import { PromoSelectionModal } from "../components/PromoSelectionModal";
+import { checkoutController } from "../services/controller";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -134,6 +135,11 @@ const CheckoutPage = () => {
   const handlePlaceOrder = () => {
     if (!checkoutData || checkoutData.items.length === 0) {
       return alert("Không có sản phẩm nào để thanh toán.");
+    }
+    const result = checkoutController.validateCheckout(form);
+
+    if (!result.success) {
+      return alert(result.message);
     }
 
     const methodLabel = paymentMethod === "bank" ? "Ngân hàng" : "Thanh toán khi nhận hàng";

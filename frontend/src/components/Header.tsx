@@ -15,13 +15,15 @@ const Header = () => {
   useEffect(() => {
     const checkAuth = () => {
       const auth = localStorage.getItem("auth");
-      setIsLoggedIn(!!auth);
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      setIsLoggedIn(!!(auth || token || userId));
     };
 
     checkAuth();
     window.addEventListener("storage", checkAuth);
     return () => window.removeEventListener("storage", checkAuth);
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -138,7 +140,7 @@ const Header = () => {
           <Heart size={20} className={location.pathname === '/wishlist' ? 'fill-black' : ''} />
         </button>
 
-        <div className="relative">
+        <div className="relative user-dropdown">
           <button 
             onClick={() => {
               if (!isLoggedIn) {
@@ -147,14 +149,14 @@ const Header = () => {
                 setIsDropdownOpen(!isDropdownOpen);
               }
             }}
-            className={`flex items-center gap-1 p-2 hover:bg-gray-100 rounded-full transition-colors ${isDropdownOpen ? 'bg-gray-100' : ''}`}
+            className={`user-button flex items-center gap-1 p-2 hover:bg-gray-100 rounded-full transition-colors ${isDropdownOpen ? 'bg-gray-100' : ''}`}
             title="Tài khoản"
           >
             <User size={20} />
           </button>
           
           {isLoggedIn && isDropdownOpen && (
-            <div className="absolute right-0 top-full mt-4 w-48 bg-white border border-gray-100 rounded-xl shadow-xl py-3 z-50 overflow-hidden">
+            <div className="user-dropdown absolute right-0 top-full mt-4 w-48 bg-white border border-gray-100 rounded-xl shadow-xl py-3 z-50 overflow-hidden">
               <button 
                 onClick={() => {
                   setIsDropdownOpen(false);

@@ -22,24 +22,68 @@ namespace HQ.Backend.Controllers
             _context = context;
         }
 
-        [HttpGet("check-payment/{orderCode}")]
-        public async Task<IActionResult> CheckPayment(string orderCode)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
         {
-            var order = await _context.Set<Order>()
-                .FirstOrDefaultAsync(o => o.OrderCode == orderCode);
-
-            if (order == null)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                return Ok(new { isPaid = false, status = "Pending" });
-            }
+                // 1. Tạo OrderCode dễ đọc (Ví dụ: HQ + Ngày giờ + 3 số ngẫu nhiên)
+                string orderCode = "HQ" + DateTime.Now.ToString("yyMMddHHmm") + new Random().Next(100, 999);
 
-            bool isPaid = order.Status == "Success";
-            return Ok(new { isPaid = isPaid, status = order.Status });
+                var order = new Order
+                {
+                    UserId = request.UserId,
+                    FullName = request.FullName,
+                    Email = request.Email,
+                    Phone = request.Phone,
+                    Address = request.Address,
+                    TotalAmount = request.TotalAmount,
+                    OrderCode = orderCode, // Mã này dùng để khách nhập vào Nội dung CK
+                    Status = "Pending",
+                    OrderDate = DateTime.Now,
+                    PaymentDate = null
+                };
+
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                // 2. Lưu chi tiết sản phẩm
+                if (request.Items != null && request.Items.Any())
+                {
+                    var orderItems = request.Items.Select(item => new OrderItem
+                    {
+                        OrderId = order.Id,
+                        VariantId = item.VariantId,
+                        Quantity = item.Quantity,
+                        PriceAtPurchase = item.PriceAtPurchase
+                    }).ToList();
+
+                    _context.OrderItems.AddRange(orderItems);
+                    await _context.SaveChangesAsync();
+                }
+
+                await transaction.CommitAsync();
+
+                // Trả về orderCode để Frontend hiển thị QR
+                return Ok(new
+                {
+                    id = order.Id,
+                    orderCode = order.OrderCode
+                });
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, new { message = "Lỗi tạo đơn", error = ex.Message });
+            }
         }
+
 
         [HttpPost("webhook/casso")]
         public async Task<IActionResult> CassoWebhook([FromBody] CassoWebhookRequest request)
         {
+            // 1. Kiểm tra dữ liệu đầu vào
             if (request?.data == null || !request.data.Any())
             {
                 return BadRequest(new { error = 1, message = "Không có dữ liệu giao dịch" });
@@ -47,30 +91,38 @@ namespace HQ.Backend.Controllers
 
             foreach (var transaction in request.data)
             {
-                // Thêm dòng này để xem Backend nhận được gì
-                Console.WriteLine($"Dang kiem tra description: {transaction.description}");
+                string tranDescription = transaction.description?.ToUpper() ?? "";
+                Console.WriteLine($"Đang xử lý giao dịch: {tranDescription} - Số tiền: {transaction.amount}");
 
+                // 2. Tìm đơn hàng 'Pending' có OrderCode nằm trong nội dung chuyển khoản
+                // Sử dụng .AsEnumerable() hoặc truy vấn cẩn thận để tránh lỗi dịch SQL nếu chuỗi phức tạp
                 var matchedOrder = await _context.Set<Order>()
+<<<<<<< HEAD
                     .FirstOrDefaultAsync(o => o.Status == "Pending" && transaction.description.Contains(o.OrderCode.ToUpper()));
+=======
+                    .FirstOrDefaultAsync(o => o.Status == "Pending" &&
+                                             tranDescription.Contains(o.OrderCode.ToUpper()));
+>>>>>>> 5b20c8f009f2a03d5c2758d0fe40c94b6ed7f4b8
 
-                if (matchedOrder == null)
+                if (matchedOrder != null)
                 {
-                    Console.WriteLine("Khong tim thay don hang khớp voi ma nay!");
-                }
-                else
-                {
-                    Console.WriteLine($"Tim thay don hang: {matchedOrder.OrderCode}. So tien thieu: {matchedOrder.TotalAmount}");
+                    // 3. CẬP NHẬT TRẠNG THÁI (Đây là bước bạn đang thiếu)
+                    matchedOrder.Status = "Success";
+                    matchedOrder.OrderDate = DateTime.UtcNow;
+
+                    Console.WriteLine($"Khớp thành công đơn hàng: {matchedOrder.OrderCode}");
                 }
             }
 
+            // 4. Lưu tất cả thay đổi vào DB
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(new { error = 0, message = "Xử lý webhook thành công" });
+                return Ok(new { error = 0, message = "Xử lý thành công" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = 1, message = "Lỗi lưu database: " + ex.Message });
+                return StatusCode(500, new { error = 1, message = "Lỗi Database: " + ex.Message });
             }
         }
     }

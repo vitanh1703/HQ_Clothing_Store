@@ -20,6 +20,7 @@ import ShippingPolicy from './pages/ShippingPolicy';
 import PaymentPage from './pages/PaymentPage';
 import AboutUsPage from './pages/Aboutus';
 import FAQPage from './pages/FAQPage';
+import AboutUsPage from './pages/Aboutus';
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/aboutus" element={<AboutUsPage />} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold italic">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

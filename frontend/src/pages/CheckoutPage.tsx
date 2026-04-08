@@ -4,6 +4,7 @@ import { cartApi, promotionsApi } from "../services/api";
 import type { CheckoutCartItem, CheckoutResponse, PromotionItem, PromotionValidationResult } from "../services/api";
 import { PromoSelectionModal } from "../components/PromoSelectionModal";
 import { checkoutController } from "../services/controller";
+import axios from "axios";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -132,27 +133,58 @@ const CheckoutPage = () => {
     localStorage.removeItem("selectedPromo");
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => { // Thêm async ở đây
     if (!checkoutData || checkoutData.items.length === 0) {
       return alert("Không có sản phẩm nào để thanh toán.");
     }
-    const result = checkoutController.validateCheckout(form);
-
-    if (!result.success) {
-      return alert(result.message);
+    
+    const validation = checkoutController.validateCheckout(form);
+    if (!validation.success) {
+      return alert(validation.message);
     }
 
-    if (paymentMethod === "bank") {
-      navigate("/payment", {
-        state: {
-          checkoutData,
-          totalAmount: totalAfterDiscount,
-          form
-        }
-      });
-    } else {
-      alert(`Đã tạo đơn hàng thành công! Phương thức thanh toán: Thanh toán khi nhận hàng. Cảm ơn bạn đã mua sắm.`);
-      navigate("/home");
+    try {
+      // 1. Chuẩn bị dữ liệu gửi lên Backend
+      const orderPayload = {
+        userId: userId,
+        fullName: form.fullName,
+        email: form.email,
+        phone: form.phone,
+        address: form.address,
+        totalAmount: totalAfterDiscount,
+        items: checkoutData.items.map(item => ({
+          variantId: item.variantId,
+          quantity: item.quantity,
+          priceAtPurchase: item.price
+        }))
+      };
+
+      // 2. Gọi API để lưu đơn hàng vào DB (Sử dụng endpoint đã viết ở Backend)
+      // Giả sử bạn dùng axios trực tiếp hoặc qua service
+      const response = await axios.post("https://localhost:7137/api/orders/create", orderPayload);
+      const savedOrder = response.data; // Đây là đơn hàng đã có OrderCode từ DB
+
+      if (paymentMethod === "bank") {
+        // 3. Chuyển sang trang thanh toán kèm theo dữ liệu THẬT từ DB
+        navigate("/payment", {
+          state: {
+            checkoutData: {
+              ...checkoutData,
+              orderCode: savedOrder.orderCode, // Quan trọng: Lấy mã từ server
+              id: savedOrder.id
+            },
+            totalAmount: totalAfterDiscount,
+            form
+          }
+        });
+      } else {
+        // Xử lý cho COD (Thanh toán khi nhận hàng)
+        alert(`Đã tạo đơn hàng thành công! Mã đơn: ${savedOrder.orderCode}. Cảm ơn bạn.`);
+        navigate("/home");
+      }
+    } catch (error: any) {
+      console.error("Lỗi tạo đơn hàng:", error);
+      alert("Không thể tạo đơn hàng. Vui lòng thử lại sau!");
     }
   };
 

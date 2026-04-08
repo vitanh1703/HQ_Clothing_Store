@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Clock, ChevronLeft, Copy, Check, ShoppingBag, Loader2 } from "lucide-react";
-import axios from "axios";
+import { Clock, ChevronLeft, Copy, Check, ShoppingBag } from "lucide-react";
 import type { CheckoutCartItem, CheckoutResponse } from "../services/api";
 
 const PaymentPage = () => {
@@ -9,8 +8,6 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState(600); 
   const [copiedAccount, setCopiedAccount] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
-  const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { checkoutData, totalAmount, form } = (location.state as {
     checkoutData: CheckoutResponse;
@@ -30,7 +27,6 @@ const PaymentPage = () => {
 
     return () => {
       clearInterval(timer);
-      if (checkIntervalRef.current) clearInterval(checkIntervalRef.current);
     };
   }, [checkoutData, navigate]);
 
@@ -42,7 +38,7 @@ const PaymentPage = () => {
     return `${m < 10 ? "0" + m : m}:${s < 10 ? "0" + s : s}`;
   };
 
-  const bookingId = "HQ" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+  const bookingId = checkoutData.orderCode || checkoutData.id?.toString();
   
   const bankAccount = "8860382942";
   const accountName = "DIEM VIET ANH";
@@ -57,33 +53,8 @@ const PaymentPage = () => {
   };
 
   const handleFinish = () => {
-    setIsChecking(true);
-    let attempts = 0;
-    const maxAttempts = 10; 
-
-    checkIntervalRef.current = setInterval(async () => {
-      attempts++;
-      try {
-        const response = await axios.get(`https://localhost:7137/api/orders/check-payment/${bookingId}`);
-        
-        if (response.data.isPaid || response.data.status === 'Success') {
-          if (checkIntervalRef.current) clearInterval(checkIntervalRef.current);
-          setIsChecking(false);
-          alert("Xác nhận thanh toán thành công! Cảm ơn bạn đã mua sắm tại H&Q Store.");
-          navigate("/home");
-        } else if (attempts >= maxAttempts) {
-          if (checkIntervalRef.current) clearInterval(checkIntervalRef.current);
-          setIsChecking(false);
-          alert("Chưa nhận được trạng thái thanh toán. Vui lòng chờ thêm giây lát rồi thử lại.");
-        }
-      } catch (error) {
-        if (attempts >= maxAttempts) {
-          if (checkIntervalRef.current) clearInterval(checkIntervalRef.current);
-          setIsChecking(false);
-          alert("Lỗi kết nối hoặc chưa nhận được phản hồi từ ngân hàng. Vui lòng thử lại!");
-        }
-      }
-    }, 3000);
+    alert("Cảm ơn bạn! Đơn hàng sẽ được xử lý sau khi chúng tôi xác nhận thanh toán.");
+    navigate("/home");
   };
 
   return (
@@ -107,7 +78,6 @@ const PaymentPage = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* --- LEFT COLUMN: INFO SUMMARY --- */}
           <div className="space-y-6">
               <div className="bg-white p-8 rounded-xl shadow-sm">
                   <h3 className="text-xl font-bold uppercase mb-6 border-b pb-4">Thông tin đơn hàng</h3>
@@ -162,8 +132,6 @@ const PaymentPage = () => {
                   </div>
               </div>
           </div>
-
-          {/* --- RIGHT COLUMN: QR PAYMENT --- */}
           <div className="bg-white p-8 rounded-xl shadow-sm h-fit">
               <h3 className="text-xl font-bold uppercase mb-6 text-center">Quét mã QR để thanh toán</h3>
               
@@ -203,18 +171,9 @@ const PaymentPage = () => {
 
               <button 
                 onClick={handleFinish}
-                disabled={isChecking}
-                className="w-full bg-black text-white py-4 rounded-xl text-sm font-bold uppercase tracking-[0.2em] hover:bg-gray-800 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full bg-black text-white py-4 rounded-xl text-sm font-bold uppercase tracking-[0.2em] hover:bg-gray-800 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
               >
-                 {isChecking ? (
-                   <>
-                     <Loader2 size={18} className="animate-spin" /> Đang kiểm tra...
-                   </>
-                 ) : (
-                   <>
-                     <ShoppingBag size={18} /> Tôi đã thanh toán
-                   </>
-                 )}
+                 <ShoppingBag size={18} /> Tôi đã thanh toán
               </button>
           </div>
       </div>

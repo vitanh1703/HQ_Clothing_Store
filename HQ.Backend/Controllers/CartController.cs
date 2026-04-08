@@ -69,8 +69,10 @@ namespace HQ.Backend.Controllers
                         {
                             Id = joined.ci.Id,
                             VariantId = joined.v.Id,
+                            ProductId = p.Id,
                             ProductName = p.Name,
                             Size = joined.v.Size,
+                            Color = joined.v.Color,
                             Price = joined.v.Price,
                             Quantity = joined.ci.Quantity,
                             Total = joined.v.Price * joined.ci.Quantity,
@@ -101,8 +103,10 @@ namespace HQ.Backend.Controllers
                         {
                             Id = joined.ci.Id,
                             VariantId = joined.v.Id,
+                            ProductId = p.Id,
                             ProductName = p.Name,
                             Size = joined.v.Size,
+                            Color = joined.v.Color,
                             Price = joined.v.Price,
                             Quantity = joined.ci.Quantity,
                             Total = joined.v.Price * joined.ci.Quantity,

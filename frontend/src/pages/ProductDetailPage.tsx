@@ -5,6 +5,7 @@ import axios from "axios";
 interface Variant {
   id: number;
   size: string;
+  color: string;
   price: number;
   stockQuantity: number;
 }
@@ -23,7 +24,8 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -36,7 +38,7 @@ const ProductDetailPage = () => {
     axios.get(`https://localhost:7137/api/products/${id}`)
       .then(res => {
         setProduct(res.data);
-        setSelectedVariant(res.data.variants?.[0] || null); // mặc định chọn variant đầu tiên
+        // Không set mặc định selectedColor và selectedSize
       })
       .catch(err => {
         console.error(err);
@@ -49,6 +51,22 @@ const ProductDetailPage = () => {
   if (error) return <div className="text-center py-20 text-red-500">{error}</div>;
   if (!product) return null;
 
+  // Tính toán availableColors từ tất cả variants
+  const availableColors = Array.from(new Set(product.variants?.map(v => v.color) || []));
+
+  // Tính toán tất cả sizes có thể có
+  const allSizes = Array.from(new Set(product.variants?.map(v => v.size) || []));
+
+  // Tính toán availableSizes dựa trên màu được chọn
+  const availableSizes = selectedColor
+    ? product.variants?.filter(v => v.color === selectedColor).map(v => v.size) || []
+    : allSizes; // Nếu chưa chọn màu, hiển thị tất cả sizes
+
+  // Tìm variant được chọn dựa trên color và size
+  const selectedVariant = selectedColor && selectedSize
+    ? product.variants?.find(v => v.color === selectedColor && v.size === selectedSize) || null
+    : null;
+
   // --- Hàm tăng/giảm số lượng ---
   const handleQuantity = (type: "plus" | "minus") => {
     if (type === "plus") {
@@ -60,34 +78,39 @@ const ProductDetailPage = () => {
   };
 
   // --- Hàm add to cart ---
-const handleAddToCart = async () => {
-  if (!selectedVariant) {
-    alert("Vui lòng chọn size!");
-    return;
-  }
+  const handleAddToCart = async () => {
+    if (!selectedColor || !selectedSize) {
+      alert("Vui lòng chọn màu và size!");
+      return;
+    }
 
-  const userId = Number(localStorage.getItem("userId"));
+    if (!selectedVariant) {
+      alert("Variant không hợp lệ!");
+      return;
+    }
 
-  if (!userId) {
-    alert("Chưa đăng nhập!");
-    return;
-  }
+    const userId = Number(localStorage.getItem("userId"));
 
-  try {
-    await axios.post("https://localhost:7137/api/cart/add", {
-      userId: userId,
-      variantId: selectedVariant.id,
-      quantity: quantity
-    });
+    if (!userId) {
+      alert("Chưa đăng nhập!");
+      return;
+    }
 
-    alert("✅ Đã thêm vào giỏ hàng!");
-    navigate("/cart");
+    try {
+      await axios.post("https://localhost:7137/api/cart/add", {
+        userId: userId,
+        variantId: selectedVariant.id,
+        quantity: quantity
+      });
 
-  } catch (err: any) {
-    console.error(err);
-    alert("Lỗi thêm giỏ hàng!");
-  }
-};
+      alert("✅ Đã thêm vào giỏ hàng!");
+      navigate("/cart");
+
+    } catch (err: any) {
+      console.error(err);
+      alert("Lỗi thêm giỏ hàng!");
+    }
+  };
   return (
     <div className="max-w-6xl mx-auto p-6 flex flex-col md:flex-row gap-8">
       {/* Ảnh sản phẩm */}
@@ -110,18 +133,45 @@ const handleAddToCart = async () => {
           {selectedVariant ? selectedVariant.price.toLocaleString() : product.variants?.[0]?.price.toLocaleString()}đ
         </p>
 
-        {/* Chọn size */}
+        {/* Chọn màu */}
         <div className="flex gap-2 mt-2">
-          {product.variants?.map(v => (
-            <button 
-              key={v.id}
-              onClick={() => setSelectedVariant(v)}
+          <span className="text-sm font-medium">Màu sắc:</span>
+          {availableColors.map(color => (
+            <button
+              key={color}
+              onClick={() => {
+                setSelectedColor(color);
+                // Reset size nếu size hiện tại không có cho màu mới
+                if (selectedSize && !product.variants?.some(v => v.color === color && v.size === selectedSize)) {
+                  setSelectedSize(null);
+                }
+              }}
               className={`px-3 py-1 border rounded text-xs font-bold
-                ${selectedVariant?.id === v.id ? "bg-black text-white" : "bg-white text-black"}`}
+                ${selectedColor === color ? "bg-black text-white" : "bg-white text-black"}`}
             >
-              {v.size}
+              {color}
             </button>
           ))}
+        </div>
+
+        {/* Chọn size */}
+        <div className="flex gap-2 mt-2">
+          <span className="text-sm font-medium">Size:</span>
+          {allSizes.map(size => {
+            const isAvailable = !selectedColor || availableSizes.includes(size);
+            return (
+              <button
+                key={size}
+                onClick={() => isAvailable && setSelectedSize(size)}
+                disabled={!isAvailable}
+                className={`px-3 py-1 border rounded text-xs font-bold
+                  ${selectedSize === size ? "bg-black text-white" : "bg-white text-black"}
+                  ${!isAvailable ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                {size}
+              </button>
+            );
+          })}
         </div>
 
         {/* Số lượng */}
@@ -136,7 +186,7 @@ const handleAddToCart = async () => {
           className="mt-4 bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
           onClick={handleAddToCart}
         >
-          {selectedVariant ? `Add - ${(selectedVariant.price * quantity).toLocaleString()}đ` : "Chọn Size"}
+          Thêm vào giỏ hàng
         </button>
       </div>
     </div>

@@ -70,16 +70,18 @@ export const useAuth = () => {
   return { login, register, loginWithGoogle, logout, loading };
 };
 
-export const useProducts = () => {
+export const useProducts = (categoryId?: number) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (categoryId?: number) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await productApi.getAll();
+      const data = categoryId !== undefined
+        ? await productApi.getByCategory(categoryId)
+        : await productApi.getAll();
       setProducts(data);
     } catch (err: any) {
       setError(err.message || "Không thể tải danh sách sản phẩm");
@@ -89,8 +91,8 @@ export const useProducts = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchProducts(categoryId);
+  }, [categoryId]);
 
   return { products, loading, error, refetch: fetchProducts };
 };

@@ -8,8 +8,10 @@ import { PromoSelectionModal } from "../components/PromoSelectionModal";
 interface CartItem {
   id: number;
   variantId: number;
+  productId: number;
   productName: string;
   size: string;
+  color: string;
   price: number;
   quantity: number;
   total: number;
@@ -169,44 +171,59 @@ const CartPage = () => {
             {cart.items.map(item => (
               <div
                 key={item.id}
-                className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm"
+                className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50"
+                onClick={() => navigate(`/products/${item.productId}`)}
               >
                 <div className="flex items-center gap-4">
                   <img
                     src={item.image}
                     alt={item.productName}
-                    className="w-20 h-24 object-cover rounded-md"
+                    className="w-20 h-24 object-cover rounded-md cursor-pointer"
+                    onClick={() => navigate(`/product/${item.productId}`)}
                   />
 
                   <div className="flex flex-col justify-between">
                     <div>
                       <h2 className="font-bold">{item.productName}</h2>
                       <p className="text-gray-500">{item.price.toLocaleString()}đ</p>
-                      <p className="text-xs text-gray-400">Size: {item.size}</p>
+                      <p className="text-xs text-gray-400">Size: {item.size}   |   Màu: {item.color}</p>
                     </div>
 
                     {/* Nút + / - và Xóa */}
                     <div className="flex items-center gap-3 mt-2">
                       <button
                         className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
-                        onClick={() =>
-                          handleQuantity(item.id, item.quantity - 1)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          if (item.quantity === 1) {
+                            const confirmDelete = window.confirm("Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?");
+                            if (confirmDelete) {
+                              handleRemove(item.id);
+                            }
+                          } else {
+                            handleQuantity(item.id, item.quantity - 1);
+                          }
+                        }}
                       >
                         -
                       </button>
                       <span className="px-4 font-medium">{item.quantity}</span>
                       <button
                         className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
-                        onClick={() =>
-                          handleQuantity(item.id, item.quantity + 1)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleQuantity(item.id, item.quantity + 1);
+                        }}
                       >
                         +
                       </button>
                       <button
                         className="ml-4 px-3 py-1 border rounded bg-red-500 text-white hover:bg-red-600"
-                        onClick={() => handleRemove(item.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemove(item.id);
+                        }}
                       >
                         Xóa
                       </button>

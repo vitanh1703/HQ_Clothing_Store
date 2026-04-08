@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import SidebarFilters from "../components/SidebarFilters";
-import { useProducts, useCart } from "../services/hooks";
+import { useProducts, useCart, useCategories } from "../services/hooks";
 
 const ProductsPage = () => {
-  const { products, loading, error } = useProducts();
+  const [searchParams] = useSearchParams();
+  const categoryIdParam = searchParams.get("category");
+  const categoryId = categoryIdParam ? Number(categoryIdParam) : undefined;
+  const { products, loading, error } = useProducts(categoryId);
+  const { categories } = useCategories();
   const { addToCart } = useCart();
   const [showFilters, setShowFilters] = useState(false);
 
@@ -17,6 +22,8 @@ const ProductsPage = () => {
     return () => window.removeEventListener("toggle-products-sidebar", handleToggle);
   }, []);
 
+  const selectedCategory = categories.find((category) => category.id === categoryId);
+
   if (error) return <div className="h-screen flex items-center justify-center text-red-500 uppercase font-black tracking-tight">Error: {error}</div>;
 
   return (
@@ -24,8 +31,17 @@ const ProductsPage = () => {
       {/* HEADER TRANG - Breadcrumb tối giản và sang trọng */}
       <header className="mb-8 shrink-0">
         <div className="text-[9px] text-gray-400 font-bold tracking-[0.2em] uppercase mb-1">Home / Shop</div>
-        <div className="flex justify-between items-end border-b border-gray-200 pb-4">
-          <h1 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tighter italic">SẢN PHẨM</h1>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 border-b border-gray-200 pb-4">
+          <div>
+            <h1 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tighter italic">
+              SẢN PHẨM
+            </h1>
+            {selectedCategory && (
+              <p className="text-sm uppercase mt-2 text-gray-500">
+                Danh mục: <span className="font-bold text-black">{selectedCategory.name}</span>
+              </p>
+            )}
+          </div>
         </div>
       </header>
 

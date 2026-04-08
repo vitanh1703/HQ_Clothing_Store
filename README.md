@@ -89,7 +89,7 @@ cd hq-clothing-store
 Chỉnh sửa chuỗi kết nối trong `backend/appsettings.json`:
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Port=3306;Database=hq_store_db;User=root;Password=your_password;"
+  "DefaultConnection": "Server=localhost;Port=3306;Database=hq_clothing_db;User=root;Password=your_password;"
 }
 ```
 *Chạy lệnh migration:* `dotnet ef database update`
@@ -113,9 +113,7 @@ Chỉnh sửa chuỗi kết nối trong `backend/appsettings.json`:
 
 ## 🐳 Triển khai với Docker (MySQL Ready)
 Dự án đã được cấu hình sẵn `docker-compose.yml` để khởi chạy đồng thời cả API và MySQL Server:
-```bash
-# Khởi động hệ thống
-docker-compose up -d --build
+
 ```
 
 ---

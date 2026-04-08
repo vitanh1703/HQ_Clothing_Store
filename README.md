@@ -121,7 +121,7 @@ Dự án đã được cấu hình sẵn `docker-compose.yml` để khởi chạ
 docker-compose up -d
 ```
 
----
+```
 
 ## 📄 Software Requirement Specifications (SRS)
 

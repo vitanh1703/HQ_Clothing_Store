@@ -6,10 +6,9 @@ import type { CheckoutCartItem, CheckoutResponse } from "../services/api";
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
+  const [timeLeft, setTimeLeft] = useState(600); 
   const [copiedAccount, setCopiedAccount] = useState(false);
 
-  // Lấy dữ liệu được truyền từ CheckoutPage
   const { checkoutData, totalAmount, form } = (location.state as {
     checkoutData: CheckoutResponse;
     totalAmount: number;
@@ -25,7 +24,10 @@ const PaymentPage = () => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-    return () => clearInterval(timer);
+
+    return () => {
+      clearInterval(timer);
+    };
   }, [checkoutData, navigate]);
 
   if (!checkoutData) return null;
@@ -36,8 +38,7 @@ const PaymentPage = () => {
     return `${m < 10 ? "0" + m : m}:${s < 10 ? "0" + s : s}`;
   };
 
-  // Mã đơn hàng giả lập
-  const bookingId = "HQ" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+  const bookingId = checkoutData.orderCode || checkoutData.id?.toString();
   
   const bankAccount = "8860382942";
   const accountName = "DIEM VIET ANH";
@@ -52,8 +53,7 @@ const PaymentPage = () => {
   };
 
   const handleFinish = () => {
-    alert("Thanh toán thành công! Cảm ơn bạn đã mua sắm tại H&Q Store.");
-    // Có thể gọi API xóa giỏ hàng hoặc đổi trạng thái đơn hàng ở đây
+    alert("Cảm ơn bạn! Đơn hàng sẽ được xử lý sau khi chúng tôi xác nhận thanh toán.");
     navigate("/home");
   };
 
@@ -78,7 +78,6 @@ const PaymentPage = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* --- LEFT COLUMN: INFO SUMMARY --- */}
           <div className="space-y-6">
               <div className="bg-white p-8 rounded-xl shadow-sm">
                   <h3 className="text-xl font-bold uppercase mb-6 border-b pb-4">Thông tin đơn hàng</h3>
@@ -133,8 +132,6 @@ const PaymentPage = () => {
                   </div>
               </div>
           </div>
-
-          {/* --- RIGHT COLUMN: QR PAYMENT --- */}
           <div className="bg-white p-8 rounded-xl shadow-sm h-fit">
               <h3 className="text-xl font-bold uppercase mb-6 text-center">Quét mã QR để thanh toán</h3>
               

@@ -99,6 +99,8 @@ export interface CheckoutUser {
 }
 
 export interface CheckoutResponse {
+  id: number;
+  orderCode: string;
   cartId: number;
   user: CheckoutUser;
   items: CheckoutCartItem[];

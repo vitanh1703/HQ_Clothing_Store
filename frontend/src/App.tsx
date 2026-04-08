@@ -18,7 +18,6 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import RefundPolicy from './pages/RefundPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
 import PaymentPage from './pages/PaymentPage';
-import AboutUsPage from './pages/Aboutus';
 import FAQPage from './pages/FAQPage';
 import AboutUsPage from './pages/Aboutus';
 

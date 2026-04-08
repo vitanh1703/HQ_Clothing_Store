@@ -159,15 +159,15 @@
   },
   {
     "ContainingType": "HQ.Backend.Controllers.OrdersController",
-    "Method": "CreateOrder",
-    "RelativePath": "api/Orders/create",
-    "HttpMethod": "POST",
+    "Method": "CheckPayment",
+    "RelativePath": "api/Orders/check-payment/{orderCode}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "request",
-        "Type": "HQ.Backend.DTOs.CreateOrderRequest",
+        "Name": "orderCode",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],

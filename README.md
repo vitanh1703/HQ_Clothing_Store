@@ -1,5 +1,3 @@
----
-
 # 👕 H&Q Clothing Store - Website Bán Quần Áo Thời Trang
 
 [![Framework](https://img.shields.io/badge/Framework-ASP.NET%20Core%209.0-purple)](https://dotnet.microsoft.com/)
@@ -7,13 +5,7 @@
 [![Styling](https://img.shields.io/badge/Styling-Tailwind%20CSS-06B6D4)](https://tailwindcss.com/)
 [![Database](https://img.shields.io/badge/Database-MySQL-orange)](https://www.mysql.com/)
 
-## 👥 Thành viên nhóm - Cửa hàng H&Q
-
-| STT | Họ và Tên | MSSV | Vai trò chính |
-| :--- | :--- | :--- | :--- |
-| 1 | **Diêm Việt Anh** | 23810310083 | Fullstack Developer / Leader |
-| 2 | **Nguyễn Thị Hảo** | 23810310152 | Frontend Developer / Designer |
-| 3 | **Đặng Thị Quỳnh** | 23810310156 | Backend Developer / Tester |
+**H&Q Clothing Store** là nền tảng thương mại điện tử chuyên biệt cho ngành thời trang. Hệ thống hỗ trợ khách hàng mua sắm trực tuyến dễ dàng và giúp quản trị viên quản lý kho hàng hiệu quả.
 
 ---
 
@@ -24,12 +16,12 @@
 4. [Cấu trúc dự án](#-cấu-trúc-dự-án)
 5. [Cài đặt và chạy](#-cài-đặt-và-chạy)
 6. [API Endpoints](#-api-endpoints)
-7. [Tài liệu SRS](#-software-requirement-specifications-srs)
+7. [Thành viên nhóm](#-thành-viên-nhóm)
 
 ---
 
 ## 🌟 Giới thiệu
-**H&Q Clothing Store** là nền tảng thương mại điện tử chuyên biệt cho ngành thời trang. Hệ thống tập trung vào trải nghiệm mua sắm hiện đại, tối ưu trên cả thiết bị di động và máy tính, hỗ trợ khách hàng mua sắm dễ dàng và giúp quản trị viên quản lý kho hàng hiệu quả.
+Dự án **H&Q** tập trung vào trải nghiệm mua sắm hiện đại, tối ưu trên cả thiết bị di động và máy tính. Website cho phép người dùng duyệt sản phẩm theo danh mục, xem chi tiết kích thước/màu sắc và thực hiện quy trình thanh toán an toàn.
 
 ---
 
@@ -43,6 +35,7 @@
 | **🛒 Giỏ hàng** | Thêm/bớt sản phẩm, cập nhật số lượng và tính tổng tiền |
 | **💳 Thanh toán** | Nhập thông tin giao hàng và chọn phương thức thanh toán |
 | **📱 Tài khoản cá nhân** | Quản lý lịch sử đơn hàng và thông tin cá nhân |
+| **💬 Phản hồi** | Gửi đánh giá và bình luận cho từng sản phẩm |
 
 ### ⚙️ Quản trị (Admin)
 | Tính năng | Mô tả |
@@ -55,10 +48,15 @@
 
 ## 🛠 Công nghệ sử dụng
 
-* **Frontend:** React 18, TypeScript, Tailwind CSS, Lucide React.
-* **Backend:** ASP.NET Core 9.0 Web API, Entity Framework Core.
-* **Database:** MySQL 8.0.
-* **DevOps:** Docker, Docker Compose.
+### Frontend
+- **React 18** & **TypeScript**
+- **Tailwind CSS** (Giao diện chuẩn Responsive)
+- **Lucide React** (Icons hệ thống)
+
+### Backend
+- **ASP.NET Core 9.0 Web API**
+- **Entity Framework Core** (Pomelo.EntityFrameworkCore.MySql)
+- **MySQL 8.0**
 
 ---
 
@@ -67,20 +65,18 @@
 ```bash
 hq-clothing-store/
 ├── 📂 backend/                 # ASP.NET Core API
-│   ├── Controllers/            # API Endpoints
-│   ├── Models/                 # Entities
+│   ├── Controllers/            # API cho Products, Orders, Users...
+│   ├── Models/                 # Entities (Product, Category, Order...)
 │   ├── DTOs/                   # Data Transfer Objects
-│   └── Data/                   # DbContext & Migrations
+│   └── Data/                   # DbContext & Seeding Data (MySQL Config)
 ├── 📂 frontend/                # React App
 │   ├── 📂 src/
-│   │   ├── 📂 components/      # UI Components
-│   │   ├── 📂 pages/           # Screen Pages
-│   │   └── 📂 services/        # API Calls (Axios)
-└── docker-compose.yml          # Docker Configuration
+│   │   ├── 📂 components/      # Navbar, ProductCard, Cart, Checkout...
+│   │   ├── 📂 pages/           # Home, ProductDetail, Profile...
+│   │   └── 📂 services/        # Axios API Config
+└── docker-compose.yml          # Triển khai với Docker (App + MySQL Server)
+
 ```
-
----
-
 ## 🚀 Cài đặt và chạy
 
 ### 1️⃣ Clone dự án
@@ -99,8 +95,8 @@ Chỉnh sửa chuỗi kết nối trong `backend/appsettings.json`:
 *Chạy lệnh migration:* `dotnet ef database update`
 
 ### 3️⃣ Khởi chạy
-* **Backend:** `cd backend && dotnet run`
-* **Frontend:** `cd frontend && npm install && npm run dev`
+- **Backend:** `cd backend && dotnet run`
+- **Frontend:** `cd frontend && npm install && npm run dev`
 
 ---
 
@@ -109,6 +105,7 @@ Chỉnh sửa chuỗi kết nối trong `backend/appsettings.json`:
 | Method | Endpoint | Mô tả |
 | :--- | :--- | :--- |
 | **GET** | `/api/products` | Lấy danh sách sản phẩm |
+| **GET** | `/api/products/{id}` | Xem chi tiết sản phẩm |
 | **POST** | `/api/orders` | Tạo đơn hàng mới |
 | **GET** | `/api/categories` | Lấy danh sách danh mục |
 
@@ -117,31 +114,39 @@ Chỉnh sửa chuỗi kết nối trong `backend/appsettings.json`:
 ## 🐳 Triển khai với Docker (MySQL Ready)
 Dự án đã được cấu hình sẵn `docker-compose.yml` để khởi chạy đồng thời cả API và MySQL Server:
 
-```bash
-docker-compose up -d
 ```
 
-```
+---
 
-## 📄 Software Requirement Specifications (SRS)
+## 👥 Thành viên nhóm - Cửa hàng H&Q
 
-### 📂 Danh sách tài liệu chi tiết
-
-| Chức năng | Thành viên thực hiện | Link tài liệu |
+| STT | Họ và Tên | MSSV |
 | :--- | :--- | :--- |
-| Đăng ký | Diêm Việt Anh | [Xem](docs/srs/SRS_REGISTER.MD) |
-| Đăng nhập | Nguyễn Thị Hảo | [Xem](docs/srs/SRS_LOGIN.MD) |
-| Quản lý hồ sơ | Đặng Thị Quỳnh | [Xem](docs/srs/SRS_PROFILE_MANAGEMENT.MD) |
-| Quản lý sản phẩm | Đặng Thị Quỳnh | [Xem](docs/srs/SRS_PRODUCT.MD) |
-| Danh mục sản phẩm | Diêm Việt Anh | [Xem](docs/srs/SRS_PRODUCT_CATALOG.MD) |
-| Chi tiết sản phẩm | Nguyễn Thị Hảo | [Xem](docs/srs/SRS_PRODUCT_DETAIL.MD) |
-| Đánh giá sản phẩm | Đặng Thị Quỳnh | [Xem](docs/srs/SRS_PRODUCT_REVIEW.MD) |
-| Giỏ hàng | Đặng Thị Quỳnh | [Xem](docs/srs/SRS_SHOPPING_CART.MD) |
-| Cart & Checkout | Diêm Việt Anh | [Xem](docs/srs/SRS_CART_CHECKOUT.MD) |
-| Danh sách yêu thích | Nguyễn Thị Hảo | [Xem](docs/srs/SRS_WISH_LIST.MD) |
-| Đơn hàng | Đặng Thị Quỳnh | [Xem](docs/srs/SRS_ORDER.MD) |
-| Xử lý đơn hàng | Nguyễn Thị Hảo | [Xem](docs/srs/SRS_ORDER_PROCESSING.MD) |
-| Thanh toán | Diêm Việt Anh | [Xem](docs/srs/SRS_CHECKOUT_PAYMENT.MD) |
-| Mã khuyến mãi | Nguyễn Thị Hảo | [Xem](docs/srs/SRS_PROMOTION_CODE.MD) |
-| Quản lý kho | Đặng Thị Quỳnh | [Xem](docs/srs/SRS_INVENTORY_MANAGEMENT.MD) |
-| Báo cáo doanh thu | Đặng Thị Quỳnh | [Xem](docs/srs/SRS_REVENUE_REPORT.MD) |
+| 1 | **Diêm Việt Anh** | 23810310083 |
+| 2 | **Nguyễn Thị Hảo** | 23810310152 |
+| 3 | **Đặng Thị Quỳnh** | 23810310156 |
+
+---
+
+##  Software Requirement Specifications (SRS)
+
+## 📂 Danh sách tài liệu
+
+| Chức năng | Tên  | Ngày thực hiện | Link |
+|----------|-------------|----------------|------|
+| Đăng ký | Diêm Việt Anh | ... | [Xem](docs/srs/SRS_REGISTER.MD) |
+| Đăng nhập | Nguyễn Thị Hảo | ... | [Xem](docs/srs/SRS_LOGIN.MD) |
+| Quản lý hồ sơ | Đặng Thị Quỳnh | ... | [Xem](docs/srs/SRS_PROFILE_MANAGEMENT.MD) |
+| Quản lý sản phẩm | Đặng Thị Quỳnh | ... | [Xem](docs/srs/SRS_PRODUCT.MD) |
+| Danh mục sản phẩm | Diêm Việt Anh | ... | [Xem](docs/srs/SRS_PRODUCT_CATALOG.MD) |
+| Chi tiết sản phẩm | Nguyễn Thị Hảo | ... | [Xem](docs/srs/SRS_PRODUCT_DETAIL.MD) |
+| Đánh giá sản phẩm | Đặng Thị Quỳnh | ... | [Xem](docs/srs/SRS_PRODUCT_REVIEW.MD) |
+| Giỏ hàng | Đặng Thị Quỳnh | ... | [Xem](docs/srs/SRS_SHOPPING_CART.MD) |
+| Cart & Checkout | Diêm Việt Anh | ... | [Xem](docs/srs/SRS_CART_CHECKOUT.MD) |
+| Danh sách yêu thích | Nguyễn Thị Hảo | ... | [Xem](docs/srs/SRS_WISH_LIST.MD) |
+| Đơn hàng | Đặng Thị Quỳnh | ... | [Xem](docs/srs/SRS_ORDER.MD) |
+| Xử lý đơn hàng | Nguyễn Thị Hảo | ... | [Xem](docs/srs/SRS_ORDER_PROCESSING.MD) |
+| Thanh toán | Diêm Việt Anh | ... | [Xem](docs/srs/SRS_CHECKOUT_PAYMENT.MD) |
+| Mã khuyến mãi | Nguyễn Thị Hảo | ... | [Xem](docs/srs/SRS_PROMOTION_CODE.MD) |
+| Quản lý kho | Đặng Thị Quỳnh | ... | [Xem](docs/srs/SRS_INVENTORY_MANAGEMENT.MD) |
+| Báo cáo doanh thu | Đặng Thị Quỳnh | ... | [Xem](docs/srs/SRS_REVENUE_REPORT.MD) |

@@ -17,6 +17,7 @@ import WishlistPage from "./pages/WishlistPage";
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RefundPolicy from './pages/RefundPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
+import PaymentPage from './pages/PaymentPage';
 
 function App() {
   const location = useLocation();
@@ -29,7 +30,7 @@ function App() {
       
       {!isHideLayout && <Navbar />}
 
-      <div className="main-content flex-grow">
+      <div className="main-content grow">
         <Routes>
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home" element={<Home />} />
@@ -40,6 +41,7 @@ function App() {
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />

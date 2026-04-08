@@ -77,7 +77,7 @@ const NewsDetailPage = () => {
           {news.desc}
         </p>
         
-        <div className="w-full aspect-[21/9] bg-[#F5F5F5] rounded-sm overflow-hidden mb-12 shadow-sm">
+        <div className="w-full aspect-21/9 bg-[#F5F5F5] rounded-sm overflow-hidden mb-12 shadow-sm">
           <img src={news.img} alt={news.title} className="w-full h-full object-cover grayscale-[0.1]" />
         </div>
         

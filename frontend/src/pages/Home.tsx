@@ -45,7 +45,7 @@ const Home = () => {
       <main className="grid grid-cols-10 gap-0 px-20 pt-24 items-start mb-20">
         <div className="col-span-4 flex flex-col pt-4">
           <div className="mb-24"> 
-            <h1 className="text-[95px] font-[1000] uppercase leading-[0.78] tracking-[-0.05em] mb-8">
+            <h1 className="text-[95px] font-[1000] uppercase leading-none tracking-[-0.05em] mb-8">
               Bộ Sưu Tập <br/>Mới Nhất
             </h1>
             <p className="text-gray-400 font-bold text-[12px] tracking-[0.3em] uppercase opacity-80">

@@ -10,13 +10,23 @@
 ---
 
 ## 📋 Mục lục
-1. [Giới thiệu](#-giới-thiệu)
-2. [Tính năng](#-tính-năng)
-3. [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
-4. [Cấu trúc dự án](#-cấu-trúc-dự-án)
-5. [Cài đặt và chạy](#-cài-đặt-và-chạy)
-6. [API Endpoints](#-api-endpoints)
-7. [Thành viên nhóm](#-thành-viên-nhóm)
+1. [Thành viên nhóm](#-thành-viên-nhóm)
+2. [Giới thiệu](#-giới-thiệu)
+3. [Tính năng](#-tính-năng)
+4. [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
+5. [Cấu trúc dự án](#-cấu-trúc-dự-án)
+6. [Cài đặt và chạy](#-cài-đặt-và-chạy)
+7. [API Endpoints](#-api-endpoints)
+
+---
+
+## 👥 Thành viên nhóm - Cửa hàng H&Q
+
+| STT | Họ và Tên | MSSV |
+| :--- | :--- | :--- |
+| 1 | **Diêm Việt Anh** | 23810310083 |
+| 2 | **Nguyễn Thị Hảo** | 23810310152 |
+| 3 | **Đặng Thị Quỳnh** | 23810310156 |
 
 ---
 
@@ -114,20 +124,7 @@ Chỉnh sửa chuỗi kết nối trong `backend/appsettings.json`:
 ## 🐳 Triển khai với Docker (MySQL Ready)
 Dự án đã được cấu hình sẵn `docker-compose.yml` để khởi chạy đồng thời cả API và MySQL Server:
 
-```
-
-```
-
-## 👥 Thành viên nhóm - Cửa hàng H&Q
-
-| STT | Họ và Tên | MSSV |
-| :--- | :--- | :--- |
-| 1 | **Diêm Việt Anh** | 23810310083 |
-| 2 | **Nguyễn Thị Hảo** | 23810310152 |
-| 3 | **Đặng Thị Quỳnh** | 23810310156 |
-
 ---
-
 ##  Software Requirement Specifications (SRS)
 
 ## 📂 Danh sách tài liệu

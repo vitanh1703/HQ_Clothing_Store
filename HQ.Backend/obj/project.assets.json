@@ -3526,23 +3526,39 @@
     ]
   },
   "packageFolders": {
+<<<<<<< HEAD
     "C:\\Users\\haonguyen\\.nuget\\packages\\": {},
+=======
+    "C:\\Users\\diema\\.nuget\\packages\\": {},
+>>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< HEAD
       "projectUniqueName": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "projectName": "HQ.Backend",
       "projectPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "packagesPath": "C:\\Users\\haonguyen\\.nuget\\packages\\",
       "outputPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+=======
+      "projectUniqueName": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+      "projectName": "HQ.Backend",
+      "projectPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+      "packagesPath": "C:\\Users\\diema\\.nuget\\packages\\",
+      "outputPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+>>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
+<<<<<<< HEAD
         "C:\\Users\\haonguyen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+=======
+        "C:\\Users\\diema\\AppData\\Roaming\\NuGet\\NuGet.Config",
+>>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3630,7 +3646,11 @@
       "code": "Undefined",
       "level": "Warning",
       "warningLevel": 1,
+<<<<<<< HEAD
       "message": "Problem reading the cache file C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0."
+=======
+      "message": "Problem reading the cache file D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0."
+>>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
     }
   ]
 }

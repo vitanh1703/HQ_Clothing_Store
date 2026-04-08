@@ -20,7 +20,7 @@ const Footer = () => {
             {/* 1. Facebook - Mở tab mới */}
             <li>
               <a 
-                href="https://facebook.com/hqstore.vn" 
+                href="https://www.facebook.com/quinh6505/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
@@ -33,7 +33,7 @@ const Footer = () => {
             {/* 2. Instagram - Mở tab mới */}
             <li>
               <a 
-                href="https://instagram.com/hqstore.vn" 
+                href="https://www.instagram.com/quinh6505/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
@@ -59,11 +59,11 @@ const Footer = () => {
             {/* 4. Email - Tự động mở ứng dụng gửi thư (Outlook/Gmail) */}
             <li>
               <a 
-                href="mailto:contact@hqstore.vn" 
+                href="mailto:dangquynhhd6505@gmail.com" 
                 className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
               >
                 <FaEnvelope size={16} className="group-hover:scale-110 transition-transform" /> 
-                <span>Email: info@hqstore.vn</span>
+                <span>Email: dangquynhhd6505@gmail.com</span>
               </a>
             </li>
 

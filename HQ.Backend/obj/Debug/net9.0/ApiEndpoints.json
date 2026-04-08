@@ -175,6 +175,22 @@
   },
   {
     "ContainingType": "HQ.Backend.Controllers.OrdersController",
+    "Method": "CreateOrder",
+    "RelativePath": "api/Orders/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "HQ.Backend.DTOs.CreateOrderDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.OrdersController",
     "Method": "CassoWebhook",
     "RelativePath": "api/Orders/webhook/casso",
     "HttpMethod": "POST",

@@ -21,24 +21,44 @@ namespace HQ.Backend.Controllers
             _context = context;
         }
 
-        [HttpGet("check-payment/{orderCode}")]
-        public async Task<IActionResult> CheckPayment(string orderCode)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto dto)
         {
-            var order = await _context.Set<Order>()
-                .FirstOrDefaultAsync(o => o.OrderCode == orderCode);
+            // 1. Tạo mã đơn hàng duy nhất (Ví dụ: HQ + 6 số cuối của Ticks)
+            string orderCode = "HQ" + DateTime.Now.Ticks.ToString().Substring(12);
 
-            if (order == null)
+            var newOrder = new Order
             {
-                return Ok(new { isPaid = false, status = "Pending" });
-            }
+                UserId = dto.UserId,
+                FullName = dto.FullName,
+                Email = dto.Email,
+                Phone = dto.Phone,
+                Address = dto.Address,
+                TotalAmount = dto.TotalAmount,
+                OrderCode = orderCode,
+                Status = "Pending", // Mặc định là chờ thanh toán
+                OrderDate = DateTime.Now,
+                PaymentDate = null // Chưa thanh toán nên để null
+            };
 
-            bool isPaid = order.Status == "Success";
-            return Ok(new { isPaid = isPaid, status = order.Status });
+            try
+            {
+                _context.Set<Order>().Add(newOrder);
+                await _context.SaveChangesAsync();
+
+                // Trả về orderCode để Frontend chuyển sang trang Payment
+                return Ok(newOrder);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi lưu đơn hàng: " + ex.Message });
+            }
         }
 
         [HttpPost("webhook/casso")]
         public async Task<IActionResult> CassoWebhook([FromBody] CassoWebhookRequest request)
         {
+            // 1. Kiểm tra dữ liệu đầu vào
             if (request?.data == null || !request.data.Any())
             {
                 return BadRequest(new { error = 1, message = "Không có dữ liệu giao dịch" });
@@ -46,30 +66,34 @@ namespace HQ.Backend.Controllers
 
             foreach (var transaction in request.data)
             {
-                // Thêm dòng này để xem Backend nhận được gì
-                Console.WriteLine($"Dang kiem tra description: {transaction.description}");
+                string tranDescription = transaction.description?.ToUpper() ?? "";
+                Console.WriteLine($"Đang xử lý giao dịch: {tranDescription} - Số tiền: {transaction.amount}");
 
+                // 2. Tìm đơn hàng 'Pending' có OrderCode nằm trong nội dung chuyển khoản
+                // Sử dụng .AsEnumerable() hoặc truy vấn cẩn thận để tránh lỗi dịch SQL nếu chuỗi phức tạp
                 var matchedOrder = await _context.Set<Order>()
-                    .FirstOrDefaultAsync(o => o.Status == "Pending" && Description.Contains(o.OrderCode.ToUpper()));
+                    .FirstOrDefaultAsync(o => o.Status == "Pending" &&
+                                             tranDescription.Contains(o.OrderCode.ToUpper()));
 
-                if (matchedOrder == null)
+                if (matchedOrder != null)
                 {
-                    Console.WriteLine("Khong tim thay don hang khớp voi ma nay!");
-                }
-                else
-                {
-                    Console.WriteLine($"Tim thay don hang: {matchedOrder.OrderCode}. So tien thieu: {matchedOrder.TotalAmount}");
+                    // 3. CẬP NHẬT TRẠNG THÁI (Đây là bước bạn đang thiếu)
+                    matchedOrder.Status = "Success";
+                    matchedOrder.OrderDate = DateTime.UtcNow;
+
+                    Console.WriteLine($"Khớp thành công đơn hàng: {matchedOrder.OrderCode}");
                 }
             }
 
+            // 4. Lưu tất cả thay đổi vào DB
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(new { error = 0, message = "Xử lý webhook thành công" });
+                return Ok(new { error = 0, message = "Xử lý thành công" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = 1, message = "Lỗi lưu database: " + ex.Message });
+                return StatusCode(500, new { error = 1, message = "Lỗi Database: " + ex.Message });
             }
         }
     }

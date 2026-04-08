@@ -175,6 +175,18 @@ public class Order
     [Column("user_id")]
     public int? UserId { get; set; }
 
+    [Column("full_name")] 
+    public string FullName { get; set; }
+
+    [Column("email")]
+    public string Email { get; set; }
+
+    [Column("phone")]
+    public string Phone { get; set; }
+
+    [Column("address")]
+    public string Address { get; set; }
+
     [Column("order_code")]
     public string OrderCode { get; set; }
 
@@ -185,5 +197,8 @@ public class Order
     public string Status { get; set; } = "Pending";
 
     [Column("order_date")]
-    public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+    public DateTime OrderDate { get; set; } = DateTime.Now;
+
+    [Column("payment_date")]
+    public DateTime? PaymentDate { get; set; }
 }

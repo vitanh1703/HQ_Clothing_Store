@@ -3526,23 +3526,39 @@
     ]
   },
   "packageFolders": {
+<<<<<<< HEAD
+    "C:\\Users\\HP\\.nuget\\packages\\": {},
+=======
     "C:\\Users\\diema\\.nuget\\packages\\": {},
+>>>>>>> 1d25e6c753d87485b594a1283f7fb12d6cf92452
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< HEAD
+      "projectUniqueName": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+      "projectName": "HQ.Backend",
+      "projectPath": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
+      "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
+      "outputPath": "E:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+=======
       "projectUniqueName": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "projectName": "HQ.Backend",
       "projectPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "packagesPath": "C:\\Users\\diema\\.nuget\\packages\\",
       "outputPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+>>>>>>> 1d25e6c753d87485b594a1283f7fb12d6cf92452
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
+<<<<<<< HEAD
+        "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
+=======
         "C:\\Users\\diema\\AppData\\Roaming\\NuGet\\NuGet.Config",
+>>>>>>> 1d25e6c753d87485b594a1283f7fb12d6cf92452
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3621,8 +3637,20 @@
             "privateAssets": "all"
           }
         },
+<<<<<<< HEAD
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+=======
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+>>>>>>> 1d25e6c753d87485b594a1283f7fb12d6cf92452
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file E:\\HQ_Clothing_Store\\HQ.Backend\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0."
+    }
+  ]
 }

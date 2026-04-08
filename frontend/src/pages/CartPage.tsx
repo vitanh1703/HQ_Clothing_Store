@@ -11,6 +11,7 @@ interface CartItem {
   productId: number;
   productName: string;
   size: string;
+  color: string;
   price: number;
   quantity: number;
   total: number;
@@ -185,7 +186,7 @@ const CartPage = () => {
                     <div>
                       <h2 className="font-bold">{item.productName}</h2>
                       <p className="text-gray-500">{item.price.toLocaleString()}đ</p>
-                      <p className="text-xs text-gray-400">Size: {item.size}</p>
+                      <p className="text-xs text-gray-400">Size: {item.size}   |   Màu: {item.color}</p>
                     </div>
 
                     {/* Nút + / - và Xóa */}
@@ -194,7 +195,15 @@ const CartPage = () => {
                         className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleQuantity(item.id, item.quantity - 1);
+
+                          if (item.quantity === 1) {
+                            const confirmDelete = window.confirm("Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?");
+                            if (confirmDelete) {
+                              handleRemove(item.id);
+                            }
+                          } else {
+                            handleQuantity(item.id, item.quantity - 1);
+                          }
                         }}
                       >
                         -

@@ -136,9 +136,18 @@ const CheckoutPage = () => {
       return alert("Không có sản phẩm nào để thanh toán.");
     }
 
-    const methodLabel = paymentMethod === "bank" ? "Ngân hàng" : "Thanh toán khi nhận hàng";
-    alert(`Đã tạo đơn hàng thành công! Phương thức thanh toán: ${methodLabel}. Cảm ơn bạn đã mua sắm.`);
-    navigate("/home");
+    if (paymentMethod === "bank") {
+      navigate("/payment", {
+        state: {
+          checkoutData,
+          totalAmount: totalAfterDiscount,
+          form
+        }
+      });
+    } else {
+      alert(`Đã tạo đơn hàng thành công! Phương thức thanh toán: Thanh toán khi nhận hàng. Cảm ơn bạn đã mua sắm.`);
+      navigate("/home");
+    }
   };
 
   if (loading) {

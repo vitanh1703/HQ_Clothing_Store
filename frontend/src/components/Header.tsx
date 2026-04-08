@@ -116,8 +116,8 @@ const Header = () => {
               About us
             </button>
 
-            <button onClick={() => { navigate("/services"); setIsNavMenuOpen(false); }} className={`hover:text-black transition-colors shrink-0 ${location.pathname.startsWith('/services') ? 'text-black' : ''}`}>
-              Dịch vụ
+            <button onClick={() => navigate("/faq")} className="hover:text-gray-500 transition-colors ">
+              Hỗ trợ
             </button>
           </div>
         )}

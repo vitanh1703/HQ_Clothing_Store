@@ -3,19 +3,11 @@
   "WorkspaceRootPath": "D:\\HQ_Clothing_Store\\",
   "Documents": [
     {
-<<<<<<< HEAD
       "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-=======
-<<<<<<< HEAD
-      "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|e:\\hq_clothing_store\\hq.backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-=======
-<<<<<<< HEAD
->>>>>>> 494ee0c1a3fe5ef41e37189520bfdaaf09cfa381
       "AbsoluteMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|d:\\hq_clothing_store\\hq.backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
->>>>>>> 3f331755845a826acf89609864ae1c38e041e829
       "RelativeMoniker": "D:0:0:{7056EF50-06C5-4864-B20F-AF5876E58400}|HQ.Backend\\HQ.Backend.csproj|solutionrelative:hq.backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -45,15 +37,6 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-<<<<<<< HEAD
-=======
-          "SelectedChildIndex": 3,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-=======
->>>>>>> 494ee0c1a3fe5ef41e37189520bfdaaf09cfa381
           "SelectedChildIndex": 6,
           "Children": [
             {
@@ -67,19 +50,7 @@
             },
             {
               "$type": "Document",
-<<<<<<< HEAD
               "DocumentIndex": 4,
-=======
-<<<<<<< HEAD
-              "DocumentIndex": 4,
-=======
-<<<<<<< HEAD
-              "DocumentIndex": 3,
-=======
-              "DocumentIndex": 4,
->>>>>>> 45e207a266a946e21fbb0daa2b774d8c175586b2
->>>>>>> 3f331755845a826acf89609864ae1c38e041e829
->>>>>>> 494ee0c1a3fe5ef41e37189520bfdaaf09cfa381
               "Title": "NewsController.cs",
               "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\NewsController.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\NewsController.cs",
@@ -103,37 +74,19 @@
             },
             {
               "$type": "Document",
-<<<<<<< HEAD
               "DocumentIndex": 1,
-=======
-              "DocumentIndex": 0,
-<<<<<<< HEAD
-=======
-=======
-              "DocumentIndex": 1,
->>>>>>> 45e207a266a946e21fbb0daa2b774d8c175586b2
->>>>>>> 3f331755845a826acf89609864ae1c38e041e829
->>>>>>> 494ee0c1a3fe5ef41e37189520bfdaaf09cfa381
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\AuthController.cs",
               "ToolTip": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\AuthController.cs",
               "RelativeToolTip": "HQ.Backend\\Controllers\\AuthController.cs",
-<<<<<<< HEAD
-              "ViewState": "AgIAAAEAAAAAAAAAAAAiwBYAAAAJAAAAAAAAAA==",
-=======
               "ViewState": "AgIAAAMAAAAAAAAAAAAcwBYAAAAJAAAAAAAAAA==",
->>>>>>> 3f331755845a826acf89609864ae1c38e041e829
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-08T00:33:01.068Z"
             },
             {
               "$type": "Document",
-<<<<<<< HEAD
-              "DocumentIndex": 1,
-=======
               "DocumentIndex": 2,
->>>>>>> 3f331755845a826acf89609864ae1c38e041e829
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Data\\AppDbContext.cs",
@@ -157,25 +110,13 @@
             },
             {
               "$type": "Document",
-<<<<<<< HEAD
               "DocumentIndex": 0,
-=======
-<<<<<<< HEAD
-              "DocumentIndex": 3,
-=======
-<<<<<<< HEAD
-              "DocumentIndex": 2,
-=======
-              "DocumentIndex": 0,
->>>>>>> 45e207a266a946e21fbb0daa2b774d8c175586b2
->>>>>>> 3f331755845a826acf89609864ae1c38e041e829
->>>>>>> 494ee0c1a3fe5ef41e37189520bfdaaf09cfa381
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Program.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Program.cs",
               "ToolTip": "D:\\HQ_Clothing_Store\\HQ.Backend\\Program.cs",
               "RelativeToolTip": "HQ.Backend\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-08T00:33:01.072Z",
               "EditorCaption": ""

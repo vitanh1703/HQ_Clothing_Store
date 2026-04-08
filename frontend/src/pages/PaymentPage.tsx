@@ -168,7 +168,7 @@ const PaymentPage = () => {
                   </div>
                   <div className="flex justify-between items-start pt-2 border-t border-gray-200">
                       <span className="text-gray-500 whitespace-nowrap mr-4 mt-1">Nội dung CK</span>
-                      <span className="font-bold text-black text-right break-words">{bookingId} {form.phone}</span>
+                      <span className="font-bold text-black text-right wrap-break-word">{bookingId} {form.phone}</span>
                   </div>
               </div>
 

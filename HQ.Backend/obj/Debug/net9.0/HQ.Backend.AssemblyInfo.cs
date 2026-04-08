@@ -15,6 +15,9 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 <<<<<<< HEAD
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+baca3afd51319982dc17922efa1a751d12fa1ebb")]
+=======
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2c88a7fc7128207fef05c9b5cffcc3700d1f08e")]
 =======
 <<<<<<< HEAD
@@ -23,6 +26,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2c88a7fc7128207fef05c9b5cffcc3700d1f08e")]
 >>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
 >>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
+>>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
 [assembly: System.Reflection.AssemblyProductAttribute("HQ.Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HQ.Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

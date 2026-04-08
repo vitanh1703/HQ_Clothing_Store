@@ -1,6 +1,8 @@
 {
   "version": 2,
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
   "dgSpecHash": "7J7+duwlukw=",
 =======
 <<<<<<< HEAD
@@ -120,6 +122,7 @@
     "C:\\Users\\haonguyen\\.nuget\\packages\\system.text.json\\9.0.0\\system.text.json.9.0.0.nupkg.sha512",
     "C:\\Users\\haonguyen\\.nuget\\packages\\system.threading.channels\\7.0.0\\system.threading.channels.7.0.0.nupkg.sha512"
 =======
+>>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
   "dgSpecHash": "rqffcMFIBz4=",
   "success": true,
   "projectFilePath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
@@ -178,25 +181,11 @@
     "C:\\Users\\diema\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "C:\\Users\\diema\\.nuget\\packages\\system.text.json\\9.0.0\\system.text.json.9.0.0.nupkg.sha512",
     "C:\\Users\\diema\\.nuget\\packages\\system.threading.channels\\7.0.0\\system.threading.channels.7.0.0.nupkg.sha512"
+<<<<<<< HEAD
+=======
 >>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
 >>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
+>>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
   ],
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-<<<<<<< HEAD
-      "message": "Problem reading the cache file C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
-      "projectPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-=======
-      "message": "Problem reading the cache file D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
-      "projectPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-      "warningLevel": 1,
-      "filePath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
->>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
-      "targetGraphs": []
-    }
-  ]
+  "logs": []
 }

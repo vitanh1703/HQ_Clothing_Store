@@ -153,6 +153,7 @@ INSERT INTO `news` (`id`, `category`, `title`, `publish_date`, `img_url`, `descr
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `order_code` varchar(20) DEFAULT NULL,
   `total_amount` decimal(15,2) NOT NULL,
   `status` enum('Pending','Shipping','Success','Cancel') NOT NULL DEFAULT 'Pending',
   `order_date` timestamp NOT NULL DEFAULT current_timestamp()
@@ -438,6 +439,7 @@ ALTER TABLE `news`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `order_code` (`order_code`),
   ADD KEY `fk_orders_user` (`user_id`);
 
 --

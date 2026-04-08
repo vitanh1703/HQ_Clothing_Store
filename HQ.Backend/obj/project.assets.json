@@ -3527,6 +3527,9 @@
   },
   "packageFolders": {
 <<<<<<< HEAD
+    "C:\\Users\\diema\\.nuget\\packages\\": {},
+=======
+<<<<<<< HEAD
     "C:\\Users\\HP\\.nuget\\packages\\": {},
 =======
 <<<<<<< HEAD
@@ -3535,11 +3538,14 @@
     "C:\\Users\\diema\\.nuget\\packages\\": {},
 >>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
 >>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
+>>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
       "projectUniqueName": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "projectName": "HQ.Backend",
@@ -3554,18 +3560,25 @@
       "packagesPath": "C:\\Users\\haonguyen\\.nuget\\packages\\",
       "outputPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
 =======
+>>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
       "projectUniqueName": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "projectName": "HQ.Backend",
       "projectPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "packagesPath": "C:\\Users\\diema\\.nuget\\packages\\",
       "outputPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
+<<<<<<< HEAD
+=======
 >>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
 >>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
+>>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
+<<<<<<< HEAD
+        "C:\\Users\\diema\\AppData\\Roaming\\NuGet\\NuGet.Config",
+=======
 <<<<<<< HEAD
         "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
 =======
@@ -3575,6 +3588,7 @@
         "C:\\Users\\diema\\AppData\\Roaming\\NuGet\\NuGet.Config",
 >>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
 >>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
+>>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3660,17 +3674,5 @@
 >>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
       }
     }
-  },
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-<<<<<<< HEAD
-      "message": "Problem reading the cache file C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0."
-=======
-      "message": "Problem reading the cache file D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0."
->>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
-    }
-  ]
+  }
 }

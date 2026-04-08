@@ -80,7 +80,11 @@
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\AuthController.cs",
               "ToolTip": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\AuthController.cs",
               "RelativeToolTip": "HQ.Backend\\Controllers\\AuthController.cs",
+<<<<<<< HEAD
+              "ViewState": "AgIAAAEAAAAAAAAAAAAiwBYAAAAJAAAAAAAAAA==",
+=======
               "ViewState": "AgIAAAMAAAAAAAAAAAAcwBYAAAAJAAAAAAAAAA==",
+>>>>>>> 3f331755845a826acf89609864ae1c38e041e829
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-08T00:33:01.068Z"
             },

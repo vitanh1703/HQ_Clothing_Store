@@ -15,23 +15,20 @@ const Home = () => {
   const { services, loading: servicesLoading } = useServices();
   const { promotions, loading: promotionsLoading } = usePromotions();
 
-  const images = [
-    "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000",
-    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000",
-    "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1000",
-    "https://images.unsplash.com/photo-1550246140-29f40b909e5a?q=80&w=1000",
-    "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1000",
-  ];
+  // Lấy 6 sản phẩm mới nhất (ID lớn nhất) từ danh sách
+  const latestProducts = [...products].sort((a, b) => b.id - a.id).slice(0, 6);
+  const carouselItems = latestProducts.map(p => ({ 
+    id: p.id, 
+    imgUrl: p.imageUrl || "https://via.placeholder.com/1500x2000" 
+  }));
 
-  const approachImages = [
-    "https://api.fastretailing.com/ugc/v1/uq/kr/SR_IMAGES/ugc_stylehint_uq_kr_photo_260401_1870192_c-480-640",
-    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000",
-    "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1000",
-    "https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/483762/sub/vngoods_483762_sub3_3x4.jpg",
-  ];
+  // Tự động lấy 4 ảnh sản phẩm cho phần Tư Duy Thiết Kế
+  const approachImages = products.length >= 4 
+    ? products.slice(0, 4).map(p => p.imageUrl || "https://via.placeholder.com/1500x2000")
+    : Array(4).fill("https://via.placeholder.com/1500x2000");
   
   const [currentIndex, setCurrentIndex] = useState(0);
-  const maxIndex = images.length - 2;
+  const maxIndex = Math.max(0, carouselItems.length - 2);
 
   const nextSlide = () => currentIndex < maxIndex ? setCurrentIndex(currentIndex + 1) : setCurrentIndex(0);
   const prevSlide = () => currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : setCurrentIndex(maxIndex);
@@ -75,9 +72,13 @@ const Home = () => {
             className="flex transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] gap-5" 
             style={{ transform: `translateX(-${currentIndex * 51}%)` }}
           >
-            {images.map((imgUrl, index) => (
-              <div key={index} className="min-w-[49%] aspect-[0.88/1] overflow-hidden rounded-sm shadow-sm group relative bg-white">
-                <img src={imgUrl} alt="Model" className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0" />
+            {carouselItems.map((item, index) => (
+              <div 
+                key={index} 
+                onClick={() => item.id !== 0 && navigate(`/products/${item.id}`)}
+                className={`min-w-[49%] aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm group relative bg-white ${item.id !== 0 ? 'cursor-pointer' : ''}`}
+              >
+                <img src={item.imgUrl} alt="Model" className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0" />
               </div>
             ))}
           </div>
@@ -129,22 +130,22 @@ const Home = () => {
         </div>
         <div className="grid grid-cols-4 gap-8 items-center">
           <div className="col-span-1 mt-20">
-            <div className="aspect-3/4 overflow-hidden rounded-sm shadow-sm">
+            <div className="aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm">
               <img src={approachImages[0]} alt="Design 1" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0" />
             </div>
           </div>
           <div className="col-span-1 mb-20">
-            <div className="aspect-3/4 overflow-hidden rounded-sm shadow-sm">
+            <div className="aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm">
               <img src={approachImages[1]} alt="Design 2" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0" />
             </div>
           </div>
           <div className="col-span-1 mt-10">
-            <div className="aspect-3/4 overflow-hidden rounded-sm shadow-sm">
+            <div className="aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm">
               <img src={approachImages[2]} alt="Design 3" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0" />
             </div>
           </div>
           <div className="col-span-1 -mt-10">
-            <div className="aspect-3/4 overflow-hidden rounded-sm shadow-sm">
+            <div className="aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm">
               <img src={approachImages[3]} alt="Design 4" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0" />
             </div>
           </div>

@@ -134,7 +134,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
      <div className="group cursor-pointer w-full"
          onClick={() => navigate(`/products/${product.id}`)}
     >
-      <div className="relative aspect-3/4 bg-[#F5F5F5] rounded-sm overflow-hidden mb-4 shadow-sm border border-gray-100">
+      <div className="relative aspect-1500/2000 bg-[#F5F5F5] rounded-sm overflow-hidden mb-4 shadow-sm border border-gray-100">
         <img
           src={imageSrc}
           alt={name}

@@ -6,7 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using HQ.Backend.DTOs;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
+//using DocumentFormat.OpenXml.Drawing.Diagrams;
+using System;
 
 namespace HQ.Backend.Controllers
 {
@@ -50,7 +51,7 @@ namespace HQ.Backend.Controllers
                 Console.WriteLine($"Dang kiem tra description: {transaction.description}");
 
                 var matchedOrder = await _context.Set<Order>()
-                    .FirstOrDefaultAsync(o => o.Status == "Pending" && Description.Contains(o.OrderCode.ToUpper()));
+                    .FirstOrDefaultAsync(o => o.Status == "Pending" && transaction.description.Contains(o.OrderCode.ToUpper()));
 
                 if (matchedOrder == null)
                 {

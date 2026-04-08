@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 07, 2026 lúc 03:54 PM
+-- Thời gian đã tạo: Th4 08, 2026 lúc 09:36 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -61,9 +61,7 @@ CREATE TABLE `cart_items` (
 INSERT INTO `cart_items` (`id`, `cart_id`, `variant_id`, `quantity`) VALUES
 (8, 3, 1, 1),
 (9, 3, 4, 1),
-(10, 2, 3, 1),
-(11, 2, 6, 1),
-(12, 2, 2, 3);
+(17, 2, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -153,7 +151,7 @@ INSERT INTO `news` (`id`, `category`, `title`, `publish_date`, `img_url`, `descr
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `order_code` varchar(20) DEFAULT NULL,
+  `order_code` varchar(255) DEFAULT NULL,
   `total_amount` decimal(15,2) NOT NULL,
   `status` enum('Pending','Shipping','Success','Cancel') NOT NULL DEFAULT 'Pending',
   `order_date` timestamp NOT NULL DEFAULT current_timestamp()
@@ -240,7 +238,7 @@ CREATE TABLE `product_variants` (
 INSERT INTO `product_variants` (`id`, `product_id`, `size`, `color`, `price`, `stock_quantity`, `sku`) VALUES
 (1, 1, 'M', 'Trắng', 450000.00, 50, 'HQ-SM-W-M'),
 (2, 1, 'L', 'Trắng', 450000.00, 30, 'HQ-SM-W-L'),
-(3, 2, 'S', 'Đen', 250000.00, 100, 'HQ-AT-B-S'),
+(3, 2, 'S', 'Đen', 10000.00, 100, 'HQ-AT-B-S'),
 (4, 2, 'M', 'Đen', 250000.00, 80, 'HQ-AT-B-M'),
 (5, 3, '30', 'Xanh Indigo', 650000.00, 40, 'HQ-QJ-I-30'),
 (6, 3, 'M', 'Xanh Indigo', 650000.00, 25, 'HQ-QJ-I-32');
@@ -296,7 +294,12 @@ CREATE TABLE `reviews` (
 
 INSERT INTO `reviews` (`id`, `user_id`, `product_id`, `rating`, `comment`, `created_at`) VALUES
 (1, 2, 1, 5, 'Áo mặc rất mát, form chuẩn công sở!', '2026-04-05 06:20:49'),
-(2, 3, 2, 4, 'Chất vải đẹp nhưng hơi ôm quá so với mình.', '2026-04-05 06:20:49');
+(2, 3, 2, 4, 'Chất vải đẹp nhưng hơi ôm quá so với mình.', '2026-04-05 06:20:49'),
+(3, 1, 2, 5, 'Chất lượng vải tuyệt vời, mặc rất thoải mái.', '2026-04-08 02:50:33'),
+(4, 2, 3, 4, 'Áo đẹp nhưng giao hàng hơi chậm một chút.', '2026-04-08 02:50:33'),
+(5, 3, 1, 3, 'Màu sắc hơi khác so với ảnh trên web, nhưng vẫn ổn.', '2026-04-08 02:50:33'),
+(6, 1, 4, 5, 'Sản phẩm rất đáng tiền, sẽ tiếp tục ủng hộ shop.', '2026-04-08 02:50:33'),
+(7, 2, 2, 2, 'Size hơi nhỏ so với mô tả, mọi người nên cân nhắc tăng 1 size.', '2026-04-08 02:50:33');
 
 -- --------------------------------------------------------
 
@@ -439,7 +442,6 @@ ALTER TABLE `news`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `order_code` (`order_code`),
   ADD KEY `fk_orders_user` (`user_id`);
 
 --
@@ -523,7 +525,7 @@ ALTER TABLE `carts`
 -- AUTO_INCREMENT cho bảng `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -577,7 +579,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT cho bảng `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `services`

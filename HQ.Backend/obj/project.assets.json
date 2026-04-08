@@ -3526,69 +3526,23 @@
     ]
   },
   "packageFolders": {
-<<<<<<< HEAD
     "C:\\Users\\diema\\.nuget\\packages\\": {},
-=======
-<<<<<<< HEAD
-    "C:\\Users\\HP\\.nuget\\packages\\": {},
-=======
-<<<<<<< HEAD
-    "C:\\Users\\haonguyen\\.nuget\\packages\\": {},
-=======
-    "C:\\Users\\diema\\.nuget\\packages\\": {},
->>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
->>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
->>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-      "projectUniqueName": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-      "projectName": "HQ.Backend",
-      "projectPath": "E:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-      "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "E:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
-=======
-<<<<<<< HEAD
-      "projectUniqueName": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-      "projectName": "HQ.Backend",
-      "projectPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-      "packagesPath": "C:\\Users\\haonguyen\\.nuget\\packages\\",
-      "outputPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
-=======
->>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
       "projectUniqueName": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "projectName": "HQ.Backend",
       "projectPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
       "packagesPath": "C:\\Users\\diema\\.nuget\\packages\\",
       "outputPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
-<<<<<<< HEAD
-=======
->>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
->>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
->>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-<<<<<<< HEAD
         "C:\\Users\\diema\\AppData\\Roaming\\NuGet\\NuGet.Config",
-=======
-<<<<<<< HEAD
-        "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
-=======
-<<<<<<< HEAD
-        "C:\\Users\\haonguyen\\AppData\\Roaming\\NuGet\\NuGet.Config",
-=======
-        "C:\\Users\\diema\\AppData\\Roaming\\NuGet\\NuGet.Config",
->>>>>>> 2d578b8966daf1ec40c3b0627c4b2df98727d6f2
->>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
->>>>>>> fafeed77c9b2a5297ff80dbe7c25a3c9e93a7628
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3667,11 +3621,7 @@
             "privateAssets": "all"
           }
         },
-<<<<<<< HEAD
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
-=======
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
->>>>>>> c7fc6e54f7b81f4e1c9adc3fe58cb87ac2109df0
       }
     }
   }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using HQ.Backend.DTOs;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 namespace HQ.Backend.Controllers
 {
@@ -45,20 +46,19 @@ namespace HQ.Backend.Controllers
 
             foreach (var transaction in request.data)
             {
-                if (string.IsNullOrEmpty(transaction.description)) continue;
+                // Thêm dòng này để xem Backend nhận được gì
+                Console.WriteLine($"Dang kiem tra description: {transaction.description}");
 
-                string description = transaction.description.ToUpper();
-                decimal amount = transaction.amount;
                 var matchedOrder = await _context.Set<Order>()
-                    .FirstOrDefaultAsync(o =>
-                        o.Status == "Pending" &&
-                        o.OrderCode != null && 
-                        description.Contains(o.OrderCode.ToUpper()));
+                    .FirstOrDefaultAsync(o => o.Status == "Pending" && Description.Contains(o.OrderCode.ToUpper()));
 
-                if (matchedOrder != null && amount >= matchedOrder.TotalAmount)
+                if (matchedOrder == null)
                 {
-                    matchedOrder.Status = "Success";
-                    _context.Update(matchedOrder);
+                    Console.WriteLine("Khong tim thay don hang khớp voi ma nay!");
+                }
+                else
+                {
+                    Console.WriteLine($"Tim thay don hang: {matchedOrder.OrderCode}. So tien thieu: {matchedOrder.TotalAmount}");
                 }
             }
 

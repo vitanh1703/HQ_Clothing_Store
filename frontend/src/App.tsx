@@ -19,6 +19,7 @@ import RefundPolicy from './pages/RefundPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
 import PaymentPage from './pages/PaymentPage';
 import FAQPage from './pages/FAQPage';
+import AboutUsPage from './pages/Aboutus';
 
 function App() {
   const location = useLocation();
@@ -50,6 +51,7 @@ function App() {
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/aboutus" element={<AboutUsPage />} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold italic">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

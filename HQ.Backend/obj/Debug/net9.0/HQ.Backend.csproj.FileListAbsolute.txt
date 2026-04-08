@@ -661,3 +661,6 @@ D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\ref\HQ.Backend.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll
+C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
+C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
+C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll

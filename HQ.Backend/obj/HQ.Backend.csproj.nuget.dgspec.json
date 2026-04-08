@@ -1,7 +1,6 @@
 {
   "format": 1,
   "restore": {
-<<<<<<< HEAD
     "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj": {}
   },
   "projects": {
@@ -13,29 +12,12 @@
         "projectPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
         "packagesPath": "C:\\Users\\haonguyen\\.nuget\\packages\\",
         "outputPath": "C:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
-=======
-    "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj": {}
-  },
-  "projects": {
-    "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-        "projectName": "HQ.Backend",
-        "projectPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\HQ.Backend.csproj",
-        "packagesPath": "C:\\Users\\diema\\.nuget\\packages\\",
-        "outputPath": "D:\\HQ_Clothing_Store\\HQ.Backend\\obj\\",
->>>>>>> 9e264154f6211cff5564dbfd4cd55a42dd00c16a
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-<<<<<<< HEAD
           "C:\\Users\\haonguyen\\AppData\\Roaming\\NuGet\\NuGet.Config",
-=======
-          "C:\\Users\\diema\\AppData\\Roaming\\NuGet\\NuGet.Config",
->>>>>>> 9e264154f6211cff5564dbfd4cd55a42dd00c16a
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -62,7 +44,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -110,6 +92,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.14, 9.0.14]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[9.0.14, 9.0.14]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.14, 9.0.14]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[9.0.14, 9.0.14]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -118,7 +118,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -164,3 +164,26 @@ public class Promotion
     [Column("status")]
     public int Status { get; set; } 
 }
+
+[Table("orders")]
+public class Order
+{
+    [Key]
+    [Column("id")]
+    public int Id { get; set; }
+
+    [Column("user_id")]
+    public int? UserId { get; set; }
+
+    [Column("order_code")]
+    public string OrderCode { get; set; }
+
+    [Column("total_amount")]
+    public decimal TotalAmount { get; set; }
+
+    [Column("status")]
+    public string Status { get; set; } = "Pending";
+
+    [Column("order_date")]
+    public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+}

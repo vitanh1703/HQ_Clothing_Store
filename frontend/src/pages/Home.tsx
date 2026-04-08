@@ -76,7 +76,7 @@ const Home = () => {
               <div 
                 key={index} 
                 onClick={() => item.id !== 0 && navigate(`/products/${item.id}`)}
-                className={`min-w-[49%] aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm group relative bg-white ${item.id !== 0 ? 'cursor-pointer' : ''}`}
+                className={`min-w-[49%] aspect-1500/2000 overflow-hidden rounded-sm shadow-sm group relative bg-white ${item.id !== 0 ? 'cursor-pointer' : ''}`}
               >
                 <img src={item.imgUrl} alt="Model" className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0" />
               </div>
@@ -130,22 +130,22 @@ const Home = () => {
         </div>
         <div className="grid grid-cols-4 gap-8 items-center">
           <div className="col-span-1 mt-20">
-            <div className="aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm">
+            <div className="aspect-1500/2000 overflow-hidden rounded-sm shadow-sm">
               <img src={approachImages[0]} alt="Design 1" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0" />
             </div>
           </div>
           <div className="col-span-1 mb-20">
-            <div className="aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm">
+            <div className="aspect-1500/2000 overflow-hidden rounded-sm shadow-sm">
               <img src={approachImages[1]} alt="Design 2" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0" />
             </div>
           </div>
           <div className="col-span-1 mt-10">
-            <div className="aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm">
+            <div className="aspect-1500/2000 overflow-hidden rounded-sm shadow-sm">
               <img src={approachImages[2]} alt="Design 3" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0" />
             </div>
           </div>
           <div className="col-span-1 -mt-10">
-            <div className="aspect-[1500/2000] overflow-hidden rounded-sm shadow-sm">
+            <div className="aspect-1500/2000 overflow-hidden rounded-sm shadow-sm">
               <img src={approachImages[3]} alt="Design 4" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0" />
             </div>
           </div>

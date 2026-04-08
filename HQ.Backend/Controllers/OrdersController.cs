@@ -22,38 +22,58 @@ namespace HQ.Backend.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto dto)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
         {
-            // 1. Tạo mã đơn hàng duy nhất (Ví dụ: HQ + 6 số cuối của Ticks)
-            string orderCode = "HQ" + DateTime.Now.Ticks.ToString().Substring(12);
-
-            var newOrder = new Order
-            {
-                UserId = dto.UserId,
-                FullName = dto.FullName,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                Address = dto.Address,
-                TotalAmount = dto.TotalAmount,
-                OrderCode = orderCode,
-                Status = "Pending", // Mặc định là chờ thanh toán
-                OrderDate = DateTime.Now,
-                PaymentDate = null // Chưa thanh toán nên để null
-            };
-
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                _context.Set<Order>().Add(newOrder);
-                await _context.SaveChangesAsync();
+                // 1. Tạo đơn hàng (Bảng orders)
+                var order = new Order
+                {
+                    UserId = request.UserId,
+                    OrderCode = GenerateOrderCode(), // Hàm sinh mã đơn hàng của bạn
+                    FullName = request.FullName,
+                    Email = request.Email,
+                    Phone = request.Phone,
+                    Address = request.Address,
+                    TotalAmount = request.TotalAmount,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow
+                };
 
-                // Trả về orderCode để Frontend chuyển sang trang Payment
-                return Ok(newOrder);
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync(); // Lưu để lấy được order.Id
+
+                // 2. Tạo chi tiết đơn hàng (Bảng order_items)
+                if (request.Items != null && request.Items.Any())
+                {
+                    var orderItems = request.Items.Select(item => new OrderItem
+                    {
+                        OrderId = order.Id, // ID vừa được sinh ra ở trên
+                        VariantId = item.VariantId,
+                        Quantity = item.Quantity,
+                        PriceAtPurchase = item.PriceAtPurchase
+                    }).ToList();
+
+                    _context.OrderItems.AddRange(orderItems);
+                    await _context.SaveChangesAsync();
+                }
+
+                await transaction.CommitAsync();
+
+                return Ok(new
+                {
+                    id = order.Id,
+                    orderCode = order.OrderCode
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Lỗi khi lưu đơn hàng: " + ex.Message });
+                await transaction.RollbackAsync();
+                return StatusCode(500, new { message = "Lỗi khi tạo đơn hàng", error = ex.Message });
             }
         }
+
 
         [HttpPost("webhook/casso")]
         public async Task<IActionResult> CassoWebhook([FromBody] CassoWebhookRequest request)

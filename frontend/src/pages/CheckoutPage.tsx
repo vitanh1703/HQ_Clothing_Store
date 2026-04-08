@@ -152,6 +152,11 @@ const CheckoutPage = () => {
         phone: form.phone,
         address: form.address,
         totalAmount: totalAfterDiscount,
+        items: checkoutData.items.map(item => ({
+          variantId: item.variantId,
+          quantity: item.quantity,
+          priceAtPurchase: item.price
+        }))
       };
 
       // 2. Gọi API để lưu đơn hàng vào DB (Sử dụng endpoint đã viết ở Backend)

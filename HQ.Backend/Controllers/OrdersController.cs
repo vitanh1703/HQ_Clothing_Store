@@ -27,29 +27,32 @@ namespace HQ.Backend.Controllers
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // 1. Tạo đơn hàng (Bảng orders)
+                // 1. Tạo OrderCode dễ đọc (Ví dụ: HQ + Ngày giờ + 3 số ngẫu nhiên)
+                string orderCode = "HQ" + DateTime.Now.ToString("yyMMddHHmm") + new Random().Next(100, 999);
+
                 var order = new Order
                 {
                     UserId = request.UserId,
-                    OrderCode = GenerateOrderCode(), // Hàm sinh mã đơn hàng của bạn
                     FullName = request.FullName,
                     Email = request.Email,
                     Phone = request.Phone,
                     Address = request.Address,
                     TotalAmount = request.TotalAmount,
+                    OrderCode = orderCode, // Mã này dùng để khách nhập vào Nội dung CK
                     Status = "Pending",
-                    CreatedAt = DateTime.UtcNow
+                    OrderDate = DateTime.Now,
+                    PaymentDate = null
                 };
 
                 _context.Orders.Add(order);
-                await _context.SaveChangesAsync(); // Lưu để lấy được order.Id
+                await _context.SaveChangesAsync();
 
-                // 2. Tạo chi tiết đơn hàng (Bảng order_items)
+                // 2. Lưu chi tiết sản phẩm
                 if (request.Items != null && request.Items.Any())
                 {
                     var orderItems = request.Items.Select(item => new OrderItem
                     {
-                        OrderId = order.Id, // ID vừa được sinh ra ở trên
+                        OrderId = order.Id,
                         VariantId = item.VariantId,
                         Quantity = item.Quantity,
                         PriceAtPurchase = item.PriceAtPurchase
@@ -61,6 +64,7 @@ namespace HQ.Backend.Controllers
 
                 await transaction.CommitAsync();
 
+                // Trả về orderCode để Frontend hiển thị QR
                 return Ok(new
                 {
                     id = order.Id,
@@ -70,7 +74,7 @@ namespace HQ.Backend.Controllers
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, new { message = "Lỗi khi tạo đơn hàng", error = ex.Message });
+                return StatusCode(500, new { message = "Lỗi tạo đơn", error = ex.Message });
             }
         }
 

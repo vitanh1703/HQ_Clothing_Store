@@ -197,10 +197,7 @@ const CartPage = () => {
                           e.stopPropagation();
 
                           if (item.quantity === 1) {
-                            const confirmDelete = window.confirm("Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?");
-                            if (confirmDelete) {
-                              handleRemove(item.id);
-                            }
+                            handleRemove(item.id); 
                           } else {
                             handleQuantity(item.id, item.quantity - 1);
                           }

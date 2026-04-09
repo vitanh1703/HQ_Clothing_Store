@@ -54,3 +54,16 @@ public class OrderItemRequest
     public int Quantity { get; set; }
     public decimal PriceAtPurchase { get; set; }
 }
+
+public class UpdateInfoRequest
+{
+    public string FullName { get; set; }
+    public string Phone { get; set; }
+    public string Address { get; set; }
+}
+
+public class UpdatePasswordRequest
+{
+    public string CurrentPassword { get; set; }
+    public string NewPassword { get; set; }
+}

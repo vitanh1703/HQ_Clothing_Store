@@ -175,6 +175,22 @@
   },
   {
     "ContainingType": "HQ.Backend.Controllers.OrdersController",
+    "Method": "GetUserOrders",
+    "RelativePath": "api/Orders/user/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.OrdersController",
     "Method": "CassoWebhook",
     "RelativePath": "api/Orders/webhook/casso",
     "HttpMethod": "POST",

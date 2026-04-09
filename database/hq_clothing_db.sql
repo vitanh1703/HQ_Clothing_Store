@@ -241,7 +241,7 @@ INSERT INTO `product_variants` (`id`, `product_id`, `size`, `color`, `price`, `s
 (3, 2, 'S', 'Đen', 10000.00, 100, 'HQ-AT-B-S'),
 (4, 2, 'M', 'Đen', 250000.00, 80, 'HQ-AT-B-M'),
 (5, 3, '30', 'Xanh Indigo', 650000.00, 40, 'HQ-QJ-I-30'),
-(6, 3, 'M', 'Xanh Indigo', 650000.00, 25, 'HQ-QJ-I-32');
+(6, 3, 'M', 'Xanh Indigo', 650000.00, 25, 'HQ-QJ-I-32'),
 (7, 4, 'M', 'Be', 520000.00, 40, 'HQ-CT-BE-M'),
 (8, 4, 'L', 'Be', 520000.00, 30, 'HQ-CT-BE-L'),
 

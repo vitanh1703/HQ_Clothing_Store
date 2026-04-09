@@ -97,12 +97,8 @@ namespace HQ.Backend.Controllers
                 // 2. Tìm đơn hàng 'Pending' có OrderCode nằm trong nội dung chuyển khoản
                 // Sử dụng .AsEnumerable() hoặc truy vấn cẩn thận để tránh lỗi dịch SQL nếu chuỗi phức tạp
                 var matchedOrder = await _context.Set<Order>()
-<<<<<<< HEAD
-                    .FirstOrDefaultAsync(o => o.Status == "Pending" && transaction.description.Contains(o.OrderCode.ToUpper()));
-=======
                     .FirstOrDefaultAsync(o => o.Status == "Pending" &&
                                              tranDescription.Contains(o.OrderCode.ToUpper()));
->>>>>>> 5b20c8f009f2a03d5c2758d0fe40c94b6ed7f4b8
 
                 if (matchedOrder != null)
                 {

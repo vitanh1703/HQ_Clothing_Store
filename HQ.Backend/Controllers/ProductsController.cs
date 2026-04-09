@@ -1,5 +1,6 @@
 ﻿using HQ.Backend.Data;
 using Microsoft.AspNetCore.Http;
+using HQ.Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -108,6 +109,42 @@ namespace HQ.Backend.Controllers
                 return NotFound(new { message = "Sản phẩm không tồn tại" });
 
             return Ok(product);
+        }
+
+        [HttpGet("{id}/reviews")]
+        public async Task<IActionResult> GetProductReviews(int id)
+        {
+            var productExists = await _context.Products.AnyAsync(p => p.Id == id);
+            if (!productExists)
+                return NotFound(new { message = "Sản phẩm không tồn tại" });
+
+            var reviews = await (
+                from review in _context.Reviews
+                join user in _context.Users on review.UserId equals user.Id
+                where review.ProductId == id
+                orderby review.CreatedAt descending
+                select new
+                {
+                    review.Id,
+                    review.UserId,
+                    review.ProductId,
+                    rating = review.Rating ?? 0,
+                    comment = review.Comment,
+                    createdAt = review.CreatedAt,
+                    userName = user.FullName
+                }
+            ).ToListAsync();
+
+            var averageRating = reviews.Count == 0
+                ? 0
+                : Math.Round(reviews.Average(r => r.rating), 1);
+
+            return Ok(new
+            {
+                averageRating,
+                totalReviews = reviews.Count,
+                reviews
+            });
         }
     }
 }

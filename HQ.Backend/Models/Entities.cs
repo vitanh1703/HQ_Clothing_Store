@@ -69,6 +69,28 @@ public class Product
     public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
 }
 
+[Table("reviews")]
+public class Review
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Column("user_id")]
+    public int UserId { get; set; }
+
+    [Column("product_id")]
+    public int ProductId { get; set; }
+
+    [Column("rating")]
+    public int? Rating { get; set; }
+
+    [Column("comment")]
+    public string? Comment { get; set; }
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
+}
+
 [Table("product_variants")]
 public class ProductVariant
 {

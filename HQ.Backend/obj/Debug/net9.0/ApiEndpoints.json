@@ -1,5 +1,21 @@
 [
   {
+    "ContainingType": "HQ.Backend.Controllers.PasswordResetController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/auth/forgot-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.Controllers.PasswordResetController\u002BForgotPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HQ.Backend.Controllers.AuthController",
     "Method": "GoogleLogin",
     "RelativePath": "api/Auth/google-login",
@@ -42,6 +58,38 @@
       {
         "Name": "user",
         "Type": "HQ.Backend.Models.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.PasswordResetController",
+    "Method": "ResetPassword",
+    "RelativePath": "api/auth/reset-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.Controllers.PasswordResetController\u002BResetPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.PasswordResetController",
+    "Method": "VerifyOtp",
+    "RelativePath": "api/auth/verify-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.Controllers.PasswordResetController\u002BVerifyOtpDto",
         "IsRequired": true
       }
     ],
@@ -330,7 +378,7 @@
       },
       {
         "Name": "request",
-        "Type": "HQ.Backend.Controllers.UpdateInfoRequest",
+        "Type": "HQ.Backend.DTOs.UpdateInfoRequest",
         "IsRequired": true
       }
     ],
@@ -351,7 +399,7 @@
       },
       {
         "Name": "request",
-        "Type": "HQ.Backend.Controllers.UpdatePasswordRequest",
+        "Type": "HQ.Backend.DTOs.UpdatePasswordRequest",
         "IsRequired": true
       }
     ],

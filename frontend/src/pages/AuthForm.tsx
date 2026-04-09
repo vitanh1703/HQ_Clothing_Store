@@ -4,10 +4,17 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../services/hooks';
 import { GoogleLogin } from '@react-oauth/google';
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
+import axios from 'axios';
 
 const AuthForm = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  const [forgotStep, setForgotStep] = useState<0 | 1 | 2 | 3>(0);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [cooldown, setCooldown] = useState(0);
   
   const { login, register, loginWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
@@ -18,6 +25,52 @@ const AuthForm = () => {
       navigate("/home");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldown]);
+
+  const handleSendOtp = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!forgotEmail) return toast.error("Vui lòng nhập email!");
+    try {
+      await axios.post("https://localhost:7137/api/auth/forgot-password", { email: forgotEmail });
+      toast.success("Mã OTP đã được gửi đến email của bạn!");
+      setForgotStep(2);
+      setCooldown(60);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi gửi OTP hoặc email không tồn tại!");
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post("https://localhost:7137/api/auth/verify-otp", { email: forgotEmail, otp });
+      toast.success("Xác thực OTP thành công!");
+      setForgotStep(3);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "OTP không hợp lệ hoặc đã hết hạn!");
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) return toast.error("Mật khẩu phải có ít nhất 6 ký tự!");
+    try {
+      await axios.post("https://localhost:7137/api/auth/reset-password", { email: forgotEmail, otp, newPassword });
+      toast.success("Cập nhật mật khẩu thành công! Vui lòng đăng nhập lại.");
+      setForgotStep(0);
+      setForgotEmail("");
+      setOtp("");
+      setNewPassword("");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi cập nhật mật khẩu!");
+    }
+  };
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -104,6 +157,7 @@ const AuthForm = () => {
         {/* --- FORM ĐĂNG NHẬP --- */}
         <div className={`absolute top-0 h-full transition-all duration-600 ease-in-out left-0 w-1/2 z-2 
           ${isRightPanelActive ? 'translate-x-full' : ''}`}>
+        {forgotStep === 0 ? (
           <form onSubmit={handleLoginSubmit} className="bg-white flex items-center justify-center flex-col px-10 h-full">
             <div className="mb-4 text-center w-full">
                 <div className="bg-black w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold mx-auto mb-4 italic">H&Q</div>
@@ -126,9 +180,8 @@ const AuthForm = () => {
                 </div>
             </div>
 
-            {/* Đã xóa Checkbox Ghi nhớ, chỉ giữ lại Quên mật khẩu căn phải */}
             <div className="flex justify-end w-full mb-6 text-sm">
-                <a href="#" className="font-bold hover:underline">Quên mật khẩu?</a>
+                <button type="button" onClick={() => setForgotStep(1)} className="font-bold hover:underline cursor-pointer">Quên mật khẩu?</button>
             </div>
 
             <button type="submit" disabled={loading} className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 disabled:bg-gray-400 cursor-pointer">
@@ -137,6 +190,62 @@ const AuthForm = () => {
 
             <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Auth Fail")} theme="outline" width="340px" text="signin_with" />
           </form>
+        ) : (
+          <div className="bg-white flex items-center justify-center flex-col px-10 h-full">
+            <div className="mb-4 text-center w-full">
+                <div className="bg-black w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold mx-auto mb-4 italic">H&Q</div>
+                <h1 className="text-2xl font-bold">Quên Mật Khẩu</h1>
+                <p className="text-gray-500 text-sm mt-1">
+                  {forgotStep === 1 && "Nhập email để nhận mã OTP"}
+                  {forgotStep === 2 && "Nhập mã OTP đã được gửi đến email"}
+                  {forgotStep === 3 && "Nhập mật khẩu mới của bạn"}
+                </p>
+            </div>
+
+            {forgotStep === 1 && (
+              <form onSubmit={handleSendOtp} className="w-full">
+                  <div className="w-full mb-4">
+                      <input type="email" placeholder="Địa chỉ email của bạn" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required className="border border-gray-300 p-3 w-full rounded-lg outline-none focus:ring-1 focus:ring-black" />
+                  </div>
+                  <button type="submit" className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 cursor-pointer">
+                    Gửi mã OTP
+                  </button>
+              </form>
+            )}
+
+            {forgotStep === 2 && (
+              <form onSubmit={handleVerifyOtp} className="w-full">
+                  <div className="w-full mb-4">
+                      <input type="text" placeholder="Nhập mã OTP (6 số)" value={otp} onChange={e => setOtp(e.target.value)} required className="border border-gray-300 p-3 w-full rounded-lg outline-none focus:ring-1 focus:ring-black text-center text-xl tracking-widest font-bold" maxLength={6} />
+                  </div>
+                  <button type="submit" className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 cursor-pointer">
+                    Xác nhận OTP
+                  </button>
+                  <button type="button" onClick={() => handleSendOtp()} disabled={cooldown > 0} className="w-full text-sm font-bold text-gray-500 hover:text-black transition-colors disabled:opacity-50 cursor-pointer">
+                    {cooldown > 0 ? `Gửi lại mã (${cooldown}s)` : "Gửi lại mã OTP"}
+                  </button>
+              </form>
+            )}
+
+            {forgotStep === 3 && (
+              <form onSubmit={handleResetPassword} className="w-full">
+                  <div className="w-full mb-4 relative">
+                      <input type={showPassword ? "text" : "password"} placeholder="Mật khẩu mới (ít nhất 6 ký tự)" value={newPassword} onChange={e => setNewPassword(e.target.value)} required className="border border-gray-300 p-3 w-full rounded-lg outline-none focus:ring-1 focus:ring-black" minLength={6} />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-4 text-gray-400 cursor-pointer">
+                          {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                      </button>
+                  </div>
+                  <button type="submit" className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 cursor-pointer">
+                    Cập nhật mật khẩu
+                  </button>
+              </form>
+            )}
+
+            <button type="button" onClick={() => { setForgotStep(0); setForgotEmail(''); setOtp(''); setNewPassword(''); setCooldown(0); }} className="mt-4 text-sm font-bold text-gray-500 hover:underline cursor-pointer">
+                Quay lại đăng nhập
+            </button>
+          </div>
+        )}
         </div>
 
         {/* --- OVERLAY --- */}

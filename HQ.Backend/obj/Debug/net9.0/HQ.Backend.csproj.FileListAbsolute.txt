@@ -525,6 +525,10 @@ C:\Webnangcap\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\refint\HQ.Backend.dl
 C:\Webnangcap\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.pdb
 C:\Webnangcap\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.genruntimeconfig.cache
 C:\Webnangcap\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\ref\HQ.Backend.dll
+C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
+C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
+C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll
+C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\appsettings.Development.json
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\appsettings.json
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\HQ.Backend.staticwebassets.endpoints.json
@@ -534,6 +538,8 @@ D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\HQ.Backend.runtimeconfig.json
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\HQ.Backend.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\HQ.Backend.pdb
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\BCrypt.Net-Next.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Google.Apis.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Google.Apis.Auth.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\Google.Apis.Core.dll
@@ -566,6 +572,7 @@ D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.Composition.Convention.d
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.Composition.Hosting.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.Composition.Runtime.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.Composition.TypedParts.dll
+D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.Management.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\cs\Microsoft.CodeAnalysis.resources.dll
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\de\Microsoft.CodeAnalysis.resources.dll
@@ -657,10 +664,3 @@ D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\refint\HQ.Backend.dll
 D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.pdb
 D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.genruntimeconfig.cache
 D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\ref\HQ.Backend.dll
-D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
-D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
-D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll
-C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
-C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
-C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll
-C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

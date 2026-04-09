@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 08, 2026 lúc 09:36 AM
+-- Thời gian đã tạo: Th4 09, 2026 lúc 04:45 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -61,7 +61,9 @@ CREATE TABLE `cart_items` (
 INSERT INTO `cart_items` (`id`, `cart_id`, `variant_id`, `quantity`) VALUES
 (8, 3, 1, 1),
 (9, 3, 4, 1),
-(17, 2, 3, 1);
+(20, 2, 1, 1),
+(21, 2, 5, 1),
+(22, 2, 3, 2);
 
 -- --------------------------------------------------------
 
@@ -151,11 +153,30 @@ INSERT INTO `news` (`id`, `category`, `title`, `publish_date`, `img_url`, `descr
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `full_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `address` text DEFAULT NULL,
   `order_code` varchar(255) DEFAULT NULL,
   `total_amount` decimal(15,2) NOT NULL,
   `status` enum('Pending','Shipping','Success','Cancel') NOT NULL DEFAULT 'Pending',
+  `payment_date` datetime DEFAULT NULL,
   `order_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `orders`
+--
+
+INSERT INTO `orders` (`id`, `user_id`, `full_name`, `email`, `phone`, `address`, `order_code`, `total_amount`, `status`, `payment_date`, `order_date`) VALUES
+(1, 1, NULL, NULL, NULL, NULL, 'HQ123456', 250000.00, 'Success', NULL, '2026-04-08 03:43:08'),
+(2, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', 'HQ584172', 10000.00, 'Pending', NULL, '2026-04-08 10:58:23'),
+(3, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', 'HQ137348', 10000.00, 'Pending', NULL, '2026-04-08 11:24:24'),
+(4, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0412568176', 'hà nội', 'HQ2604081842628', 10000.00, 'Pending', NULL, '2026-04-08 11:42:05'),
+(5, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0351531616', 'hà nội', 'HQ2604081842203', 1120000.00, 'Pending', NULL, '2026-04-08 11:42:33'),
+(6, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0351531616', 'hà nội', 'HQ2604081842203', 1120000.00, 'Pending', NULL, '2026-04-08 11:42:33'),
+(7, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0351531616', 'hà nội', 'HQ2604081842203', 1120000.00, 'Pending', NULL, '2026-04-08 11:42:33'),
+(8, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0351531616', 'hà nội', 'HQ2604081842203', 1120000.00, 'Pending', NULL, '2026-04-08 11:42:33');
 
 -- --------------------------------------------------------
 
@@ -170,6 +191,16 @@ CREATE TABLE `order_items` (
   `quantity` int(11) NOT NULL CHECK (`quantity` > 0),
   `price_at_purchase` decimal(15,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `variant_id`, `quantity`, `price_at_purchase`) VALUES
+(1, 4, 3, 1, 10000.00),
+(2, 5, 3, 2, 10000.00),
+(3, 5, 1, 1, 450000.00),
+(4, 5, 5, 1, 650000.00);
 
 -- --------------------------------------------------------
 
@@ -244,52 +275,36 @@ INSERT INTO `product_variants` (`id`, `product_id`, `size`, `color`, `price`, `s
 (6, 3, 'M', 'Xanh Indigo', 650000.00, 25, 'HQ-QJ-I-32'),
 (7, 4, 'M', 'Be', 520000.00, 40, 'HQ-CT-BE-M'),
 (8, 4, 'L', 'Be', 520000.00, 30, 'HQ-CT-BE-L'),
-
 (9, 5, 'M', 'Xám', 600000.00, 35, 'HQ-RX-G-M'),
 (10, 5, 'L', 'Xám', 600000.00, 20, 'HQ-RX-G-L'),
-
 (11, 6, 'M', 'Nâu', 700000.00, 25, 'HQ-HR-BR-M'),
 (12, 6, 'L', 'Nâu', 700000.00, 15, 'HQ-HR-BR-L'),
-
 (13, 7, 'M', 'Xanh Navy', 650000.00, 50, 'HQ-CC-N-M'),
 (14, 7, 'L', 'Xanh Navy', 650000.00, 40, 'HQ-CC-N-L'),
-
 (15, 8, 'M', 'Đen', 720000.00, 45, 'HQ-BL-B-M'),
 (16, 8, 'L', 'Đen', 720000.00, 30, 'HQ-BL-B-L'),
-
 (17, 9, 'M', 'Xám', 800000.00, 20, 'HQ-RV-G-M'),
 (18, 9, 'L', 'Xám', 800000.00, 15, 'HQ-RV-G-L'),
-
 (19, 10, 'M', 'Trắng', 550000.00, 25, 'HQ-LN-W-M'),
 (20, 10, 'L', 'Trắng', 550000.00, 20, 'HQ-LN-W-L'),
-
 (21, 11, 'M', 'Kẻ sọc', 250000.00, 60, 'HQ-TS-ST-M'),
 (22, 11, 'L', 'Kẻ sọc', 250000.00, 50, 'HQ-TS-ST-L'),
-
 (23, 12, 'M', 'Xanh', 230000.00, 70, 'HQ-TS-BL-M'),
 (24, 12, 'L', 'Xanh', 230000.00, 60, 'HQ-TS-BL-L'),
-
 (25, 13, 'M', 'Trắng', 200000.00, 80, 'HQ-TS-W-M'),
 (26, 13, 'L', 'Trắng', 200000.00, 70, 'HQ-TS-W-L'),
-
 (27, 14, 'M', 'Đen', 180000.00, 90, 'HQ-CT-B-M'),
 (28, 14, 'L', 'Đen', 180000.00, 85, 'HQ-CT-B-L'),
-
 (29, 15, 'M', 'Be', 220000.00, 60, 'HQ-HL-BE-M'),
 (30, 15, 'L', 'Be', 220000.00, 50, 'HQ-HL-BE-L'),
-
 (31, 16, 'M', 'Xám', 400000.00, 40, 'HQ-MI-G-M'),
 (32, 16, 'L', 'Xám', 400000.00, 30, 'HQ-MI-G-L'),
-
 (33, 17, 'M', 'Trắng', 350000.00, 50, 'HQ-PL-W-M'),
 (34, 17, 'L', 'Trắng', 350000.00, 40, 'HQ-PL-W-L'),
-
 (35, 18, 'M', 'Xanh', 380000.00, 45, 'HQ-CT-BL-M'),
 (36, 18, 'L', 'Xanh', 380000.00, 35, 'HQ-CT-BL-L'),
-
 (37, 19, 'M', 'Kẻ sọc', 360000.00, 55, 'HQ-PL-ST-M'),
 (38, 19, 'L', 'Kẻ sọc', 360000.00, 45, 'HQ-PL-ST-L'),
-
 (39, 20, 'M', 'Xanh Navy', 370000.00, 50, 'HQ-PL-N-M'),
 (40, 20, 'L', 'Xanh Navy', 370000.00, 40, 'HQ-PL-N-L');
 
@@ -575,7 +590,7 @@ ALTER TABLE `carts`
 -- AUTO_INCREMENT cho bảng `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -599,13 +614,13 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `products`

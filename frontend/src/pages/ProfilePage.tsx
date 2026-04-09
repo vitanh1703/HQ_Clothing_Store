@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
 
   useEffect(() => {
     const auth = localStorage.getItem("auth");
@@ -14,6 +17,22 @@ const ProfilePage = () => {
 
     const userData = JSON.parse(auth);
     setUser(userData.user);
+
+    const fetchOrders = async () => {
+      try {
+        const userId = userData.user.id || userData.user.Id;
+        if (userId) {
+          const res = await axios.get(`https://localhost:7137/api/orders/user/${userId}`);
+          setOrders(res.data);
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải lịch sử mua hàng:", error);
+      } finally {
+        setLoadingOrders(false);
+      }
+    };
+
+    fetchOrders();
   }, [navigate]);
 
   if (!user) {
@@ -67,17 +86,54 @@ const ProfilePage = () => {
           </div>
 
           <div>
-              <h2 className="text-xl font-bold uppercase mb-4">Lịch sử mua hàng</h2>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-              <p className="text-gray-600 mb-4">Chưa có đơn hàng nào</p>
+            <h2 className="text-xl font-bold uppercase mb-4">Lịch sử mua hàng</h2>
+            {loadingOrders ? (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                <p className="text-gray-600">Đang tải lịch sử mua hàng...</p>
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                <p className="text-gray-600 mb-4">Chưa có đơn hàng nào</p>
                 <button
-                onClick={() => navigate("/products")}
-                className="bg-black text-white px-6 py-2 rounded-lg font-bold uppercase text-sm hover:bg-gray-800 transition-colors"
-              >
-                Mua sắm ngay
-              </button>
-            </div>
-        </div>
+                  onClick={() => navigate("/products")}
+                  className="bg-black text-white px-6 py-2 rounded-lg font-bold uppercase text-sm hover:bg-gray-800 transition-colors"
+                >
+                  Mua sắm ngay
+                </button>
+              </div>
+            ) : (
+              <div className="bg-white border border-gray-200 rounded-lg max-h-90 overflow-y-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-gray-50 border-b border-gray-200 uppercase text-xs tracking-wider sticky top-0 z-10">
+                    <tr>
+                      <th className="p-4 font-bold">Mã đơn hàng</th>
+                      <th className="p-4 font-bold">Ngày đặt</th>
+                      <th className="p-4 font-bold">Tổng tiền</th>
+                      <th className="p-4 font-bold">Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {orders.map((order) => (
+                      <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-4 font-semibold">{order.orderCode}</td>
+                        <td className="p-4 text-gray-500">
+                          {new Date(order.orderDate).toLocaleDateString('vi-VN')}
+                        </td>
+                        <td className="p-4 font-bold text-red-600">
+                          {order.totalAmount.toLocaleString()}đ
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : order.status === 'Success' ? 'bg-green-100 text-green-700' : order.status === 'Shipping' ? 'bg-blue-100 text-blue-700' : order.status === 'Cancel' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`}>
+                            {order.status === 'Pending' ? 'Chờ xử lý' : order.status === 'Success' ? 'Thành công' : order.status === 'Shipping' ? 'Đang giao' : order.status === 'Cancel' ? 'Đã hủy' : order.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
           <div className="mt-8 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-bold uppercase mb-4">Cài đặt tài khoản</h2>
             <div className="flex gap-4">

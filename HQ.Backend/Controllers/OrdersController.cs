@@ -121,5 +121,25 @@ namespace HQ.Backend.Controllers
                 return StatusCode(500, new { error = 1, message = "Lỗi Database: " + ex.Message });
             }
         }
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetUserOrders(int userId)
+        {
+            var orders = await _context.Orders
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => new
+                {
+                    o.Id,
+                    o.OrderCode,
+                    o.TotalAmount,
+                    o.Status,
+                    o.OrderDate
+                })
+                .ToListAsync();
+
+            return Ok(orders);
+        }
     }
 }
+  

@@ -319,8 +319,6 @@
         }
       }
     },
-<<<<<<< HEAD
-=======
     "/api/Orders/user/{userId}": {
       "get": {
         "tags": [
@@ -437,7 +435,6 @@
         }
       }
     },
->>>>>>> af968c8eb3e57dc1fc2c3552f0b44742b4b38ed8
     "/api/Products": {
       "get": {
         "tags": [
@@ -580,6 +577,90 @@
         "tags": [
           "Services"
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Users/{id}/info": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInfoRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInfoRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInfoRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Users/{id}/password": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -740,8 +821,6 @@
         },
         "additionalProperties": false
       },
-<<<<<<< HEAD
-=======
       "ResetPasswordDto": {
         "type": "object",
         "properties": {
@@ -792,7 +871,6 @@
         },
         "additionalProperties": false
       },
->>>>>>> af968c8eb3e57dc1fc2c3552f0b44742b4b38ed8
       "User": {
         "type": "object",
         "properties": {

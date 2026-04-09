@@ -64,7 +64,7 @@ const SidebarFilters = () => {
       {/* 3. CATEGORY - Dạng List */}
       <FilterWrapper title="Danh mục" isOpen={openMenus.includes("Danh mục")} onToggle={() => toggleMenu("Danh mục")}>
         <div className="space-y-2 mt-2">
-          {["Shirts", "Polo Shirts", "Jeans", "Jackets"].map(cat => (
+          {["Áo khoác", "Sơ thun", "Áo len & Áo dệt kim", "Phụ kiện"].map(cat => (
             <p key={cat} className="text-[10px] font-bold uppercase text-gray-500 hover:text-black cursor-pointer transition-colors">
               {cat} <span className="text-gray-300 ml-1">(12)</span>
             </p>

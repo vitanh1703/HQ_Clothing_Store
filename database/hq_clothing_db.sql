@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 08, 2026 lúc 09:36 AM
+-- Thời gian đã tạo: Th4 09, 2026 lúc 04:45 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -61,7 +61,9 @@ CREATE TABLE `cart_items` (
 INSERT INTO `cart_items` (`id`, `cart_id`, `variant_id`, `quantity`) VALUES
 (8, 3, 1, 1),
 (9, 3, 4, 1),
-(17, 2, 3, 1);
+(20, 2, 1, 1),
+(21, 2, 5, 1),
+(22, 2, 3, 2);
 
 -- --------------------------------------------------------
 
@@ -151,11 +153,30 @@ INSERT INTO `news` (`id`, `category`, `title`, `publish_date`, `img_url`, `descr
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `full_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `address` text DEFAULT NULL,
   `order_code` varchar(255) DEFAULT NULL,
   `total_amount` decimal(15,2) NOT NULL,
   `status` enum('Pending','Shipping','Success','Cancel') NOT NULL DEFAULT 'Pending',
+  `payment_date` datetime DEFAULT NULL,
   `order_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `orders`
+--
+
+INSERT INTO `orders` (`id`, `user_id`, `full_name`, `email`, `phone`, `address`, `order_code`, `total_amount`, `status`, `payment_date`, `order_date`) VALUES
+(1, 1, NULL, NULL, NULL, NULL, 'HQ123456', 250000.00, 'Success', NULL, '2026-04-08 03:43:08'),
+(2, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', 'HQ584172', 10000.00, 'Pending', NULL, '2026-04-08 10:58:23'),
+(3, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', 'HQ137348', 10000.00, 'Pending', NULL, '2026-04-08 11:24:24'),
+(4, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0412568176', 'hà nội', 'HQ2604081842628', 10000.00, 'Pending', NULL, '2026-04-08 11:42:05'),
+(5, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0351531616', 'hà nội', 'HQ2604081842203', 1120000.00, 'Pending', NULL, '2026-04-08 11:42:33'),
+(6, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0351531616', 'hà nội', 'HQ2604081842203', 1120000.00, 'Pending', NULL, '2026-04-08 11:42:33'),
+(7, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0351531616', 'hà nội', 'HQ2604081842203', 1120000.00, 'Pending', NULL, '2026-04-08 11:42:33'),
+(8, 4, 'Diêm Việt Anh', 'diema448@gmail.com', '0351531616', 'hà nội', 'HQ2604081842203', 1120000.00, 'Pending', NULL, '2026-04-08 11:42:33');
 
 -- --------------------------------------------------------
 
@@ -170,6 +191,16 @@ CREATE TABLE `order_items` (
   `quantity` int(11) NOT NULL CHECK (`quantity` > 0),
   `price_at_purchase` decimal(15,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `variant_id`, `quantity`, `price_at_purchase`) VALUES
+(1, 4, 3, 1, 10000.00),
+(2, 5, 3, 2, 10000.00),
+(3, 5, 1, 1, 450000.00),
+(4, 5, 5, 1, 650000.00);
 
 -- --------------------------------------------------------
 
@@ -525,7 +556,7 @@ ALTER TABLE `carts`
 -- AUTO_INCREMENT cho bảng `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -549,13 +580,13 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `products`

@@ -525,7 +525,6 @@ C:\Webnangcap\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\refint\HQ.Backend.dl
 C:\Webnangcap\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.pdb
 C:\Webnangcap\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.genruntimeconfig.cache
 C:\Webnangcap\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\ref\HQ.Backend.dll
-C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\appsettings.Development.json
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\appsettings.json
 D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\HQ.Backend.staticwebassets.endpoints.json
@@ -664,3 +663,4 @@ D:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll
 C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
 C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
 C:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll
+C:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+﻿import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 interface Variant {
@@ -19,65 +19,105 @@ interface Product {
   variants: Variant[];
 }
 
+interface ReviewItem {
+  id: number;
+  userId: number;
+  productId: number;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  userName: string;
+}
+
+interface ReviewResponse {
+  averageRating: number;
+  totalReviews: number;
+  reviews: ReviewItem[];
+}
+
+const API_BASE = "https://localhost:7137/api";
+
+const renderStars = (rating: number) => {
+  const rounded = Math.round(rating);
+  return (
+    <span className="text-yellow-500" aria-label={`${rating} sao`}>
+      {"\u2605".repeat(rounded)}
+      <span className="text-gray-300">{"\u2605".repeat(5 - rounded)}</span>
+    </span>
+  );
+};
+
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
+  const [reviewsData, setReviewsData] = useState<ReviewResponse>({
+    averageRating: 0,
+    totalReviews: 0,
+    reviews: [],
+  });
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // --- Gọi API để lấy chi tiết sản phẩm ---
   useEffect(() => {
     if (!id) return;
 
     setLoading(true);
-    axios.get(`https://localhost:7137/api/products/${id}`)
-      .then(res => {
-        setProduct(res.data);
-        // Không set mặc định selectedColor và selectedSize
+    axios
+      .get(`${API_BASE}/products/${id}`)
+      .then((productRes) => {
+        setProduct(productRes.data);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         setError("Không tải được sản phẩm");
       })
       .finally(() => setLoading(false));
+
+    axios
+      .get(`${API_BASE}/products/${id}/reviews`)
+      .then((reviewsRes) => {
+        setReviewsData(reviewsRes.data);
+      })
+      .catch((err) => {
+        console.error("Không tải được reviews:", err);
+        setReviewsData({
+          averageRating: 0,
+          totalReviews: 0,
+          reviews: [],
+        });
+      });
   }, [id]);
 
-  if (loading) return <div className="text-center py-20">Đang tải sản phẩm...</div>;
-  if (error) return <div className="text-center py-20 text-red-500">{error}</div>;
+  if (loading) return <div className="py-20 text-center">Đang tải sản phẩm...</div>;
+  if (error) return <div className="py-20 text-center text-red-500">{error}</div>;
   if (!product) return null;
 
-  // Tính toán availableColors từ tất cả variants
-  const availableColors = Array.from(new Set(product.variants?.map(v => v.color) || []));
+  const availableColors = Array.from(new Set(product.variants.map((v) => v.color)));
+  const allSizes = Array.from(new Set(product.variants.map((v) => v.size)));
 
-  // Tính toán tất cả sizes có thể có
-  const allSizes = Array.from(new Set(product.variants?.map(v => v.size) || []));
-
-  // Tính toán availableSizes dựa trên màu được chọn
   const availableSizes = selectedColor
-    ? product.variants?.filter(v => v.color === selectedColor).map(v => v.size) || []
-    : allSizes; // Nếu chưa chọn màu, hiển thị tất cả sizes
+    ? product.variants.filter((v) => v.color === selectedColor).map((v) => v.size)
+    : allSizes;
 
-  // Tìm variant được chọn dựa trên color và size
-  const selectedVariant = selectedColor && selectedSize
-    ? product.variants?.find(v => v.color === selectedColor && v.size === selectedSize) || null
-    : null;
+  const selectedVariant =
+    selectedColor && selectedSize
+      ? product.variants.find((v) => v.color === selectedColor && v.size === selectedSize) || null
+      : null;
 
-  // --- Hàm tăng/giảm số lượng ---
   const handleQuantity = (type: "plus" | "minus") => {
     if (type === "plus") {
       const maxStock = selectedVariant?.stockQuantity || 99;
-      if (quantity < maxStock) setQuantity(q => q + 1);
-    } else {
-      if (quantity > 1) setQuantity(q => q - 1);
+      if (quantity < maxStock) setQuantity((q) => q + 1);
+    } else if (quantity > 1) {
+      setQuantity((q) => q - 1);
     }
   };
 
-  // --- Hàm add to cart ---
   const handleAddToCart = async () => {
     if (!selectedColor || !selectedSize) {
       alert("Vui lòng chọn màu và size!");
@@ -97,97 +137,143 @@ const ProductDetailPage = () => {
     }
 
     try {
-      await axios.post("https://localhost:7137/api/cart/add", {
-        userId: userId,
+      await axios.post(`${API_BASE}/cart/add`, {
+        userId,
         variantId: selectedVariant.id,
-        quantity: quantity
+        quantity,
       });
 
-      alert("✅ Đã thêm vào giỏ hàng!");
+      alert("Đã thêm vào giỏ hàng!");
       navigate("/cart");
-
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       alert("Lỗi thêm giỏ hàng!");
     }
   };
+
   return (
-    <div className="max-w-6xl mx-auto p-6 flex flex-col md:flex-row gap-8">
-      {/* Ảnh sản phẩm */}
-      <div className="flex-1">
-        <img 
-          src={product.imageUrl} 
-          alt={product.name} 
-          className="w-full rounded object-cover"
-        />
+    <div className="mx-auto max-w-6xl p-6">
+      <div className="flex flex-col gap-8 md:flex-row">
+        <div className="flex-1">
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="w-full rounded object-cover"
+          />
+        </div>
+
+        <div className="flex flex-1 flex-col gap-4">
+          <h1 className="text-2xl font-bold uppercase">{product.name}</h1>
+          <p className="text-gray-500">{product.brandText || "H&Q"}</p>
+
+          <div className="flex items-center gap-2 text-sm">
+            {renderStars(reviewsData.averageRating)}
+            <span className="font-semibold">{reviewsData.averageRating.toFixed(1)}</span>
+            <span className="text-gray-500">({reviewsData.totalReviews} đánh giá)</span>
+          </div>
+
+          <p className="mt-2">{product.description}</p>
+
+          <p className="mt-4 text-xl font-bold text-red-600">
+            {(selectedVariant ? selectedVariant.price : product.variants[0]?.price)?.toLocaleString()}đ
+          </p>
+
+          <div className="mt-2 flex gap-2">
+            <span className="text-sm font-medium">Màu sắc:</span>
+            {availableColors.map((color) => (
+              <button
+                key={color}
+                onClick={() => {
+                  setSelectedColor(color);
+                  if (
+                    selectedSize &&
+                    !product.variants.some((v) => v.color === color && v.size === selectedSize)
+                  ) {
+                    setSelectedSize(null);
+                  }
+                }}
+                className={`rounded border px-3 py-1 text-xs font-bold ${
+                  selectedColor === color ? "bg-black text-white" : "bg-white text-black"
+                }`}
+              >
+                {color}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-2 flex gap-2">
+            <span className="text-sm font-medium">Size:</span>
+            {allSizes.map((size) => {
+              const isAvailable = !selectedColor || availableSizes.includes(size);
+              return (
+                <button
+                  key={size}
+                  onClick={() => isAvailable && setSelectedSize(size)}
+                  disabled={!isAvailable}
+                  className={`rounded border px-3 py-1 text-xs font-bold ${
+                    selectedSize === size ? "bg-black text-white" : "bg-white text-black"
+                  } ${!isAvailable ? "cursor-not-allowed opacity-50" : ""}`}
+                >
+                  {size}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 flex items-center gap-4">
+            <button onClick={() => handleQuantity("minus")} className="border px-2">
+              -
+            </button>
+            <span>{quantity}</span>
+            <button onClick={() => handleQuantity("plus")} className="border px-2">
+              +
+            </button>
+          </div>
+
+          <button
+            className="mt-4 rounded bg-black px-6 py-2 text-white hover:bg-gray-800"
+            onClick={handleAddToCart}
+          >
+            Thêm vào giỏ hàng
+          </button>
+        </div>
       </div>
 
-      {/* Thông tin sản phẩm */}
-      <div className="flex-1 flex flex-col gap-4">
-        <h1 className="text-2xl font-bold uppercase">{product.name}</h1>
-        <p className="text-gray-500">{product.brandText || "H&Q"}</p>
-        <p className="mt-2">{product.description}</p>
-
-        {/* Giá sản phẩm */}
-        <p className="text-xl font-bold mt-4">
-          {selectedVariant ? selectedVariant.price.toLocaleString() : product.variants?.[0]?.price.toLocaleString()}đ
-        </p>
-
-        {/* Chọn màu */}
-        <div className="flex gap-2 mt-2">
-          <span className="text-sm font-medium">Màu sắc:</span>
-          {availableColors.map(color => (
-            <button
-              key={color}
-              onClick={() => {
-                setSelectedColor(color);
-                // Reset size nếu size hiện tại không có cho màu mới
-                if (selectedSize && !product.variants?.some(v => v.color === color && v.size === selectedSize)) {
-                  setSelectedSize(null);
-                }
-              }}
-              className={`px-3 py-1 border rounded text-xs font-bold
-                ${selectedColor === color ? "bg-black text-white" : "bg-white text-black"}`}
-            >
-              {color}
-            </button>
-          ))}
+      <div className="mt-12 border-t pt-8">
+        <div className="mb-6 flex items-center gap-3">
+          <h2 className="text-2xl font-bold">Đánh giá sản phẩm</h2>
+          <div className="flex items-center gap-2 text-sm">
+            {renderStars(reviewsData.averageRating)}
+            <span className="font-semibold">{reviewsData.averageRating.toFixed(1)}</span>
+            <span className="text-gray-500">({reviewsData.totalReviews} đánh giá)</span>
+          </div>
         </div>
 
-        {/* Chọn size */}
-        <div className="flex gap-2 mt-2">
-          <span className="text-sm font-medium">Size:</span>
-          {allSizes.map(size => {
-            const isAvailable = !selectedColor || availableSizes.includes(size);
-            return (
-              <button
-                key={size}
-                onClick={() => isAvailable && setSelectedSize(size)}
-                disabled={!isAvailable}
-                className={`px-3 py-1 border rounded text-xs font-bold
-                  ${selectedSize === size ? "bg-black text-white" : "bg-white text-black"}
-                  ${!isAvailable ? "opacity-50 cursor-not-allowed" : ""}`}
-              >
-                {size}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Số lượng */}
-        <div className="flex items-center gap-4 mt-4">
-          <button onClick={() => handleQuantity("minus")} className="px-2 border">-</button>
-          <span>{quantity}</span>
-          <button onClick={() => handleQuantity("plus")} className="px-2 border">+</button>
-        </div>
-
-        {/* Add to Cart */}
-        <button 
-          className="mt-4 bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
-          onClick={handleAddToCart}
-        >
-          Thêm vào giỏ hàng
-        </button>
+        {reviewsData.reviews.length === 0 ? (
+          <p className="text-gray-500">
+            Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này.
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {reviewsData.reviews.map((review) => (
+              <div key={review.id} className="border-b pb-6">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="font-semibold">{review.userName}</p>
+                    <div className="mt-1 flex items-center gap-2 text-sm">
+                      {renderStars(review.rating)}
+                      <span>{review.rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    {new Date(review.createdAt).toLocaleDateString("vi-VN")}
+                  </span>
+                </div>
+                <p className="mt-3 text-gray-700">{review.comment}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

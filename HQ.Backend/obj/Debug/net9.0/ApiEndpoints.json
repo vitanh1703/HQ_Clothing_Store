@@ -1,5 +1,21 @@
 [
   {
+    "ContainingType": "HQ.Backend.Controllers.PasswordResetController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/auth/forgot-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.Controllers.PasswordResetController\u002BForgotPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HQ.Backend.Controllers.AuthController",
     "Method": "GoogleLogin",
     "RelativePath": "api/Auth/google-login",
@@ -42,6 +58,38 @@
       {
         "Name": "user",
         "Type": "HQ.Backend.Models.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.PasswordResetController",
+    "Method": "ResetPassword",
+    "RelativePath": "api/auth/reset-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.Controllers.PasswordResetController\u002BResetPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.PasswordResetController",
+    "Method": "VerifyOtp",
+    "RelativePath": "api/auth/verify-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.Controllers.PasswordResetController\u002BVerifyOtpDto",
         "IsRequired": true
       }
     ],
@@ -298,5 +346,50 @@
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": []
+<<<<<<< HEAD
+=======
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.UsersController",
+    "Method": "UpdateInfo",
+    "RelativePath": "api/Users/{id}/info",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.DTOs.UpdateInfoRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.UsersController",
+    "Method": "UpdatePassword",
+    "RelativePath": "api/Users/{id}/password",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.DTOs.UpdatePasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+>>>>>>> af968c8eb3e57dc1fc2c3552f0b44742b4b38ed8
   }
 ]

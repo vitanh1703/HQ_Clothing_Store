@@ -175,22 +175,6 @@
   },
   {
     "ContainingType": "HQ.Backend.Controllers.OrdersController",
-    "Method": "GetUserOrders",
-    "RelativePath": "api/Orders/user/{userId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "HQ.Backend.Controllers.OrdersController",
     "Method": "CassoWebhook",
     "RelativePath": "api/Orders/webhook/casso",
     "HttpMethod": "POST",
@@ -313,48 +297,6 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "HQ.Backend.Controllers.UsersController",
-    "Method": "UpdateInfo",
-    "RelativePath": "api/Users/{id}/info",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "request",
-        "Type": "HQ.Backend.Controllers.UpdateInfoRequest",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "HQ.Backend.Controllers.UsersController",
-    "Method": "UpdatePassword",
-    "RelativePath": "api/Users/{id}/password",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "request",
-        "Type": "HQ.Backend.Controllers.UpdatePasswordRequest",
-        "IsRequired": true
-      }
-    ],
     "ReturnTypes": []
   }
 ]

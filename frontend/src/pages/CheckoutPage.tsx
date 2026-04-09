@@ -235,8 +235,10 @@ const CheckoutPage = () => {
           <section className="mb-10">
             <h2 className="text-xl font-bold mb-4">Thông tin người đặt</h2>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="flex flex-col text-sm text-gray-700">
-                Họ và tên
+              <label className=" text-sm text-gray-700">
+                 <div className="flex items-center">
+                    Họ và tên<span className="text-red-500 ml-1">*</span>
+                  </div>
                 <input
                   type="text"
                   value={form.fullName}
@@ -245,7 +247,9 @@ const CheckoutPage = () => {
                 />
               </label>
               <label className="flex flex-col text-sm text-gray-700">
-                Email
+                <div className="flex items-center">
+                    Email<span className="text-red-500 ml-1">*</span>
+                  </div>
                 <input
                   type="email"
                   value={form.email}
@@ -254,7 +258,9 @@ const CheckoutPage = () => {
                 />
               </label>
               <label className="flex flex-col text-sm text-gray-700">
-                Số điện thoại
+                <div className="flex items-center">
+                    Số điện thoại <span className="text-red-500 ml-1">*</span>
+                  </div>
                 <input
                   type="tel"
                   value={form.phone}
@@ -263,7 +269,9 @@ const CheckoutPage = () => {
                 />
               </label>
               <label className="flex flex-col text-sm text-gray-700 md:col-span-2">
-                Địa chỉ giao hàng
+                <div className="flex items-center">
+                    Địa chỉ giao hàng<span className="text-red-500 ml-1">*</span>
+                  </div>
                 <input
                   type="text"
                   value={form.address}

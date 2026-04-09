@@ -160,7 +160,12 @@ CREATE TABLE `orders` (
   `order_code` varchar(255) DEFAULT NULL,
   `total_amount` decimal(15,2) NOT NULL,
   `status` enum('Pending','Shipping','Success','Cancel') NOT NULL DEFAULT 'Pending',
-  `order_date` timestamp NOT NULL DEFAULT current_timestamp()
+  `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `full_name` varchar(100) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `phone` varchar(15) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `payment_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

@@ -1,9 +1,32 @@
-import { useState } from "react";
-import { ChevronDown, Star } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { ChevronDown, Star, X } from "lucide-react";
+import type { Product } from "../services/api";
 
-const SidebarFilters = () => {
+export interface FilterState {
+  sizes: string[];
+  colors: string[];
+  minPrice: number;
+  maxPrice: number;
+  status: string[];
+  minRating: number | null;
+}
+
+interface SidebarFiltersProps {
+  products: Product[];
+  onFilterChange: (filters: FilterState) => void;
+  loading?: boolean;
+}
+
+const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFiltersProps) => {
   // State để đóng/mở các mục (Accordion)
   const [openMenus, setOpenMenus] = useState<string[]>(["Kích thước", "Khoảng giá"]);
+  
+  // Filter states
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 2000000 });
+  const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
   const toggleMenu = (menu: string) => {
     setOpenMenus(prev => 
@@ -11,20 +34,124 @@ const SidebarFilters = () => {
     );
   };
 
-  const sizes = ["XS", "S", "M", "L", "XL", "2X"];
-  const colors = [
-    { name: "Black", hex: "#000000" },
-    { name: "White", hex: "#FFFFFF" },
-    { name: "Navy", hex: "#000080" },
-    { name: "Beige", hex: "#F5F5DC" },
-    { name: "Gray", hex: "#808080" }
-  ];
+  // Extract unique sizes and colors from products
+  const extractedSizes = new Set<string>();
+  const extractedColors = new Set<string>();
+  let minPrice = Infinity;
+  let maxPrice = 0;
+
+  products.forEach(product => {
+    product.variants?.forEach(variant => {
+      if (variant.size) extractedSizes.add(variant.size);
+      if (variant.color) extractedColors.add(variant.color);
+      if (variant.price < minPrice) minPrice = variant.price;
+      if (variant.price > maxPrice) maxPrice = variant.price;
+    });
+  });
+
+  const sizes = Array.from(extractedSizes).sort();
+  const colors = Array.from(extractedColors);
+
+  // Vietnamese color mapping to hex codes - STATIC
+  const colorMap: Record<string, string> = useMemo(() => ({
+    "Trắng": "#FFFFFF",
+    "Đen": "#000000",
+    "Xanh Indigo": "#4B0082",
+    "Be": "#F5F5DC",
+    "Xám": "#808080",
+    "Xanh Navy": "#000080",
+    "Đỏ": "#FF0000",
+    "Xanh Lá": "#008000",
+    "Vàng": "#FFFF00",
+    "Hồng": "#FFC0CB",
+    "Tím": "#800080",
+    "Cam": "#FFA500",
+    "Xanh Dương": "#0000FF",
+  }), []);
+
+  // Memoized color hex mapping
+  const getColorHex = useMemo(() => {
+    return (colorName: string) => {
+      return colorMap[colorName] || "#CCCCCC"; // fallback to gray, not random
+    };
+  }, [colorMap]);
+
+  // Emit filter changes to parent
+  useEffect(() => {
+    onFilterChange({
+      sizes: selectedSizes,
+      colors: selectedColors,
+      minPrice: priceRange.min,
+      maxPrice: priceRange.max,
+      status: selectedStatus,
+      minRating: selectedRating,
+    });
+  }, [selectedSizes, selectedColors, priceRange, selectedStatus, selectedRating, onFilterChange]);
+
+  const handleSizeToggle = (size: string) => {
+    setSelectedSizes(prev => 
+      prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
+    );
+  };
+
+  const handleColorToggle = (color: string) => {
+    setSelectedColors(prev => 
+      prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]
+    );
+  };
+
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatus(prev => 
+      prev.includes(status) ? prev.filter(s => s !== status) : [...prev, status]
+    );
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPriceRange(prev => ({
+      ...prev,
+      max: Number(e.target.value)
+    }));
+  };
+
+  const handleRatingClick = (rating: number) => {
+    const newRating = selectedRating === rating ? null : rating;
+    setSelectedRating(newRating);
+  };
+
+  const clearAllFilters = () => {
+    setSelectedSizes([]);
+    setSelectedColors([]);
+    setSelectedStatus([]);
+    setPriceRange({ min: 0, max: 2000000 });
+    setSelectedRating(null);
+  };
+
+  // Determine availability status from stock quantity
+  const hasInStock = products.some(p => 
+    p.variants?.some(v => v.stockQuantity > 0)
+  );
+  const hasOutOfStock = products.some(p => 
+    p.variants?.some(v => v.stockQuantity === 0)
+  );
+
+  const activeFilterCount = selectedSizes.length + selectedColors.length + selectedStatus.length + (selectedRating ? 1 : 0);
 
   return (
     <div className="min-w-60 space-y-2 pb-20">
-      <h3 className="font-black uppercase text-[11px] tracking-[0.25em] mb-8 text-black border-b-2 border-black pb-2 w-fit">
-        Filters
-      </h3>
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="font-black uppercase text-[11px] tracking-[0.25em] text-black border-b-2 border-black pb-2 w-fit">
+          Filters
+        </h3>
+        {activeFilterCount > 0 && (
+          <button 
+            onClick={clearAllFilters}
+            className="text-[9px] font-bold text-gray-400 hover:text-black transition-colors flex items-center gap-1"
+          >
+            <X size={12} />
+            Clear
+          </button>
+        )}
+      </div>
 
       {/* 1. SIZE - Dạng Button Grid */}
       <div className="mb-8">
@@ -37,76 +164,140 @@ const SidebarFilters = () => {
         </div>
         {openMenus.includes("Kích thước") && (
           <div className="grid grid-cols-3 gap-2 mt-2 animate-in fade-in slide-in-from-top-1">
-            {sizes.map((s) => (
-              <button key={s} className="aspect-square border border-gray-200 text-[10px] font-bold hover:bg-black hover:text-white transition-all bg-white flex items-center justify-center">
-                {s}
-              </button>
-            ))}
+            {loading ? (
+              <div className="col-span-3 text-center text-[10px] text-gray-400">Loading...</div>
+            ) : sizes.length === 0 ? (
+              <div className="col-span-3 text-center text-[10px] text-gray-400">No sizes available</div>
+            ) : (
+              sizes.map((s) => (
+                <button 
+                  key={s} 
+                  onClick={() => handleSizeToggle(s)}
+                  className={`aspect-square border text-[10px] font-bold transition-all flex items-center justify-center ${
+                    selectedSizes.includes(s)
+                      ? "bg-black text-white border-black"
+                      : "border-gray-200 bg-white hover:bg-black hover:text-white"
+                  }`}
+                >
+                  {s}
+                </button>
+              ))
+            )}
           </div>
         )}
       </div>
 
-      {/* 2. AVAILABILITY - Dạng Checkbox */}
+      {/* 2. AVAILABILITY - Dynamic based on stock_quantity */}
       <FilterWrapper title="Tình trạng" isOpen={openMenus.includes("Tình trạng")} onToggle={() => toggleMenu("Tình trạng")}>
         <div className="space-y-2 mt-2">
-          {[{ label: "Còn hàng", value: "in-stock" },
-            { label: "Hết hàng", value: "out-of-stock" },
-            { label: "Đặt trước", value: "pre-order" }
-            ].map(item => (
-            <label key={item.value} className="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" className="w-4 h-4 accent-black border-gray-300 rounded" />
-              <span className="text-[10px] font-bold uppercase text-gray-600 group-hover:text-black">{item.label}</span>
+          {hasInStock && (
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <input 
+                type="checkbox" 
+                checked={selectedStatus.includes("in-stock")}
+                onChange={() => handleStatusToggle("in-stock")}
+                className="w-4 h-4 accent-black border-gray-300 rounded" 
+              />
+              <span className="text-[10px] font-bold uppercase text-gray-600 group-hover:text-black">Còn hàng</span>
             </label>
-          ))}
+          )}
+          {hasOutOfStock && (
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <input 
+                type="checkbox" 
+                checked={selectedStatus.includes("out-of-stock")}
+                onChange={() => handleStatusToggle("out-of-stock")}
+                className="w-4 h-4 accent-black border-gray-300 rounded" 
+              />
+              <span className="text-[10px] font-bold uppercase text-gray-600 group-hover:text-black">Hết hàng</span>
+            </label>
+          )}
+          {!hasInStock && !hasOutOfStock && (
+            <p className="text-[10px] text-gray-400">No products available</p>
+          )}
         </div>
       </FilterWrapper>
 
-      {/* 3. CATEGORY - Dạng List */}
-      <FilterWrapper title="Danh mục" isOpen={openMenus.includes("Danh mục")} onToggle={() => toggleMenu("Danh mục")}>
-        <div className="space-y-2 mt-2">
-          {["Áo khoác", "Sơ thun", "Áo len & Áo dệt kim", "Phụ kiện"].map(cat => (
-            <p key={cat} className="text-[10px] font-bold uppercase text-gray-500 hover:text-black cursor-pointer transition-colors">
-              {cat} <span className="text-gray-300 ml-1">(12)</span>
-            </p>
-          ))}
-        </div>
-      </FilterWrapper>
-
-      {/* 4. COLORS - Dạng Vòng tròn màu */}
+      {/* 3. COLORS - Dạng Vòng tròn màu */}
       <FilterWrapper title="Màu sắc" isOpen={openMenus.includes("Màu sắc")} onToggle={() => toggleMenu("Màu sắc")}>
         <div className="flex flex-wrap gap-3 mt-3">
-          {colors.map(color => (
-            <button 
-              key={color.name}
-              title={color.name}
-              className="w-6 h-6 rounded-full border border-gray-200 hover:scale-110 transition-transform shadow-sm"
-              style={{ backgroundColor: color.hex }}
-            />
-          ))}
+          {loading ? (
+            <div className="text-[10px] text-gray-400">Loading...</div>
+          ) : colors.length === 0 ? (
+            <div className="text-[10px] text-gray-400">No colors available</div>
+          ) : (
+            colors.map(color => (
+              <button 
+                key={color}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleColorToggle(color);
+                }}
+                title={color}
+                className={`w-6 h-6 rounded-full transition-all relative flex-shrink-0 ${
+                  selectedColors.includes(color) ? "ring-2 ring-offset-2 ring-gray-900" : "hover:opacity-80"
+                }`}
+                style={{ backgroundColor: getColorHex(color) }}
+              >
+                {selectedColors.includes(color) && (
+                  <div className="absolute inset-0 rounded-full border-2 border-white"></div>
+                )}
+              </button>
+            ))
+          )}
         </div>
       </FilterWrapper>
 
-      {/* 5. PRICE RANGE - Dạng Range Slider đơn giản */}
+      {/* 4. PRICE RANGE - Dạng Range Slider đơn giản */}
       <FilterWrapper title="Khoảng giá" isOpen={openMenus.includes("Khoảng giá")} onToggle={() => toggleMenu("Khoảng giá")}>
         <div className="mt-4 px-2">
-          <input type="range" className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black" />
+          <input 
+            type="range" 
+            min="0" 
+            max="2000000" 
+            value={priceRange.max}
+            onChange={handlePriceChange}
+            className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black" 
+          />
           <div className="flex justify-between mt-2 text-[9px] font-bold text-gray-400 uppercase">
             <span>0đ</span>
-            <span>2.000.000đ</span>
+            <span>{Math.max(...products.flatMap(p => p.variants?.map(v => v.price) ?? [])).toLocaleString()}đ</span>
+          </div>
+          <div className="mt-3 text-[10px] font-bold text-gray-600">
+            Max giá: <span className="text-black">{priceRange.max.toLocaleString()}đ</span>
           </div>
         </div>
       </FilterWrapper>
 
-      {/* 6. RATINGS - Dạng Sao */}
+      {/* 5. RATINGS - Filter products by average rating */}
       <FilterWrapper title="Đánh giá" isOpen={openMenus.includes("Đánh giá")} onToggle={() => toggleMenu("Đánh giá")}>
         <div className="space-y-2 mt-3">
-          {[5, 4, 3].map(star => (
-            <div key={star} className="flex items-center gap-1 cursor-pointer group">
+          {[5, 4, 3, 2, 1].map(star => (
+            <button
+              key={star}
+              type="button"
+              onClick={() => handleRatingClick(star)}
+              className={`w-full text-left flex items-center gap-1 p-2 rounded transition-colors ${
+                selectedRating === star 
+                  ? "bg-black text-white" 
+                  : "hover:bg-gray-100"
+              }`}
+            >
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={10} fill={i < star ? "black" : "none"} className={i < star ? "text-black" : "text-gray-200"} />
+                <Star 
+                  key={i} 
+                  size={10} 
+                  fill={i < star ? (selectedRating === star ? "white" : "black") : "none"} 
+                  className={i < star ? (selectedRating === star ? "text-white" : "text-black") : "text-gray-200"} 
+                />
               ))}
-              <span className="text-[9px] font-bold text-gray-400 ml-1 group-hover:text-black">& Up</span>
-            </div>
+              <span className={`text-[9px] font-bold ml-1 ${
+                selectedRating === star ? "text-white" : "text-gray-400"
+              }`}>
+                &Trở lên
+              </span>
+            </button>
           ))}
         </div>
       </FilterWrapper>

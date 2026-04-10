@@ -125,6 +125,16 @@ export interface PromotionCardProps {
   discountText: string;
 }
 
+export interface Review {
+  id: number;
+  userId: number;
+  productId: number;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  userName?: string;
+}
+
 export const authApi = {
   login: async (loginData: any) => {
     const response = await axios.post(`${API_BASE}/Auth/login`, {
@@ -205,6 +215,21 @@ export const promotionsApi = {
 
   validateCode: async (code: string): Promise<PromotionValidationResult> => {
     const response = await axios.get(`${API_BASE}/Promotions/validate/${encodeURIComponent(code)}`);
+    return response.data;
+  }
+};
+
+export const reviewApi = {
+  getAll: async (): Promise<Review[]> => {
+    const response = await axios.get(`${API_BASE}/Reviews`);
+    return response.data;
+  },
+  getByProduct: async (productId: number): Promise<Review[]> => {
+    const response = await axios.get(`${API_BASE}/Reviews/product/${productId}`);
+    return response.data;
+  },
+  getByRating: async (rating: number): Promise<Review[]> => {
+    const response = await axios.get(`${API_BASE}/Reviews/rating/${rating}`);
     return response.data;
   }
 };

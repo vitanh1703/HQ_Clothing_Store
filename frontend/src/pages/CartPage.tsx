@@ -33,6 +33,7 @@ const CartPage = () => {
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const [promotions, setPromotions] = useState<PromotionItem[]>([]);
   const [showPromoModal, setShowPromoModal] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   const userId = Number(localStorage.getItem("userId")) || 1;
 
@@ -104,7 +105,22 @@ const CartPage = () => {
       alert("Không thể xóa sản phẩm khỏi giỏ hàng");
     }
   };
+  const toggleSelectItem = (id: number) => {
+    setSelectedItems(prev =>
+      prev.includes(id)
+        ? prev.filter(itemId => itemId !== id)
+        : [...prev, id]
+    );
+  };
+  const toggleSelectAll = () => {
+    if (!cart) return;
 
+    if (selectedItems.length === cart.items.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(cart.items.map(item => item.id));
+    }
+  };
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
       setPromoMessage("Vui lòng nhập mã giảm giá.");
@@ -148,13 +164,17 @@ const CartPage = () => {
     localStorage.removeItem("selectedPromo");
   };
 
-  const totalPrice = cart?.items.reduce((sum, item) => sum + item.total, 0) || 0;
-  const discountAmount = promoResult
-    ? promoResult.discountType === "Percentage"
-      ? Math.round((totalPrice * promoResult.discountValue) / 100)
-      : Math.min(promoResult.discountValue, totalPrice)
-    : 0;
-  const totalAfterDiscount = totalPrice - discountAmount;
+  const selectedCartItems = cart?.items.filter(item =>
+    selectedItems.includes(item.id)
+  ) || [];
+
+  const totalPrice = selectedCartItems.reduce((sum, item) => sum + item.total, 0);
+    const discountAmount = promoResult
+      ? promoResult.discountType === "Percentage"
+        ? Math.round((totalPrice * promoResult.discountValue) / 100)
+        : Math.min(promoResult.discountValue, totalPrice)
+      : 0;
+    const totalAfterDiscount = totalPrice - discountAmount;
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] px-8 py-6">
@@ -168,6 +188,14 @@ const CartPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* LEFT: Danh sách sản phẩm */}
           <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center gap-2 mb-3">
+              <input
+                type="checkbox"
+                checked={cart && selectedItems.length === cart.items.length}
+                onChange={toggleSelectAll}
+              />
+              <span>Chọn tất cả</span>
+          </div>
             {cart.items.map(item => (
               <div
                 key={item.id}
@@ -175,13 +203,19 @@ const CartPage = () => {
                 onClick={() => navigate(`/products/${item.productId}`)}
               >
                 <div className="flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.includes(item.id)}
+                    onClick={(e) => e.stopPropagation()} // 🔥 QUAN TRỌNG
+                    onChange={() => toggleSelectItem(item.id)}
+                    className="w-5 h-5"
+                  />
                   <img
                     src={item.image}
                     alt={item.productName}
                     className="w-20 h-24 object-cover rounded-md cursor-pointer"
                     onClick={() => navigate(`/product/${item.productId}`)}
-                  />
-
+                  />             
                   <div className="flex flex-col justify-between">
                     <div>
                       <h2 className="font-bold">{item.productName}</h2>
@@ -308,7 +342,20 @@ const CartPage = () => {
 
             <button
               className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800"
-              onClick={() => navigate("/checkout")}
+              onClick={() => {
+              if (selectedItems.length === 0) {
+                alert("Vui lòng chọn ít nhất 1 sản phẩm");
+                return;
+              }
+
+              navigate("/checkout", {
+                state: {
+                  items: selectedCartItems,
+                  promo: promoResult,
+                  total: totalPrice
+                }
+              });
+            }}
             >
               Checkout
             </button>

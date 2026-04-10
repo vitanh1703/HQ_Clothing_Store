@@ -5,6 +5,7 @@ import type { CheckoutCartItem, CheckoutResponse, PromotionItem, PromotionValida
 import { PromoSelectionModal } from "../components/PromoSelectionModal";
 import { checkoutController } from "../services/controller";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,10 @@ const CheckoutPage = () => {
     phone: "",
     address: "",
   });
+  const location = useLocation();
+  const selectedItems = location.state?.items || [];
+  const promoFromCart = location.state?.promo || null;
+  const totalFromCart = location.state?.total || 0;
   const [promoCode, setPromoCode] = useState("");
   const [promoMessage, setPromoMessage] = useState("");
   const [promoResult, setPromoResult] = useState<PromotionValidationResult | null>(null);
@@ -26,56 +31,48 @@ const CheckoutPage = () => {
   const userId = Number(localStorage.getItem("userId")) || 1;
 
   useEffect(() => {
-    const fetchCheckout = async () => {
-      try {
-        const data = await cartApi.getCheckout(userId);
-        setCheckoutData(data);
-        setForm({
-          fullName: data.user.fullName,
-          email: data.user.email,
-          phone: data.user.phone || "",
-          address: data.user.address || "",
-        });
-      } catch (err) {
-        console.error("Lỗi khi lấy dữ liệu checkout:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!selectedItems || selectedItems.length === 0) {
+      navigate("/cart");
+      return;
+    }
 
-    const fetchPromotions = async () => {
-      try {
-        const data = await promotionsApi.getAll();
-        setPromotions(data);
-      } catch (err) {
-        console.error("Lỗi lấy danh sách mã giảm giá:", err);
-      }
-    };
+    // set data từ cart
+  setCheckoutData({
+    id: 0,
+    orderCode: "",
+    cartId: 0,
+    items: selectedItems,
+    user: {
+      fullName: "",
+      email: "",
+      phone: "",
+      address: ""
+    }
+  });
 
-    const restorePromo = () => {
-      const stored = localStorage.getItem("selectedPromo");
-      if (!stored) return;
+  // set promo nếu có
+  if (promoFromCart) {
+    setPromoResult(promoFromCart);
+    setPromoCode(promoFromCart.code);
+    setPromoMessage(`Mã ${promoFromCart.code} đã được áp dụng.`);
+  }
 
-      try {
-        const parsed: PromotionValidationResult = JSON.parse(stored);
-        setPromoCode(parsed.code);
-        setPromoResult(parsed);
-        setPromoMessage(`Mã ${parsed.code} đã được áp dụng.`);
-      } catch {
-        localStorage.removeItem("selectedPromo");
-      }
-    };
+  // fetch thêm danh sách mã giảm giá
+  const fetchPromotions = async () => {
+    try {
+      const data = await promotionsApi.getAll();
+      setPromotions(data);
+    } catch (err) {
+      console.error("Lỗi lấy danh sách mã giảm giá:", err);
+    }
+  };
 
-    fetchCheckout();
-    fetchPromotions();
-    restorePromo();
-  }, [userId]);
+  fetchPromotions();
 
-  const totalPrice = useMemo(
-    () =>
-      checkoutData?.items.reduce((sum, item) => sum + item.total, 0) ?? 0,
-    [checkoutData]
-  );
+  setLoading(false);
+}, []);
+
+  const totalPrice = totalFromCart;
 
   const discountAmount = useMemo(() => {
     if (!promoResult) return 0;

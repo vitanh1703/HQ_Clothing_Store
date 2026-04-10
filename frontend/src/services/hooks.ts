@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { authApi, productApi, cartApi, newsApi, servicesApi, promotionsApi, type Product, type NewsItem, type ServiceItem, type PromotionItem, type Category, type NewsTitle } from "./api";
+import { authApi, productApi, cartApi, newsApi, servicesApi, promotionsApi, reviewApi, type Product, type NewsItem, type ServiceItem, type PromotionItem, type Category, type NewsTitle, type Review } from "./api";
 import { authController } from "./controller";
 
 export const useAuth = () => {
@@ -251,4 +251,32 @@ export const useNewsTitles = () => {
   }, []);
 
   return { newsTitles, loading, error, refetch: fetchNewsTitles };
+};
+
+export const useReviews = (productId?: number) => {
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchReviews = async (pId?: number) => {
+    if (!pId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await reviewApi.getByProduct(pId);
+      setReviews(data);
+    } catch (err: any) {
+      setError(err.message || "Không thể tải đánh giá");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (productId) {
+      fetchReviews(productId);
+    }
+  }, [productId]);
+
+  return { reviews, loading, error, refetch: fetchReviews };
 };

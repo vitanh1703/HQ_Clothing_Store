@@ -200,7 +200,11 @@ const CartPage = () => {
               <div
                 key={item.id}
                 className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50"
-                onClick={() => navigate(`/products/${item.productId}`)}
+                onClick={() =>
+              navigate(`/products/${item.productId}`, {
+                state: { from: "cart" }
+              })
+            }
               >
                 <div className="flex items-center gap-4">
                   <input

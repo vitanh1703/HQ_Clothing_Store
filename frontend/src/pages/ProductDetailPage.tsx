@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 
 interface Variant {
@@ -50,6 +51,8 @@ const renderStars = (rating: number) => {
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from;
 
   const [product, setProduct] = useState<Product | null>(null);
   const [reviewsData, setReviewsData] = useState<ReviewResponse>({
@@ -153,6 +156,17 @@ const ProductDetailPage = () => {
 
   return (
     <div className="mx-auto max-w-6xl p-6">
+      <button
+        onClick={() => {
+          if (from === "cart") navigate("/cart");
+          else if (from === "products") navigate("/products");
+          else navigate(-1);
+        }}
+        className="mb-4 inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium text-gray-500 transition hover:bg-gray-100 hover:text-black"
+      >
+        <span className="text-sm">←</span>
+        Quay lại
+      </button>
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="flex-1">
           <img

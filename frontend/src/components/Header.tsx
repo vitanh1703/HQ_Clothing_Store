@@ -2,6 +2,7 @@ import { Menu, ShoppingBag, User, Heart } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useCategories } from "../services/hooks";
+import { useNewsTitles } from "../services/hooks";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -9,8 +10,10 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
+  const [isNewsDropdownOpen, setIsNewsDropdownOpen] = useState(false);
   const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
   const { categories } = useCategories();
+  const { newsTitles } = useNewsTitles();
 
   useEffect(() => {
     const checkAuth = () => {
@@ -71,7 +74,7 @@ const Header = () => {
             </button>
             
             <div
-              className="relative shrink-0 w-full md:w-auto text-left"
+              className="relative"
               onMouseEnter={() => setIsProductsDropdownOpen(true)}
               onMouseLeave={() => setIsProductsDropdownOpen(false)}
             >
@@ -82,7 +85,7 @@ const Header = () => {
                 Sản phẩm
               </button>
               {isProductsDropdownOpen && (
-                <div className="md:absolute static top-full left-0 mt-4 md:mt-6 w-full md:w-56 bg-gray-50 md:bg-white border-none md:border border-gray-100 rounded-xl md:shadow-xl py-2 md:py-3 z-50 overflow-hidden">
+                <div className="md:absolute static top-full left-0  w-full md:w-56 bg-gray-50 md:bg-white border-none md:border border-gray-100 rounded-xl md:shadow-xl py-2 md:py-3 z-50 overflow-hidden">
                   <button 
                     onClick={() => {
                       navigate(`/products`);
@@ -110,9 +113,52 @@ const Header = () => {
               )}
             </div>
 
-            <button onClick={() => { navigate("/news"); setIsNavMenuOpen(false); }} className={`hover:text-black transition-colors shrink-0 ${location.pathname.startsWith('/news') ? 'text-black' : ''}`}>
-              Tin tức
-            </button>
+            <div
+              className="relative"
+              onMouseEnter={() => setIsNewsDropdownOpen(true)}
+              onMouseLeave={() => setIsNewsDropdownOpen(false)}
+            >
+              <button 
+                onClick={() => navigate("/news")} 
+                className={`hover:text-black transition-colors shrink-0 ${location.pathname.startsWith('/news') ? 'text-black' : ''}`}
+              >
+                Tin tức
+              </button>
+
+              {isNewsDropdownOpen && (
+                <div className="md:absolute static top-full left-0 w-full md:w-64 bg-gray-50 md:bg-white border-none md:border border-gray-100 rounded-xl md:shadow-xl py-2 md:py-3 z-50 overflow-hidden">
+                  
+                  {/* Tất cả */}
+                  <button 
+                    onClick={() => {
+                      navigate("/news");
+                      setIsNewsDropdownOpen(false);
+                      setIsNavMenuOpen(false);
+                    }}
+                    className="w-full text-left px-5 py-3 text-sm font-bold hover:bg-gray-100 md:hover:bg-gray-50"
+                  >
+                    Tất cả bài viết
+                  </button>
+
+                  {/* Map API */}
+                  {newsTitles?.slice(0, 5).map((news: any) => (
+                    <button
+                      key={news.id}
+                      onClick={() => {
+                        navigate(`/news/${news.id}`);
+                        setIsNewsDropdownOpen(false);
+                        setIsNavMenuOpen(false);
+                      }}
+                      className="w-full text-left px-5 py-3 text-sm hover:bg-gray-100 md:hover:bg-gray-50"
+                    >
+                      <div className="font-medium">{news.title}</div>
+                      <div className="text-xs text-gray-500">{news.category}</div>
+                    </button>
+                  ))}
+
+                </div>
+              )}
+            </div>
 
             <button onClick={() => { navigate("/aboutus"); setIsNavMenuOpen(false); }} className={`hover:text-black transition-colors shrink-0 ${location.pathname.startsWith('/aboutus') ? 'text-black' : ''}`}>
               About us

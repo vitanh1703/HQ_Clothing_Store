@@ -20,6 +20,7 @@ import ShippingPolicy from './pages/ShippingPolicy';
 import PaymentPage from './pages/PaymentPage';
 import FAQPage from './pages/FAQPage';
 import AboutUsPage from './pages/Aboutus';
+import PaymentCallback from './pages/PaymentCallback';
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/payment-callback" element={<PaymentCallback />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />

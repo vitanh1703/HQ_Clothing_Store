@@ -140,6 +140,72 @@ namespace HQ.Backend.Controllers
 
             return Ok(orders);
         }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] UpdateOrderStatusRequest request)
+        {
+            try
+            {
+                var conn = _context.Database.GetDbConnection();
+                if (conn.State != System.Data.ConnectionState.Open)
+                    await conn.OpenAsync();
+
+                // 1. Cập nhật trạng thái đơn hàng
+                using var updateCmd = conn.CreateCommand();
+                updateCmd.CommandText = "UPDATE orders SET status = @status WHERE id = @id";
+
+                var pStatus = updateCmd.CreateParameter();
+                pStatus.ParameterName = "@status";
+                pStatus.Value = request.Status;
+                updateCmd.Parameters.Add(pStatus);
+
+                var pId = updateCmd.CreateParameter();
+                pId.ParameterName = "@id";
+                pId.Value = id;
+                updateCmd.Parameters.Add(pId);
+
+                var rowsAffected = await updateCmd.ExecuteNonQueryAsync();
+                if (rowsAffected == 0)
+                    return NotFound(new { message = "Không tìm thấy đơn hàng để cập nhật" });
+
+                // 2. Nếu thanh toán thành công, tự động dọn dẹp giỏ hàng của người dùng
+                if (request.Status == "Success")
+                {
+                    using var getUserIdCmd = conn.CreateCommand();
+                    getUserIdCmd.CommandText = "SELECT user_id FROM orders WHERE id = @id";
+
+                    var pId2 = getUserIdCmd.CreateParameter();
+                    pId2.ParameterName = "@id";
+                    pId2.Value = id;
+                    getUserIdCmd.Parameters.Add(pId2);
+
+                    var userIdObj = await getUserIdCmd.ExecuteScalarAsync();
+
+                    if (userIdObj != null && userIdObj != DBNull.Value)
+                    {
+                        int userId = Convert.ToInt32(userIdObj);
+
+                        // Xóa toàn bộ sản phẩm trong giỏ hàng của user này
+                        using var clearCartCmd = conn.CreateCommand();
+                        clearCartCmd.CommandText = "DELETE FROM cart_items WHERE cart_id = (SELECT id FROM carts WHERE user_id = @userId)";
+
+                        var pUserId = clearCartCmd.CreateParameter();
+                        pUserId.ParameterName = "@userId";
+                        pUserId.Value = userId;
+                        clearCartCmd.Parameters.Add(pUserId);
+
+                        await clearCartCmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                return Ok(new { message = "Cập nhật trạng thái đơn hàng thành công" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi cập nhật trạng thái đơn hàng", error = ex.Message });
+            }
+        }
+
     }
 }
   

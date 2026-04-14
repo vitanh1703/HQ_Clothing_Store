@@ -67,3 +67,14 @@ public class UpdatePasswordRequest
     public string CurrentPassword { get; set; }
     public string NewPassword { get; set; }
 }
+
+public class PaymentRequest
+{
+    public int OrderId { get; set; }
+    public long Amount { get; set; }
+}
+
+public class UpdateOrderStatusRequest
+{
+    public string Status { get; set; }
+}

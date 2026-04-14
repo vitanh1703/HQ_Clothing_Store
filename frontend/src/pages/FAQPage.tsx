@@ -8,8 +8,10 @@ import {
   Ruler, 
   UserCircle,
   ChevronRight,
-  MessageCircle
+  MessageCircle,
+  ArrowLeft
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // 1. Cấu trúc dữ liệu đầy đủ cho các danh mục
 const faqData = [
@@ -87,6 +89,7 @@ const categories = [
 const FAQPage = () => {
   const [activeTab, setActiveTab] = useState("delivery");
   const [openId, setOpenId] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   const filteredFaqs = faqData.filter(faq => faq.category === activeTab);
 
@@ -116,6 +119,13 @@ const FAQPage = () => {
         {/* NỘI DUNG CHÍNH */}
         <main className="w-full md:w-3/4">
           <header className="mb-12">
+            <button
+              onClick={() => navigate('/home')}
+              className="flex items-center gap-2 text-gray-500 hover:text-black transition-colors mb-4"
+            >
+              <ArrowLeft size={20} />
+              <span className="text-sm">Quay lại</span>
+            </button>
             <h1 className="text-4xl font-light mb-6 tracking-tight">Chúng tôi có thể giúp gì cho bạn?</h1>
             <p className="text-gray-500 text-[14px] leading-relaxed max-w-2xl">
               Chọn danh mục ở bên trái để tìm câu trả lời nhanh nhất. Nếu bạn vẫn gặp khó khăn, 

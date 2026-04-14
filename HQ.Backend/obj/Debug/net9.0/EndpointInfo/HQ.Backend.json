@@ -572,93 +572,6 @@
         }
       }
     },
-    "/api/Reviews": {
-      "get": {
-        "tags": [
-          "Reviews"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Reviews"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateReviewRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateReviewRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateReviewRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Reviews/product/{productId}": {
-      "get": {
-        "tags": [
-          "Reviews"
-        ],
-        "parameters": [
-          {
-            "name": "productId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Reviews/rating/{rating}": {
-      "get": {
-        "tags": [
-          "Reviews"
-        ],
-        "parameters": [
-          {
-            "name": "rating",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Services": {
       "get": {
         "tags": [
@@ -748,92 +661,6 @@
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Wishlist/{userId}": {
-      "get": {
-        "tags": [
-          "Wishlist"
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Wishlist": {
-      "post": {
-        "tags": [
-          "Wishlist"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WishlistRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WishlistRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/WishlistRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Wishlist/{userId}/{variantId}": {
-      "delete": {
-        "tags": [
-          "Wishlist"
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "variantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -937,28 +764,6 @@
             "items": {
               "$ref": "#/components/schemas/OrderItemRequest"
             },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CreateReviewRequest": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "productId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "rating": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "comment": {
-            "type": "string",
             "nullable": true
           }
         },
@@ -1129,20 +934,6 @@
           "otp": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "WishlistRequest": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "variantId": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

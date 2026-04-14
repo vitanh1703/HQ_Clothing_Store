@@ -3,7 +3,17 @@ import { useState, useMemo, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import SidebarFilters, { type FilterState } from "../components/SidebarFilters";
 import { useProducts, useCart, useCategories } from "../services/hooks";
-import { reviewApi, type Review } from "../services/api";
+import { productApi, type ReviewResponse } from "../services/api";
+
+type RatingBucketMap = Record<number, number>;
+
+const buildRatingBucketMap = (summaries: Record<number, ReviewResponse>): RatingBucketMap =>
+  Object.fromEntries(
+    Object.entries(summaries).map(([productId, summary]) => [
+      Number(productId),
+      Math.round(summary.averageRating),
+    ])
+  );
 
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
@@ -12,6 +22,7 @@ const ProductsPage = () => {
   const { products, loading, error } = useProducts(categoryId);
   const { categories } = useCategories();
   const { addToCart } = useCart();
+  const itemsPerPage = 9;
   
   // Filter state
   const [filters, setFilters] = useState<FilterState>({
@@ -22,59 +33,63 @@ const ProductsPage = () => {
     status: [],
     minRating: null,
   });
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Reviews state for rating filter
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [reviewsLoading, setReviewsLoading] = useState(false);
+  // Rating summaries from product detail API
+  const [productReviewSummaries, setProductReviewSummaries] = useState<Record<number, ReviewResponse>>({});
+  const [ratingLoading, setRatingLoading] = useState(false);
 
-  // Fetch all reviews for rating calculation
+  // Fetch rating summaries using the same API as the product detail page
   useEffect(() => {
-    const fetchReviews = async () => {
-      setReviewsLoading(true);
+    const fetchReviewSummaries = async () => {
+      setRatingLoading(true);
       try {
-        const data = await reviewApi.getAll();
-        setReviews(data);
+        const summaries = await Promise.all(
+          products.map(async (product) => {
+            try {
+              const summary = await productApi.getReviewSummary(product.id);
+              return [product.id, summary] as const;
+            } catch (error) {
+              console.error(`Error fetching rating summary for product ${product.id}:`, error);
+              return [product.id, { averageRating: 0, totalReviews: 0, reviews: [] }] as const;
+            }
+          })
+        );
+
+        setProductReviewSummaries(Object.fromEntries(summaries));
       } catch (error) {
-        console.error("Error fetching reviews:", error);
+        console.error("Error fetching product review summaries:", error);
+        setProductReviewSummaries({});
       } finally {
-        setReviewsLoading(false);
+        setRatingLoading(false);
       }
     };
 
-    fetchReviews();
-  }, []);
+    if (products.length > 0) {
+      fetchReviewSummaries();
+    } else {
+      setProductReviewSummaries({});
+    }
+  }, [products]);
 
   const selectedCategory = categories.find((category) => category.id === categoryId);
 
-  // Memoize average ratings for each product
-  const productAverageRatings = useMemo(() => {
-    const ratingMap: Record<number, number> = {};
-    
-    reviews.forEach(review => {
-      if (!ratingMap[review.productId]) {
-        ratingMap[review.productId] = 0;
-      }
-      ratingMap[review.productId] += review.rating;
-    });
-
-    // Convert to average
-    Object.keys(ratingMap).forEach(productId => {
-      const productReviews = reviews.filter(r => r.productId === Number(productId));
-      if (productReviews.length > 0) {
-        ratingMap[Number(productId)] = productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length;
-      }
-    });
-
-    return ratingMap;
-  }, [reviews]);
+  const productRatingBuckets = useMemo(
+    () => buildRatingBucketMap(productReviewSummaries),
+    [productReviewSummaries]
+  );
 
   // Apply filters to products
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      // Check rating filter first
+      if (filters.minRating !== null && ratingLoading) {
+        return true;
+      }
+
+      // Lọc đánh giá theo điểm trung bình của sản phẩm, làm tròn về đúng 1 bucket sao
       if (filters.minRating !== null) {
-        const productRating = productAverageRatings[product.id] ?? 0;
-        if (productRating < filters.minRating) {
+        const ratingBucket = productRatingBuckets[product.id];
+        if (ratingBucket !== filters.minRating) {
           return false;
         }
       }
@@ -117,7 +132,24 @@ const ProductsPage = () => {
       
       return hasMatchingVariant ?? false;
     });
-  }, [products, filters, productAverageRatings]);
+  }, [products, filters, productRatingBuckets]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredProducts, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [categoryId, filters.sizes, filters.colors, filters.minPrice, filters.maxPrice, filters.status, filters.minRating]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   if (error) return <div className="h-screen flex items-center justify-center text-red-500 uppercase font-black tracking-tight">Error: {error}</div>;
 
@@ -168,12 +200,35 @@ const ProductsPage = () => {
                   Tìm thấy <span className="text-black font-bold">{filteredProducts.length}</span> sản phẩm
                 </div>
                 <div className="grid gap-x-10 gap-y-14 transition-all duration-700 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-                  {filteredProducts.map((item) => (
+                  {paginatedProducts.map((item) => (
                     <div key={item.id} className="hover:-translate-y-2 transition-transform duration-500">
                       <ProductCard product={item} onAddToCart={addToCart} />
                     </div>
                   ))}
                 </div>
+                {totalPages > 1 && (
+                  <div className="mt-8 flex items-center justify-center gap-3 pb-6">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                      disabled={currentPage === 1}
+                      className="rounded-full border border-gray-200 bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Trước
+                    </button>
+                    <div className="rounded-full bg-black px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                      Trang {currentPage}/{totalPages}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                      disabled={currentPage === totalPages}
+                      className="rounded-full border border-gray-200 bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Sau
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </div>

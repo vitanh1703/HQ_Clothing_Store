@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import gsap from 'gsap';
 import { Heart } from 'lucide-react';
 import type { Product } from '../services/api';
@@ -59,17 +59,25 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [quantity, setQuantity] = useState<number>(1);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const availableColors = Array.from(new Set(variants.map(v => v.color).filter(Boolean)));
-  const allSizes = Array.from(new Set(variants.map(v => v.size).filter(Boolean)));
+  const availableColors = useMemo(
+    () => Array.from(new Set(variants.map((v) => v.color).filter(Boolean))),
+    [variants]
+  );
 
-  const variantToAdd = (selectedColor && selectedSize) 
-    ? variants.find(v => v.color === selectedColor && v.size === selectedSize)
-    : null;
+  const allSizes = useMemo(
+    () => Array.from(new Set(variants.map((v) => v.size).filter(Boolean))).sort(),
+    [variants]
+  );
+
+  const variantToAdd = useMemo(() => {
+    if (!selectedColor || !selectedSize) return null;
+    return variants.find((v) => v.color === selectedColor && v.size === selectedSize) ?? null;
+  }, [selectedColor, selectedSize, variants]);
 
   const activeVariant = variantToAdd || variants[0] || null;
   const displayPrice = variantToAdd
     ? variantToAdd.price
-    : (variants.length > 0 ? Math.min(...variants.map(v => v.price)) : 0);
+    : (variants.length > 0 ? Math.min(...variants.map((v) => v.price)) : 0);
 
   useEffect(() => {
     const checkWishlist = () => {
@@ -106,11 +114,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
       navigate("/auth");
       return;
     }
+
     if (!activeVariant) return;
-    
+
     const variantId = activeVariant.id;
     const willAdd = !isFavorite;
-    
+
     try {
       if (willAdd) {
         await axios.post(`https://localhost:7137/api/wishlist`, { userId, variantId });
@@ -144,6 +153,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       navigate("/auth");
       return;
     }
+
     if (!variantToAdd) {
       alert("Vui lòng chọn đầy đủ màu sắc và kích thước!");
       return;
@@ -217,57 +227,59 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Heart fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" size={18} />
         </button>
 
-      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
-        <div className="flex flex-wrap justify-center gap-1 mb-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-          {availableColors.map((color) => (
-            <button
-              key={color}
-              onClick={(e) => { 
-                e.stopPropagation(); 
-                setSelectedColor(color); 
-                if (selectedSize && !variants.some(v => v.color === color && v.size === selectedSize)) {
-                  setSelectedSize(null);
-                }
-              }}
-              title={color}
-              className={`w-5 h-5 rounded-full border border-gray-300 transition-all duration-300 shrink-0
-                ${selectedColor === color
-                  ? 'ring-2 ring-white scale-110 shadow-md'
-                  : 'hover:scale-110 shadow-sm'}`}
-              style={{ backgroundColor: getColorHex(color) }}
-            />
-          ))}
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-          {allSizes.map((size) => {
-            const isAvailable = !selectedColor || variants.some(v => v.color === selectedColor && v.size === size);
-            return (
+        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
+          <div className="flex flex-wrap justify-center gap-1 mb-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            {availableColors.map((color) => (
               <button
-                key={size}
-                onClick={(e) => { 
-                  e.stopPropagation(); 
-                  if (isAvailable) {
-                    setSelectedSize(size);
-                    if (!selectedColor) {
-                      const colorForSize = variants.find(v => v.size === size)?.color;
-                      if (colorForSize) setSelectedColor(colorForSize);
-                    }
+                key={color}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedColor(color);
+                  if (selectedSize && !variants.some((v) => v.color === color && v.size === selectedSize)) {
+                    setSelectedSize(null);
                   }
                 }}
-                disabled={!isAvailable}
-                className={`min-w-8 h-8 px-1 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
-                  ${selectedSize === size
-                    ? 'bg-black text-white border-black'
-                    : isAvailable
-                      ? 'bg-white/90 text-black border-transparent hover:border-black'
-                      : 'bg-gray-200 text-gray-400 border-transparent cursor-not-allowed opacity-50'}`}
-              >
-                {size}
-              </button>
-            );
-          })}
-        </div>
+                title={color}
+                className={`w-5 h-5 rounded-full border border-gray-300 transition-all duration-300 shrink-0 ${
+                  selectedColor === color
+                    ? 'ring-2 ring-white scale-110 shadow-md'
+                    : 'hover:scale-110 shadow-sm'
+                }`}
+                style={{ backgroundColor: getColorHex(color) }}
+              />
+            ))}
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            {allSizes.map((size) => {
+              const isAvailable = !selectedColor || variants.some((v) => v.color === selectedColor && v.size === size);
+              return (
+                <button
+                  key={size}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (isAvailable) {
+                      setSelectedSize(size);
+                      if (!selectedColor) {
+                        const colorForSize = variants.find((v) => v.size === size)?.color;
+                        if (colorForSize) setSelectedColor(colorForSize);
+                      }
+                    }
+                  }}
+                  disabled={!isAvailable}
+                  className={`min-w-8 h-8 px-1 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm ${
+                    selectedSize === size
+                      ? 'bg-black text-white border-black'
+                      : isAvailable
+                        ? 'bg-white/90 text-black border-transparent hover:border-black'
+                        : 'bg-gray-200 text-gray-400 border-transparent cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  {size}
+                </button>
+              );
+            })}
+          </div>
 
           <div className="flex items-center bg-white/95 rounded-sm mb-3 w-full justify-between px-3 py-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 shadow-sm">
             <span className="text-[9px] font-bold uppercase text-gray-500 tracking-wider">Số lượng</span>
@@ -292,7 +304,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             } as React.CSSProperties}
           >
             <span className="relative z-10 block transition-opacity duration-300" style={{ opacity: 'var(--text-o)' }}>
-          {variantToAdd ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Phân Loại'}
+              {variantToAdd ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Phân Loại'}
             </span>
 
             <div className="shirt pointer-events-none absolute left-1/2 top-0 -ml-3 origin-bottom"

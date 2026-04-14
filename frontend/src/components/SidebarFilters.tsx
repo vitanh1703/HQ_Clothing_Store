@@ -295,7 +295,7 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
               <span className={`text-[9px] font-bold ml-1 ${
                 selectedRating === star ? "text-white" : "text-gray-400"
               }`}>
-                &Trở lên
+                {star} sao
               </span>
             </button>
           ))}

@@ -3,6 +3,8 @@ import gsap from 'gsap';
 import { Heart } from 'lucide-react';
 import type { Variant, Product } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 interface ProductCardProps {
   product: Product;
@@ -10,6 +12,17 @@ interface ProductCardProps {
 }
 
 const WISHLIST_KEY = "wishlistVariantIds";
+
+const getUserId = () => {
+  const auth = localStorage.getItem("auth");
+  if (auth) {
+    try {
+      const parsed = JSON.parse(auth);
+      return parsed.user?.id || parsed.user?.Id;
+    } catch (e) {}
+  }
+  return Number(localStorage.getItem("userId")) || null;
+};
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -45,17 +58,34 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   const navigate = useNavigate();
-  const handleToggleFavorite = (e: React.MouseEvent) => {
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const auth = localStorage.getItem("auth");
-    if (!auth) {
+    
+    const userId = getUserId();
+    if (!userId) {
       alert("Vui lòng đăng nhập để thêm vào yêu thích!");
       navigate("/auth");
       return;
     }
     if (!activeVariant) return;
-    updateWishlistStorage(activeVariant.id, !isFavorite);
+    
+    const variantId = activeVariant.id;
+    const willAdd = !isFavorite;
+    
+    try {
+      if (willAdd) {
+        await axios.post(`https://localhost:7137/api/wishlist`, { userId, variantId });
+        toast.success("Đã thêm vào danh sách yêu thích");
+      } else {
+        await axios.delete(`https://localhost:7137/api/wishlist/${userId}/${variantId}`);
+        toast.info("Đã xóa khỏi danh sách yêu thích");
+      }
+      updateWishlistStorage(variantId, willAdd);
+    } catch (err: any) {
+      console.error("Lỗi đồng bộ wishlist:", err);
+      toast.error(err.response?.data?.message || "Lỗi khi cập nhật danh sách yêu thích!");
+    }
   };
 
   const handleQuantity = (type: 'plus' | 'minus') => {

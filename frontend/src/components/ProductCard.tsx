@@ -3,6 +3,8 @@ import gsap from 'gsap';
 import { Heart } from 'lucide-react';
 import type { Product } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 interface ProductCardProps {
   product: Product;
@@ -10,6 +12,40 @@ interface ProductCardProps {
 }
 
 const WISHLIST_KEY = "wishlistVariantIds";
+
+const colorMap: Record<string, string> = {
+  "Trắng": "#FFFFFF",
+  "Đen": "#000000",
+  "Xanh Indigo": "#4B0082",
+  "Be": "#F5F5DC",
+  "Xám": "#808080",
+  "Xanh Navy": "#000080",
+  "Đỏ": "#FF0000",
+  "Xanh Lá": "#008000",
+  "Vàng": "#FFFF00",
+  "Hồng": "#FFC0CB",
+  "Tím": "#800080",
+  "Cam": "#FFA500",
+  "Xanh Dương": "#0000FF",
+  "Xanh": "#3b82f6",
+  "Nâu": "#8B4513",
+  "Kẻ sọc": "#e5e7eb"
+};
+
+const getColorHex = (colorName: string) => {
+  return colorMap[colorName] || "#CCCCCC";
+};
+
+const getUserId = () => {
+  const auth = localStorage.getItem("auth");
+  if (auth) {
+    try {
+      const parsed = JSON.parse(auth);
+      return parsed.user?.id || parsed.user?.Id;
+    } catch (e) {}
+  }
+  return Number(localStorage.getItem("userId")) || null;
+};
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -24,47 +60,37 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [isFavorite, setIsFavorite] = useState(false);
 
   const availableColors = useMemo(
-    () => Array.from(new Set(variants.map((variant) => variant.color))),
+    () => Array.from(new Set(variants.map((v) => v.color).filter(Boolean))),
     [variants]
   );
 
-  const availableSizes = useMemo(
-    () => Array.from(new Set(variants.map((variant) => variant.size))).sort(),
+  const allSizes = useMemo(
+    () => Array.from(new Set(variants.map((v) => v.size).filter(Boolean))).sort(),
     [variants]
   );
 
-  const filteredSizes = useMemo(() => {
-    if (!selectedColor) return availableSizes;
-
-    return Array.from(
-      new Set(
-        variants
-          .filter((variant) => variant.color === selectedColor)
-          .map((variant) => variant.size)
-      )
-    ).sort();
-  }, [availableSizes, selectedColor, variants]);
-
-  const activeVariant = useMemo(() => {
+  const variantToAdd = useMemo(() => {
     if (!selectedColor || !selectedSize) return null;
-    return (
-      variants.find(
-        (variant) => variant.color === selectedColor && variant.size === selectedSize
-      ) || null
-    );
+    return variants.find((v) => v.color === selectedColor && v.size === selectedSize) ?? null;
   }, [selectedColor, selectedSize, variants]);
 
-  const fallbackVariant = activeVariant || variants[0] || null;
-  const displayPrice = activeVariant
-    ? activeVariant.price
-    : (variants.length > 0 ? Math.min(...variants.map(v => v.price)) : 0);
+  const activeVariant = variantToAdd || variants[0] || null;
+  const displayPrice = variantToAdd
+    ? variantToAdd.price
+    : (variants.length > 0 ? Math.min(...variants.map((v) => v.price)) : 0);
 
   useEffect(() => {
-    if (!fallbackVariant) return;
-    const stored = localStorage.getItem(WISHLIST_KEY);
-    const wishlist: number[] = stored ? JSON.parse(stored) : [];
-    setIsFavorite(wishlist.includes(fallbackVariant.id));
-  }, [fallbackVariant]);
+    const checkWishlist = () => {
+      if (!activeVariant) return;
+      const stored = localStorage.getItem(WISHLIST_KEY);
+      const wishlist: number[] = stored ? JSON.parse(stored) : [];
+      setIsFavorite(wishlist.includes(activeVariant.id));
+    };
+
+    checkWishlist();
+    window.addEventListener("wishlistUpdated", checkWishlist);
+    return () => window.removeEventListener("wishlistUpdated", checkWishlist);
+  }, [activeVariant]);
 
   const updateWishlistStorage = (variantId: number, add: boolean) => {
     const stored = localStorage.getItem(WISHLIST_KEY);
@@ -74,20 +100,39 @@ const ProductCard: React.FC<ProductCardProps> = ({
       : wishlist.filter((id) => id !== variantId);
     localStorage.setItem(WISHLIST_KEY, JSON.stringify(next));
     setIsFavorite(add);
+    window.dispatchEvent(new Event("wishlistUpdated"));
   };
 
   const navigate = useNavigate();
-  const handleToggleFavorite = (e: React.MouseEvent) => {
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const auth = localStorage.getItem("auth");
-    if (!auth) {
+    
+    const userId = getUserId();
+    if (!userId) {
       alert("Vui lòng đăng nhập để thêm vào yêu thích!");
       navigate("/auth");
       return;
     }
-    if (!fallbackVariant) return;
-    updateWishlistStorage(fallbackVariant.id, !isFavorite);
+
+    if (!activeVariant) return;
+
+    const variantId = activeVariant.id;
+    const willAdd = !isFavorite;
+
+    try {
+      if (willAdd) {
+        await axios.post(`https://localhost:7137/api/wishlist`, { userId, variantId });
+        toast.success("Đã thêm vào danh sách yêu thích");
+      } else {
+        await axios.delete(`https://localhost:7137/api/wishlist/${userId}/${variantId}`);
+        toast.info("Đã xóa khỏi danh sách yêu thích");
+      }
+      updateWishlistStorage(variantId, willAdd);
+    } catch (err: any) {
+      console.error("Lỗi đồng bộ wishlist:", err);
+      toast.error(err.response?.data?.message || "Lỗi khi cập nhật danh sách yêu thích!");
+    }
   };
 
   const handleQuantity = (type: 'plus' | 'minus') => {
@@ -108,20 +153,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
       navigate("/auth");
       return;
     }
-    if (!selectedColor || !selectedSize) {
-      alert("Vui lòng chọn màu và size!");
-      return;
-    }
 
-    if (!activeVariant) {
-      alert("Biến thể sản phẩm không tồn tại!");
+    if (!variantToAdd) {
+      alert("Vui lòng chọn đầy đủ màu sắc và kích thước!");
       return;
     }
 
     const button = buttonRef.current;
     if (!button || button.classList.contains('active')) return;
 
-    onAddToCart(activeVariant.id, quantity);
+    onAddToCart(variantToAdd.id, quantity);
 
     button.classList.add('active');
     const tl = gsap.timeline();
@@ -186,48 +227,58 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Heart fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" size={18} />
         </button>
 
-        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
-          <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
+          <div className="flex flex-wrap justify-center gap-1 mb-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
             {availableColors.map((color) => (
               <button
                 key={color}
                 onClick={(e) => {
                   e.stopPropagation();
                   setSelectedColor(color);
-                  setSelectedSize((currentSize) => {
-                    if (!currentSize) return currentSize;
-                    const hasVariant = variants.some(
-                      (variant) => variant.color === color && variant.size === currentSize
-                    );
-                    return hasVariant ? currentSize : null;
-                  });
+                  if (selectedSize && !variants.some((v) => v.color === color && v.size === selectedSize)) {
+                    setSelectedSize(null);
+                  }
                 }}
-                className={`min-w-9 h-9 px-2 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
-                  ${selectedColor === color
-                    ? 'bg-black text-white border-black'
-                    : 'bg-white/90 text-black border-transparent hover:border-black'}`}
-              >
-                {color}
-              </button>
+                title={color}
+                className={`w-5 h-5 rounded-full border border-gray-300 transition-all duration-300 shrink-0 ${
+                  selectedColor === color
+                    ? 'ring-2 ring-white scale-110 shadow-md'
+                    : 'hover:scale-110 shadow-sm'
+                }`}
+                style={{ backgroundColor: getColorHex(color) }}
+              />
             ))}
           </div>
 
-          <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
-            {filteredSizes.map((size) => (
-              <button
-                key={size}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedSize(size);
-                }}
-                className={`w-9 h-9 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
-                  ${selectedSize === size
-                    ? 'bg-black text-white border-black'
-                    : 'bg-white/90 text-black border-transparent hover:border-black'}`}
-              >
-                {size}
-              </button>
-            ))}
+          <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            {allSizes.map((size) => {
+              const isAvailable = !selectedColor || variants.some((v) => v.color === selectedColor && v.size === size);
+              return (
+                <button
+                  key={size}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (isAvailable) {
+                      setSelectedSize(size);
+                      if (!selectedColor) {
+                        const colorForSize = variants.find((v) => v.size === size)?.color;
+                        if (colorForSize) setSelectedColor(colorForSize);
+                      }
+                    }
+                  }}
+                  disabled={!isAvailable}
+                  className={`min-w-8 h-8 px-1 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm ${
+                    selectedSize === size
+                      ? 'bg-black text-white border-black'
+                      : isAvailable
+                        ? 'bg-white/90 text-black border-transparent hover:border-black'
+                        : 'bg-gray-200 text-gray-400 border-transparent cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  {size}
+                </button>
+              );
+            })}
           </div>
 
           <div className="flex items-center bg-white/95 rounded-sm mb-3 w-full justify-between px-3 py-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 shadow-sm">
@@ -253,7 +304,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             } as React.CSSProperties}
           >
             <span className="relative z-10 block transition-opacity duration-300" style={{ opacity: 'var(--text-o)' }}>
-              {activeVariant ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn màu / size'}
+              {variantToAdd ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Phân Loại'}
             </span>
 
             <div className="shirt pointer-events-none absolute left-1/2 top-0 -ml-3 origin-bottom"

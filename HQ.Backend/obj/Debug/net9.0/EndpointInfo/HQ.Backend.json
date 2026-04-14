@@ -508,6 +508,18 @@
         }
       }
     },
+    "/api/Payment/vnpay-ipn": {
+      "get": {
+        "tags": [
+          "Payment"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Products": {
       "get": {
         "tags": [

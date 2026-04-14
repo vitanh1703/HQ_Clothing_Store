@@ -291,6 +291,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "HQ.Backend.Controllers.PaymentController",
+    "Method": "VnPayIPN",
+    "RelativePath": "api/Payment/vnpay-ipn",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HQ.Backend.Controllers.ProductsController",
     "Method": "GetProducts",
     "RelativePath": "api/Products",

@@ -2,6 +2,8 @@
 using HQ.Backend.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using HQ.Backend.Data;
 
 namespace HQ.Backend.Controllers
 {
@@ -9,6 +11,13 @@ namespace HQ.Backend.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
     {
+        private readonly AppDbContext _context;
+
+        public PaymentController(AppDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpPost("create-payment")]
         public IActionResult CreatePayment([FromBody] PaymentRequest request)
         {
@@ -35,6 +44,45 @@ namespace HQ.Backend.Controllers
             string paymentUrl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
 
             return Ok(new { url = paymentUrl });
+        }
+
+        [HttpGet("vnpay-ipn")]
+        public async Task<IActionResult> VnPayIPN()
+        {
+            var vnpayData = Request.Query;
+            VnPayLibrary vnpay = new VnPayLibrary();
+
+            foreach (var (key, value) in vnpayData)
+            {
+                if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
+                {
+                    vnpay.AddResponseData(key, value.ToString());
+                }
+            }
+
+            string secretKey = "FOT4EZMW8ZT729XNKBJR3NW7GNTPA6HX";
+            string vnp_SecureHash = Request.Query["vnp_SecureHash"];
+            bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, secretKey);
+
+            if (checkSignature)
+            {
+                string vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
+                int orderId = int.Parse(vnpay.GetResponseData("vnp_TxnRef"));
+
+                if (vnp_ResponseCode == "00") 
+                {
+                    var order = await _context.Orders.FindAsync(orderId);
+                    if (order != null && order.Status != "Success")
+                    {
+                        order.Status = "Success"; 
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                
+                return Ok(new { RspCode = "00", Message = "Confirm Success" });
+            }
+
+            return BadRequest(new { RspCode = "97", Message = "Invalid Signature" });
         }
     }
 }

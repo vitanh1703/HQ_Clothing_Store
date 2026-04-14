@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CheckCircle, XCircle } from "lucide-react";
-import axios from "axios";
 
 const PaymentCallback = () => {
   const [searchParams] = useSearchParams();
@@ -10,34 +9,14 @@ const PaymentCallback = () => {
 
   const vnp_ResponseCode = searchParams.get("vnp_ResponseCode");
   const vnp_Amount = searchParams.get("vnp_Amount");
-  const vnp_TxnRef = searchParams.get("vnp_TxnRef"); // Lấy mã đơn hàng (hoặc ID) từ VNPay
 
   useEffect(() => {
     // VNPay trả về mã 00 là giao dịch thành công
     if (vnp_ResponseCode === "00") {
-      if (vnp_TxnRef) {
-        // Gọi API cập nhật trạng thái đơn hàng thành "Thành công" / "Đã thanh toán"
-        // Bạn hãy chắc chắn Backend đã có API này (ví dụ PUT: /api/orders/{id}/status)
-        axios
-          .put(`https://localhost:7137/api/orders/${vnp_TxnRef}/status`, { status: "Success" })
-          .then(() => {
-            setStatus("success");
-            // Clear thông tin khuyến mãi và giỏ hàng tạm sau khi thanh toán xong
-            localStorage.removeItem("selectedPromo");
-            // Nếu có API clear giỏ hàng trên DB, bạn có thể gọi luôn ở đây.
-          })
-          .catch((err) => {
-            console.error("Lỗi cập nhật trạng thái đơn hàng trên Database:", err);
-            // Vẫn set success vì khách thực tế đã bị trừ tiền, lỗi do backend không cập nhật được
-            setStatus("success");
-          });
-      } else {
-        setStatus("success");
-      }
+      setStatus("success");
+      localStorage.removeItem("selectedPromo");
     } else if (vnp_ResponseCode) {
       setStatus("error");
-      // Nếu vnp_ResponseCode != 00, khách hủy thanh toán hoặc giao dịch lỗi.
-      // Bạn có thể gọi API cập nhật status = "Cancel" nếu muốn.
     }
   }, [vnp_ResponseCode]);
 

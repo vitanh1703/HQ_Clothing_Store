@@ -235,7 +235,7 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
                   handleColorToggle(color);
                 }}
                 title={color}
-                className={`w-6 h-6 rounded-full transition-all relative flex-shrink-0 ${
+                className={`w-6 h-6 rounded-full transition-all relative shrink-0 ${
                   selectedColors.includes(color) ? "ring-2 ring-offset-2 ring-gray-900" : "hover:opacity-80"
                 }`}
                 style={{ backgroundColor: getColorHex(color) }}

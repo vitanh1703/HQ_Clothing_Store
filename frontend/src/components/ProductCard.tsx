@@ -72,10 +72,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
     : (variants.length > 0 ? Math.min(...variants.map(v => v.price)) : 0);
 
   useEffect(() => {
-    if (!activeVariant) return;
-    const stored = localStorage.getItem(WISHLIST_KEY);
-    const wishlist: number[] = stored ? JSON.parse(stored) : [];
-    setIsFavorite(wishlist.includes(activeVariant.id));
+    const checkWishlist = () => {
+      if (!activeVariant) return;
+      const stored = localStorage.getItem(WISHLIST_KEY);
+      const wishlist: number[] = stored ? JSON.parse(stored) : [];
+      setIsFavorite(wishlist.includes(activeVariant.id));
+    };
+
+    checkWishlist();
+    window.addEventListener("wishlistUpdated", checkWishlist);
+    return () => window.removeEventListener("wishlistUpdated", checkWishlist);
   }, [activeVariant]);
 
   const updateWishlistStorage = (variantId: number, add: boolean) => {
@@ -86,6 +92,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       : wishlist.filter((id) => id !== variantId);
     localStorage.setItem(WISHLIST_KEY, JSON.stringify(next));
     setIsFavorite(add);
+    window.dispatchEvent(new Event("wishlistUpdated"));
   };
 
   const navigate = useNavigate();

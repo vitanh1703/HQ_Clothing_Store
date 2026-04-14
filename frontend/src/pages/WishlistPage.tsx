@@ -85,6 +85,7 @@ const WishlistPage = () => {
   const saveWishlist = (variantIds: number[]) => {
     localStorage.setItem("wishlistVariantIds", JSON.stringify(variantIds));
     setWishlistVariantIds(variantIds);
+    window.dispatchEvent(new Event("wishlistUpdated"));
   };
 
   const handleRemoveFavorite = async (variantId: number) => {

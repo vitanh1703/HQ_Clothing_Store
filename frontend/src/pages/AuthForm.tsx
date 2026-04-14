@@ -81,6 +81,15 @@ const AuthForm = () => {
     try {
       const data = await login(email, password);
       localStorage.setItem("auth", JSON.stringify(data));
+      try {
+        const userId = data.user?.id || data.user?.Id;
+        if (userId) {
+          const res = await axios.get(`https://localhost:7137/api/wishlist/${userId}`);
+          localStorage.setItem("wishlistVariantIds", JSON.stringify(res.data));
+        }
+      } catch (err) {
+        console.error("Lỗi lấy danh sách yêu thích:", err);
+      }
       toast.success("Chào mừng bạn trở lại!");
       navigate("/home");
     } catch (err: any) {
@@ -112,6 +121,15 @@ const AuthForm = () => {
     try {
       const idToken = credentialResponse.credential;
       const data = await loginWithGoogle(idToken);
+      try {
+        const userId = data.user?.id || data.user?.Id;
+        if (userId) {
+          const res = await axios.get(`https://localhost:7137/api/wishlist/${userId}`);
+          localStorage.setItem("wishlistVariantIds", JSON.stringify(res.data));
+        }
+      } catch (err) {
+        console.error("Lỗi lấy danh sách yêu thích:", err);
+      }
       toast.success(`Chào mừng ${data.user.full_name} trở lại!`);
       navigate("/home");
     } catch (error: any) {

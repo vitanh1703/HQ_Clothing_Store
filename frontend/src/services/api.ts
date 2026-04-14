@@ -79,6 +79,12 @@ export interface PromotionValidationResult {
   discountType: string;
 }
 
+export interface ReviewResponse {
+  averageRating: number;
+  totalReviews: number;
+  reviews: Review[];
+}
+
 export interface CheckoutCartItem {
   id: number;
   variantId: number;
@@ -158,12 +164,17 @@ export const authApi = {
 };
 
 export const productApi = {
-  getAll: async (): Promise<Product[]> => {
-    const response = await axios.get(`${API_BASE}/Products`);
+  getAll: async (categoryId?: number): Promise<Product[]> => {
+    const response = await axios.get(`${API_BASE}/Products`, {
+      params: categoryId ? { category: categoryId } : undefined,
+    });
     return response.data;
   },
   getByCategory: async (categoryId: number): Promise<Product[]> => {
-    const response = await axios.get(`${API_BASE}/Products/category/${categoryId}`);
+    return productApi.getAll(categoryId);
+  },
+  getReviewSummary: async (productId: number): Promise<ReviewResponse> => {
+    const response = await axios.get(`${API_BASE}/Products/${productId}/reviews`);
     return response.data;
   },
   getCategories: async (): Promise<Category[]> => {

@@ -79,9 +79,7 @@ export const useProducts = (categoryId?: number) => {
     setLoading(true);
     setError(null);
     try {
-      const data = categoryId !== undefined
-        ? await productApi.getByCategory(categoryId)
-        : await productApi.getAll();
+      const data = await productApi.getAll(categoryId);
       setProducts(data);
     } catch (err: any) {
       setError(err.message || "Không thể tải danh sách sản phẩm");

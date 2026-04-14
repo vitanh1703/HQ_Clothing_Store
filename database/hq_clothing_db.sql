@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 09, 2026 lúc 05:37 AM
+-- Thời gian đã tạo: Th4 14, 2026 lúc 02:17 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -41,7 +41,8 @@ INSERT INTO `carts` (`id`, `user_id`) VALUES
 (2, 4),
 (4, 5),
 (3, 6),
-(5, 7);
+(5, 7),
+(6, 8);
 
 -- --------------------------------------------------------
 
@@ -66,8 +67,9 @@ INSERT INTO `cart_items` (`id`, `cart_id`, `variant_id`, `quantity`) VALUES
 (17, 2, 3, 1),
 (22, 4, 3, 1),
 (23, 4, 1, 1),
-(28, 5, 38, 1),
-(29, 5, 4, 1);
+(29, 5, 4, 2),
+(30, 5, 6, 1),
+(33, 6, 44, 1);
 
 -- --------------------------------------------------------
 
@@ -168,6 +170,14 @@ CREATE TABLE `orders` (
   `payment_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `orders`
+--
+
+INSERT INTO `orders` (`id`, `user_id`, `order_code`, `total_amount`, `status`, `order_date`, `full_name`, `email`, `phone`, `address`, `payment_date`) VALUES
+(1, 7, 'HQ2604100902115', 400000.00, 'Pending', '2026-04-10 02:02:05', 'nguyen hao', 'hao1512005@gmail.com', '0974636727', 'ha noi', NULL),
+(4, 8, 'HQ2604102133430', 2331000.00, 'Pending', '2026-04-10 14:33:22', 'Nguyễn Hảo', 'hao1512005@gmail.com', '0947764463', 'haf noi', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -181,6 +191,17 @@ CREATE TABLE `order_items` (
   `quantity` int(11) NOT NULL CHECK (`quantity` > 0),
   `price_at_purchase` decimal(15,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `variant_id`, `quantity`, `price_at_purchase`) VALUES
+(1, 1, 4, 2, 250000.00),
+(5, 4, 8, 2, 520000.00),
+(8, 4, 6, 1, 650000.00),
+(9, 4, 44, 1, 450000.00),
+(11, 4, 42, 1, 450000.00);
 
 -- --------------------------------------------------------
 
@@ -286,7 +307,55 @@ INSERT INTO `product_variants` (`id`, `product_id`, `size`, `color`, `price`, `s
 (37, 19, 'M', 'Kẻ sọc', 360000.00, 55, 'HQ-PL-ST-M'),
 (38, 19, 'L', 'Kẻ sọc', 360000.00, 45, 'HQ-PL-ST-L'),
 (39, 20, 'M', 'Xanh Navy', 370000.00, 50, 'HQ-PL-N-M'),
-(40, 20, 'L', 'Xanh Navy', 370000.00, 40, 'HQ-PL-N-L');
+(40, 20, 'L', 'Xanh Navy', 370000.00, 40, 'HQ-PL-N-L'),
+(41, 1, 'M', 'Đen', 450000.00, 40, 'HQ-SM-B-M'),
+(42, 1, 'L', 'Đen', 450000.00, 35, 'HQ-SM-B-L'),
+(43, 1, 'M', 'Xanh', 450000.00, 30, 'HQ-SM-BL-M'),
+(44, 1, 'L', 'Xanh', 450000.00, 25, 'HQ-SM-BL-L'),
+(260, 1, 'M', 'Đen', 450000.00, 40, 'HQ-P1-B-M'),
+(261, 1, 'L', 'Đen', 450000.00, 35, 'HQ-P1-B-L'),
+(262, 1, 'M', 'Xanh', 450000.00, 30, 'HQ-P1-BL-M'),
+(263, 1, 'L', 'Xanh', 450000.00, 25, 'HQ-P1-BL-L'),
+(264, 2, 'M', 'Trắng', 250000.00, 70, 'HQ-P2-W-M'),
+(265, 2, 'L', 'Trắng', 250000.00, 60, 'HQ-P2-W-L'),
+(266, 2, 'M', 'Xanh', 250000.00, 50, 'HQ-P2-BL-M'),
+(267, 2, 'L', 'Xanh', 250000.00, 40, 'HQ-P2-BL-L'),
+(268, 3, '30', 'Đen', 650000.00, 20, 'HQ-P3-B-30'),
+(269, 3, '32', 'Đen', 650000.00, 15, 'HQ-P3-B-32'),
+(270, 4, 'M', 'Đen', 520000.00, 30, 'HQ-P4-B-M'),
+(271, 4, 'L', 'Đen', 520000.00, 25, 'HQ-P4-B-L'),
+(272, 5, 'M', 'Đen', 600000.00, 25, 'HQ-P5-B-M'),
+(273, 5, 'L', 'Đen', 600000.00, 20, 'HQ-P5-B-L'),
+(274, 6, 'M', 'Đen', 700000.00, 20, 'HQ-P6-B-M'),
+(275, 6, 'L', 'Đen', 700000.00, 15, 'HQ-P6-B-L'),
+(276, 7, 'M', 'Trắng', 650000.00, 40, 'HQ-P7-W-M'),
+(277, 7, 'L', 'Trắng', 650000.00, 30, 'HQ-P7-W-L'),
+(278, 8, 'M', 'Xanh', 720000.00, 35, 'HQ-P8-BL-M'),
+(279, 8, 'L', 'Xanh', 720000.00, 25, 'HQ-P8-BL-L'),
+(280, 9, 'M', 'Đen', 800000.00, 15, 'HQ-P9-B-M'),
+(281, 9, 'L', 'Đen', 800000.00, 10, 'HQ-P9-B-L'),
+(282, 10, 'M', 'Xanh', 550000.00, 20, 'HQ-P10-BL-M'),
+(283, 10, 'L', 'Xanh', 550000.00, 15, 'HQ-P10-BL-L'),
+(284, 11, 'M', 'Đen', 250000.00, 40, 'HQ-P11-B-M'),
+(285, 11, 'L', 'Đen', 250000.00, 30, 'HQ-P11-B-L'),
+(286, 12, 'M', 'Đen', 230000.00, 50, 'HQ-P12-B-M'),
+(287, 12, 'L', 'Đen', 230000.00, 40, 'HQ-P12-B-L'),
+(288, 13, 'M', 'Đen', 200000.00, 60, 'HQ-P13-B-M'),
+(289, 13, 'L', 'Đen', 200000.00, 50, 'HQ-P13-B-L'),
+(290, 14, 'M', 'Trắng', 180000.00, 70, 'HQ-P14-W-M'),
+(291, 14, 'L', 'Trắng', 180000.00, 60, 'HQ-P14-W-L'),
+(292, 15, 'M', 'Đen', 220000.00, 45, 'HQ-P15-B-M'),
+(293, 15, 'L', 'Đen', 220000.00, 35, 'HQ-P15-B-L'),
+(294, 16, 'M', 'Đen', 400000.00, 30, 'HQ-P16-B-M'),
+(295, 16, 'L', 'Đen', 400000.00, 20, 'HQ-P16-B-L'),
+(296, 17, 'M', 'Đen', 350000.00, 40, 'HQ-P17-B-M'),
+(297, 17, 'L', 'Đen', 350000.00, 30, 'HQ-P17-B-L'),
+(298, 18, 'M', 'Đen', 380000.00, 35, 'HQ-P18-B-M'),
+(299, 18, 'L', 'Đen', 380000.00, 25, 'HQ-P18-B-L'),
+(300, 19, 'M', 'Đen', 360000.00, 45, 'HQ-P19-B-M'),
+(301, 19, 'L', 'Đen', 360000.00, 35, 'HQ-P19-B-L'),
+(302, 20, 'M', 'Đen', 370000.00, 40, 'HQ-P20-B-M'),
+(303, 20, 'L', 'Đen', 370000.00, 30, 'HQ-P20-B-L');
 
 -- --------------------------------------------------------
 
@@ -338,13 +407,20 @@ CREATE TABLE `reviews` (
 --
 
 INSERT INTO `reviews` (`id`, `user_id`, `product_id`, `rating`, `comment`, `created_at`) VALUES
-(1, 2, 1, 5, 'Áo mặc rất mát, form chuẩn công sở!', '2026-04-05 06:20:49'),
-(2, 3, 2, 4, 'Chất vải đẹp nhưng hơi ôm quá so với mình.', '2026-04-05 06:20:49'),
-(3, 1, 2, 5, 'Chất lượng vải tuyệt vời, mặc rất thoải mái.', '2026-04-08 02:50:33'),
-(4, 2, 3, 4, 'Áo đẹp nhưng giao hàng hơi chậm một chút.', '2026-04-08 02:50:33'),
-(5, 3, 1, 3, 'Màu sắc hơi khác so với ảnh trên web, nhưng vẫn ổn.', '2026-04-08 02:50:33'),
-(6, 1, 4, 5, 'Sản phẩm rất đáng tiền, sẽ tiếp tục ủng hộ shop.', '2026-04-08 02:50:33'),
-(7, 2, 2, 2, 'Size hơi nhỏ so với mô tả, mọi người nên cân nhắc tăng 1 size.', '2026-04-08 02:50:33');
+(62, 8, 1, 5, 'Áo khoác đẹp, form chuẩn, mặc rất sang', '2026-04-10 14:53:35'),
+(63, 9, 1, 4, 'Chất vải ổn, mặc thoải mái', '2026-04-10 14:53:35'),
+(64, 10, 2, 5, 'Áo nhẹ, mặc rất dễ chịu', '2026-04-10 14:53:35'),
+(65, 11, 2, 3, 'Form hơi ôm so với mình', '2026-04-10 14:53:35'),
+(66, 12, 3, 5, 'Áo đẹp, chất lượng tốt', '2026-04-10 14:53:35'),
+(67, 13, 3, 4, 'Khá ổn trong tầm giá', '2026-04-10 14:53:35'),
+(68, 14, 5, 5, 'Áo khoác mặc rất phong cách', '2026-04-10 14:53:35'),
+(69, 15, 5, 4, 'Chất vải tốt, ổn', '2026-04-10 14:53:35'),
+(70, 16, 7, 5, 'Áo đẹp, màu chuẩn như hình', '2026-04-10 14:53:35'),
+(71, 17, 10, 4, 'Áo mặc mát, form rộng thoải mái', '2026-04-10 14:53:35'),
+(72, 8, 12, 5, 'Áo thun mặc rất mát, dễ chịu', '2026-04-10 14:53:35'),
+(73, 9, 15, 4, 'Áo mặc ổn, phù hợp mặc hàng ngày', '2026-04-10 14:53:35'),
+(74, 10, 18, 5, 'Áo len đẹp, mặc ấm và thoải mái', '2026-04-10 14:53:35'),
+(75, 11, 20, 4, 'Áo polo mặc lịch sự, dễ phối đồ', '2026-04-10 14:53:35');
 
 -- --------------------------------------------------------
 
@@ -423,7 +499,18 @@ INSERT INTO `users` (`id`, `password`, `email`, `role`, `auth_provider`, `google
 (4, '$2a$11$ne2nAQEV8.sekykzIQ8BJ.qEJaz9FcnTIzRObfp1CoSwAfMbU3Q6W', 'diema448@gmail.com', 'Customer', 'google', '104884167290364105829', 'Diêm Việt Anh', NULL, NULL, 'https://lh3.googleusercontent.com/a/ACg8ocLHZKCZ0cWLxikxVdSzqJ7qSoORzATbHfxtSYNMH0Bi9_EhxwYF=s96-c', 1, '2026-04-05 06:51:58'),
 (5, '$2a$11$5sAC6yhhcVwa8WfLK.oKFOnHidkT3uaWFUfRqj5GB7YNACOfxyl/e', 'diema447@gmail.com', 'Customer', 'local', NULL, 'Diêm Anh', NULL, NULL, NULL, 1, '2026-04-05 13:47:23'),
 (6, '$2a$11$x09VDjSr2U90T.Uo4N3sT.C0GDk6pAoEBBbZi/43f/mNDxQidRAXe', 'diema4489@gmail.com', 'Customer', 'local', NULL, 'Diêm Anh', NULL, NULL, NULL, 1, '2026-04-06 07:11:16'),
-(7, '$2a$11$vI.ooznpVw6AArxoPSylQOAqgqjAO4PYtI4nLgeAhkSv5w/Wxak5a', 'hao1512005@gmail.com', 'Customer', 'local', NULL, 'Nguyễn Hảo', NULL, NULL, NULL, 1, '2026-04-08 14:45:40');
+(7, '$2a$11$vI.ooznpVw6AArxoPSylQOAqgqjAO4PYtI4nLgeAhkSv5w/Wxak5a', 'hao1512005@gmail.com', 'Customer', 'local', NULL, 'Nguyễn Hảo', NULL, NULL, NULL, 1, '2026-04-08 14:45:40'),
+(8, '$2a$11$KGpmCIuKk0BZ4ZZGq0T9QOMMO1VvHSOmE7SFxscH0P0NBl1FPPgSq', 'hao1512009@gmail.com', 'Customer', 'local', NULL, 'Nguyễn Hảo', '0988463546', 'ha noi', NULL, 1, '2026-04-10 02:04:03'),
+(9, '123456', 'minhquan01@gmail.com', 'Customer', 'local', NULL, 'Nguyễn Minh Quân', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(10, '123456', 'thutrang02@gmail.com', 'Customer', 'local', NULL, 'Trần Thu Trang', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(11, '123456', 'hoanglong03@gmail.com', 'Customer', 'local', NULL, 'Lê Hoàng Long', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(12, '123456', 'ngocanh04@gmail.com', 'Customer', 'local', NULL, 'Phạm Ngọc Anh', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(13, '123456', 'quanghuy05@gmail.com', 'Customer', 'local', NULL, 'Hoàng Quang Huy', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(14, '123456', 'thuha06@gmail.com', 'Customer', 'local', NULL, 'Đỗ Thu Hà', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(15, '123456', 'ducthanh07@gmail.com', 'Customer', 'local', NULL, 'Vũ Đức Thành', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(16, '123456', 'phuonglinh08@gmail.com', 'Customer', 'local', NULL, 'Bùi Phương Linh', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(17, '123456', 'nguyenthanhphucnguyen@gmail.com', 'Customer', 'local', NULL, 'Nguyễn Thanh Phúc Nguyên', NULL, NULL, NULL, 1, '2026-04-10 14:42:51'),
+(18, '123456', 'lananh10@gmail.com', 'Customer', 'local', NULL, 'Phan Lan Anh', NULL, NULL, NULL, 1, '2026-04-10 14:42:51');
 
 -- --------------------------------------------------------
 
@@ -565,13 +652,13 @@ ALTER TABLE `wishlist`
 -- AUTO_INCREMENT cho bảng `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -595,13 +682,13 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
@@ -613,7 +700,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT cho bảng `product_variants`
 --
 ALTER TABLE `product_variants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=304;
 
 --
 -- AUTO_INCREMENT cho bảng `promotions`
@@ -625,7 +712,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT cho bảng `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT cho bảng `services`
@@ -643,7 +730,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT cho bảng `wishlist`

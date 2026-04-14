@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { Heart } from 'lucide-react';
-import type { Variant, Product } from '../services/api';
+import type { Product } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -12,6 +12,29 @@ interface ProductCardProps {
 }
 
 const WISHLIST_KEY = "wishlistVariantIds";
+
+const colorMap: Record<string, string> = {
+  "Trắng": "#FFFFFF",
+  "Đen": "#000000",
+  "Xanh Indigo": "#4B0082",
+  "Be": "#F5F5DC",
+  "Xám": "#808080",
+  "Xanh Navy": "#000080",
+  "Đỏ": "#FF0000",
+  "Xanh Lá": "#008000",
+  "Vàng": "#FFFF00",
+  "Hồng": "#FFC0CB",
+  "Tím": "#800080",
+  "Cam": "#FFA500",
+  "Xanh Dương": "#0000FF",
+  "Xanh": "#3b82f6",
+  "Nâu": "#8B4513",
+  "Kẻ sọc": "#e5e7eb"
+};
+
+const getColorHex = (colorName: string) => {
+  return colorMap[colorName] || "#CCCCCC";
+};
 
 const getUserId = () => {
   const auth = localStorage.getItem("auth");
@@ -31,13 +54,21 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const { name, variants, brandText } = product;
   const imageSrc = product.imageUrl || (product as any).imageUrl || product.imageSrc;
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const activeVariant = selectedVariant || variants[0] || null;
-  const displayPrice = activeVariant
-    ? activeVariant.price
+  const availableColors = Array.from(new Set(variants.map(v => v.color).filter(Boolean)));
+  const allSizes = Array.from(new Set(variants.map(v => v.size).filter(Boolean)));
+
+  const variantToAdd = (selectedColor && selectedSize) 
+    ? variants.find(v => v.color === selectedColor && v.size === selectedSize)
+    : null;
+
+  const activeVariant = variantToAdd || variants[0] || null;
+  const displayPrice = variantToAdd
+    ? variantToAdd.price
     : (variants.length > 0 ? Math.min(...variants.map(v => v.price)) : 0);
 
   useEffect(() => {
@@ -106,15 +137,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
       navigate("/auth");
       return;
     }
-    if (!activeVariant) {
-      alert("Vui lòng chọn size!");
+    if (!variantToAdd) {
+      alert("Vui lòng chọn đầy đủ màu sắc và kích thước!");
       return;
     }
 
     const button = buttonRef.current;
     if (!button || button.classList.contains('active')) return;
 
-    onAddToCart(activeVariant.id, quantity);
+    onAddToCart(variantToAdd.id, quantity);
 
     button.classList.add('active');
     const tl = gsap.timeline();
@@ -179,21 +210,57 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Heart fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" size={18} />
         </button>
 
-        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
-          <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-            {variants.map((v) => (
+      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
+        <div className="flex flex-wrap justify-center gap-1 mb-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+          {availableColors.map((color) => (
+            <button
+              key={color}
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                setSelectedColor(color); 
+                if (selectedSize && !variants.some(v => v.color === color && v.size === selectedSize)) {
+                  setSelectedSize(null);
+                }
+              }}
+              title={color}
+              className={`w-5 h-5 rounded-full border border-gray-300 transition-all duration-300 shrink-0
+                ${selectedColor === color
+                  ? 'ring-2 ring-white scale-110 shadow-md'
+                  : 'hover:scale-110 shadow-sm'}`}
+              style={{ backgroundColor: getColorHex(color) }}
+            />
+          ))}
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+          {allSizes.map((size) => {
+            const isAvailable = !selectedColor || variants.some(v => v.color === selectedColor && v.size === size);
+            return (
               <button
-                key={v.id}
-                onClick={(e) => { e.stopPropagation(); setSelectedVariant(v); }}
-                className={`w-9 h-9 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
-                  ${activeVariant?.id === v.id
+                key={size}
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  if (isAvailable) {
+                    setSelectedSize(size);
+                    if (!selectedColor) {
+                      const colorForSize = variants.find(v => v.size === size)?.color;
+                      if (colorForSize) setSelectedColor(colorForSize);
+                    }
+                  }
+                }}
+                disabled={!isAvailable}
+                className={`min-w-8 h-8 px-1 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
+                  ${selectedSize === size
                     ? 'bg-black text-white border-black'
-                    : 'bg-white/90 text-black border-transparent hover:border-black'}`}
+                    : isAvailable
+                      ? 'bg-white/90 text-black border-transparent hover:border-black'
+                      : 'bg-gray-200 text-gray-400 border-transparent cursor-not-allowed opacity-50'}`}
               >
-                {v.size}
+                {size}
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </div>
 
           <div className="flex items-center bg-white/95 rounded-sm mb-3 w-full justify-between px-3 py-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 shadow-sm">
             <span className="text-[9px] font-bold uppercase text-gray-500 tracking-wider">Số lượng</span>
@@ -218,7 +285,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             } as React.CSSProperties}
           >
             <span className="relative z-10 block transition-opacity duration-300" style={{ opacity: 'var(--text-o)' }}>
-              {activeVariant ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Size'}
+          {variantToAdd ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Phân Loại'}
             </span>
 
             <div className="shirt pointer-events-none absolute left-1/2 top-0 -ml-3 origin-bottom"

@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import gsap from 'gsap';
 import { Heart } from 'lucide-react';
-import type { Variant, Product } from '../services/api';
+import type { Product } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
@@ -18,21 +18,53 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const { name, variants, brandText } = product;
   const imageSrc = product.imageUrl || (product as any).imageUrl || product.imageSrc;
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const activeVariant = selectedVariant || variants[0] || null;
+  const availableColors = useMemo(
+    () => Array.from(new Set(variants.map((variant) => variant.color))),
+    [variants]
+  );
+
+  const availableSizes = useMemo(
+    () => Array.from(new Set(variants.map((variant) => variant.size))).sort(),
+    [variants]
+  );
+
+  const filteredSizes = useMemo(() => {
+    if (!selectedColor) return availableSizes;
+
+    return Array.from(
+      new Set(
+        variants
+          .filter((variant) => variant.color === selectedColor)
+          .map((variant) => variant.size)
+      )
+    ).sort();
+  }, [availableSizes, selectedColor, variants]);
+
+  const activeVariant = useMemo(() => {
+    if (!selectedColor || !selectedSize) return null;
+    return (
+      variants.find(
+        (variant) => variant.color === selectedColor && variant.size === selectedSize
+      ) || null
+    );
+  }, [selectedColor, selectedSize, variants]);
+
+  const fallbackVariant = activeVariant || variants[0] || null;
   const displayPrice = activeVariant
     ? activeVariant.price
     : (variants.length > 0 ? Math.min(...variants.map(v => v.price)) : 0);
 
   useEffect(() => {
-    if (!activeVariant) return;
+    if (!fallbackVariant) return;
     const stored = localStorage.getItem(WISHLIST_KEY);
     const wishlist: number[] = stored ? JSON.parse(stored) : [];
-    setIsFavorite(wishlist.includes(activeVariant.id));
-  }, [activeVariant]);
+    setIsFavorite(wishlist.includes(fallbackVariant.id));
+  }, [fallbackVariant]);
 
   const updateWishlistStorage = (variantId: number, add: boolean) => {
     const stored = localStorage.getItem(WISHLIST_KEY);
@@ -54,8 +86,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       navigate("/auth");
       return;
     }
-    if (!activeVariant) return;
-    updateWishlistStorage(activeVariant.id, !isFavorite);
+    if (!fallbackVariant) return;
+    updateWishlistStorage(fallbackVariant.id, !isFavorite);
   };
 
   const handleQuantity = (type: 'plus' | 'minus') => {
@@ -76,8 +108,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
       navigate("/auth");
       return;
     }
+    if (!selectedColor || !selectedSize) {
+      alert("Vui lòng chọn màu và size!");
+      return;
+    }
+
     if (!activeVariant) {
-      alert("Vui lòng chọn size!");
+      alert("Biến thể sản phẩm không tồn tại!");
       return;
     }
 
@@ -151,16 +188,44 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
           <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-            {variants.map((v) => (
+            {availableColors.map((color) => (
               <button
-                key={v.id}
-                onClick={(e) => { e.stopPropagation(); setSelectedVariant(v); }}
-                className={`w-9 h-9 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
-                  ${activeVariant?.id === v.id
+                key={color}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedColor(color);
+                  setSelectedSize((currentSize) => {
+                    if (!currentSize) return currentSize;
+                    const hasVariant = variants.some(
+                      (variant) => variant.color === color && variant.size === currentSize
+                    );
+                    return hasVariant ? currentSize : null;
+                  });
+                }}
+                className={`min-w-9 h-9 px-2 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
+                  ${selectedColor === color
                     ? 'bg-black text-white border-black'
                     : 'bg-white/90 text-black border-transparent hover:border-black'}`}
               >
-                {v.size}
+                {color}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
+            {filteredSizes.map((size) => (
+              <button
+                key={size}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedSize(size);
+                }}
+                className={`w-9 h-9 flex items-center justify-center text-[10px] font-bold border transition-all duration-300 rounded-sm
+                  ${selectedSize === size
+                    ? 'bg-black text-white border-black'
+                    : 'bg-white/90 text-black border-transparent hover:border-black'}`}
+              >
+                {size}
               </button>
             ))}
           </div>
@@ -188,7 +253,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             } as React.CSSProperties}
           >
             <span className="relative z-10 block transition-opacity duration-300" style={{ opacity: 'var(--text-o)' }}>
-              {activeVariant ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Size'}
+              {activeVariant ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn màu / size'}
             </span>
 
             <div className="shirt pointer-events-none absolute left-1/2 top-0 -ml-3 origin-bottom"

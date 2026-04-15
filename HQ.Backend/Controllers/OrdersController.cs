@@ -216,21 +216,42 @@ namespace HQ.Backend.Controllers
         {
             try
             {
-                // Sử dụng thời gian của Database (NOW()) để so sánh với cột order_date
                 var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
-                    "DELETE FROM orders WHERE status = 'Pending' AND order_date <= NOW() - INTERVAL 24 HOUR"
+                    "UPDATE orders SET status = 'Cancel' WHERE status = 'Pending' AND order_date <= NOW() - INTERVAL 24 HOUR"
                 );
 
                 if (rowsAffected == 0)
                 {
-                    return Ok(new { message = "Không có đơn hàng nào quá hạn cần xóa." });
+                    return Ok(new { message = "Không có đơn hàng nào quá hạn cần xử lý." });
                 }
 
-                return Ok(new { message = $"Đã xóa thành công {rowsAffected} đơn hàng chưa thanh toán quá 24h." });
+                return Ok(new { message = $"Đã hủy thành công {rowsAffected} đơn hàng chưa thanh toán quá 24h và hoàn trả kho." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Lỗi khi xóa đơn hàng quá hạn", error = ex.Message });
+                return StatusCode(500, new { message = "Lỗi khi xử lý đơn hàng quá hạn", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("delete-canceled")]
+        public async Task<IActionResult> DeleteCanceledOrders()
+        {
+            try
+            {
+                var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                    "DELETE FROM orders WHERE status = 'Cancel'"
+                );
+
+                if (rowsAffected == 0)
+                {
+                    return Ok(new { message = "Không có đơn hàng đã hủy nào cần xóa." });
+                }
+
+                return Ok(new { message = $"Đã xóa thành công {rowsAffected} đơn hàng đã hủy khỏi hệ thống." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi xóa đơn hàng đã hủy", error = ex.Message });
             }
         }
     }

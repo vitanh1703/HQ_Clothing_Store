@@ -52,25 +52,35 @@ namespace HQ.Backend.Services
         {
             try
             {
-                _logger.LogInformation("Bắt đầu dọn dẹp các đơn hàng chưa thanh toán quá 24h...");
+                _logger.LogInformation("Bắt đầu tự động xử lý các đơn hàng quá hạn và đơn hàng đã hủy...");
 
                 // Tạo Scope mới để lấy DbContext (vì BackgroundService là Singleton, DbContext là Scoped)
                 using var scope = _serviceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                // Dùng SQL thuần để Database tự đối chiếu order_date với thời gian hiện tại của Database (NOW)
-                var rowsAffected = await context.Database.ExecuteSqlRawAsync(
-                    "DELETE FROM orders WHERE status = 'Pending' AND order_date <= NOW() - INTERVAL 24 HOUR"
+                // 1. Chuyển trạng thái các đơn hàng Pending quá 24h sang Cancel
+                var canceledRows = await context.Database.ExecuteSqlRawAsync(
+                    "UPDATE orders SET status = 'Cancel' WHERE status = 'Pending' AND order_date <= NOW() - INTERVAL 24 HOUR"
                 );
 
-                if (rowsAffected > 0)
+                if (canceledRows > 0)
                 {
-                    _logger.LogInformation($"Đã xóa thành công {rowsAffected} đơn hàng chưa thanh toán.");
+                    _logger.LogInformation($"Đã hủy thành công {canceledRows} đơn hàng chưa thanh toán quá 24h.");
+                }
+
+                // 2. Xóa hoàn toàn các đơn hàng đã bị Cancel khỏi DB
+                var deletedRows = await context.Database.ExecuteSqlRawAsync(
+                    "DELETE FROM orders WHERE status = 'Cancel'"
+                );
+
+                if (deletedRows > 0)
+                {
+                    _logger.LogInformation($"Đã dọn dẹp thành công {deletedRows} đơn hàng đã hủy khỏi hệ thống.");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Đã xảy ra lỗi khi dọn dẹp đơn hàng quá hạn.");
+                _logger.LogError(ex, "Đã xảy ra lỗi khi tự động xử lý đơn hàng.");
             }
         }
     }

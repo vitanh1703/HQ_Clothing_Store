@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 14, 2026 lúc 02:17 AM
+-- Thời gian đã tạo: Th4 15, 2026 lúc 03:31 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -64,12 +64,12 @@ CREATE TABLE `cart_items` (
 INSERT INTO `cart_items` (`id`, `cart_id`, `variant_id`, `quantity`) VALUES
 (8, 3, 1, 1),
 (9, 3, 4, 1),
-(17, 2, 3, 1),
 (22, 4, 3, 1),
 (23, 4, 1, 1),
 (29, 5, 4, 2),
 (30, 5, 6, 1),
-(33, 6, 44, 1);
+(33, 6, 44, 1),
+(46, 2, 41, 1);
 
 -- --------------------------------------------------------
 
@@ -175,8 +175,31 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `order_code`, `total_amount`, `status`, `order_date`, `full_name`, `email`, `phone`, `address`, `payment_date`) VALUES
-(1, 7, 'HQ2604100902115', 400000.00, 'Pending', '2026-04-10 02:02:05', 'nguyen hao', 'hao1512005@gmail.com', '0974636727', 'ha noi', NULL),
-(4, 8, 'HQ2604102133430', 2331000.00, 'Pending', '2026-04-10 14:33:22', 'Nguyễn Hảo', 'hao1512005@gmail.com', '0947764463', 'haf noi', NULL);
+(15, 4, 'HQ2604141040944', 10000.00, 'Success', '2026-04-14 03:40:26', 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'Hà Nội', NULL),
+(17, 4, 'HQ2604150739612', 10000.00, 'Pending', '2026-04-15 00:39:01', 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', NULL),
+(18, 4, 'HQ2604150740990', 10000.00, 'Pending', '2026-04-15 00:40:54', 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', NULL),
+(19, 4, 'HQ2604150741891', 10000.00, 'Pending', '2026-04-15 00:41:15', 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', NULL),
+(20, 4, 'HQ2604150744709', 10000.00, 'Success', '2026-04-15 00:44:48', 'Diêm Anh ', 'diema448@gmail.com', '0328662317', '1234567', NULL),
+(21, 4, 'HQ2604150746967', 220000.00, 'Success', '2026-04-15 00:46:27', '0328662317', 'diema448@gmail.com', '0328662317', '17032', NULL),
+(22, 4, 'HQ2604150751534', 450000.00, 'Success', '2026-04-15 00:51:51', 'DIêm Việt ANh', 'diema448@gmail.com', '0328662317', 'Hà Nội', NULL),
+(23, 4, 'HQ2604150754911', 250000.00, 'Success', '2026-04-15 00:54:14', 'Dieem Vieetj ANh', 'diema448@gmail.com', '0328662317', 'Hà Nội', NULL);
+
+--
+-- Bẫy `orders`
+--
+DELIMITER $$
+CREATE TRIGGER `after_order_cancel` AFTER UPDATE ON `orders` FOR EACH ROW BEGIN
+    -- Kiểm tra nếu trạng thái chuyển sang 'Cancel'
+    IF NEW.status = 'Cancel' AND OLD.status <> 'Cancel' THEN
+        -- Sử dụng một con trỏ hoặc cập nhật trực tiếp qua JOIN
+        UPDATE product_variants pv
+        JOIN order_items oi ON pv.id = oi.variant_id
+        SET pv.stock_quantity = pv.stock_quantity + oi.quantity
+        WHERE oi.order_id = NEW.id;
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -197,11 +220,26 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`id`, `order_id`, `variant_id`, `quantity`, `price_at_purchase`) VALUES
-(1, 1, 4, 2, 250000.00),
-(5, 4, 8, 2, 520000.00),
-(8, 4, 6, 1, 650000.00),
-(9, 4, 44, 1, 450000.00),
-(11, 4, 42, 1, 450000.00);
+(25, 15, 3, 1, 10000.00),
+(27, 17, 3, 1, 10000.00),
+(28, 18, 3, 1, 10000.00),
+(29, 19, 3, 1, 10000.00),
+(30, 20, 3, 1, 10000.00),
+(31, 21, 266, 1, 250000.00),
+(32, 22, 1, 1, 450000.00),
+(33, 23, 266, 1, 250000.00);
+
+--
+-- Bẫy `order_items`
+--
+DELIMITER $$
+CREATE TRIGGER `after_order_item_insert` AFTER INSERT ON `order_items` FOR EACH ROW BEGIN
+    UPDATE product_variants
+    SET stock_quantity = stock_quantity - NEW.quantity
+    WHERE id = NEW.variant_id;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -213,8 +251,6 @@ CREATE TABLE `products` (
   `id` int(11) NOT NULL,
   `name` varchar(200) NOT NULL,
   `brand_text` varchar(50) DEFAULT 'H&Q',
-  `accent_color` varchar(50) DEFAULT 'bg-[#9bdc28]',
-  `hover_accent` varchar(50) DEFAULT 'hover:bg-[#9bdc28]',
   `image_url` text DEFAULT NULL,
   `description` text DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
@@ -225,27 +261,27 @@ CREATE TABLE `products` (
 -- Đang đổ dữ liệu cho bảng `products`
 --
 
-INSERT INTO `products` (`id`, `name`, `brand_text`, `accent_color`, `hover_accent`, `image_url`, `description`, `category_id`, `supplier_id`) VALUES
-(1, 'AirSense Áo Blazer', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/477704/item/vngoods_69_477704_3x4.jpg', 'Lấy cảm hứng từ phong cách thời trang học đường, chiếc áo khoác sáng tạo này kết hợp chất liệu nhẹ nhàng của UNIQLO với điểm nhấn da.', 1, 1),
-(2, 'AirSense Áo Khoác | Vải Wool-like | Họa Tiết', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/468671/item/vngoods_05_468671_3x4.jpg', 'Chất liệu cực kỳ thoải mái, gọn nhẹ, co giãn và mau khô, do Toray và UNIQLO phát triển.', 1, 1),
-(3, 'AirSense Áo Khoác | Vải Wool-like', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/448034/item/vngoods_08_448034_3x4.jpg', 'Chất vải nhẹ, co giãn, khô nhanh, được đồng phát triển với Toray, mang lại sự thoải mái tối ưu.', 1, 2),
-(4, 'Áo Khoác Kiểu Sơ Mi Vải Cotton Linen', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/482443/item/vngoods_30_482443_3x4.jpg', 'Combines the texture of linen and natural cotton for comfort.', 1, 1),
-(5, 'Áo Khoác Dáng Relax', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/483836/item/vngoods_09_483836_3x4.jpg', 'Cotton-nylon twill fabric with a fine weave for a lightweight, refined impression. Finished with a washed effect for a casual look.', 1, 1),
-(6, 'Áo Khoác Harrington', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484610/item/vngoods_09_484610_3x4.jpg', 'Vải dày dặn với các sợi dọc và sợi ngang khác nhau tạo nên những nếp nhăn tự nhiên, mang lại vẻ thanh lịch, phom dáng vừa vặn và chất liệu mềm mại.', 1, 1),
-(7, 'Áo Khoác Coach', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484663002/item/vngoods_55_484663002_3x4.jpg', 'Peanuts - bộ truyện tranh nổi tiếng toàn cầu được ra đời năm 1950 bởi tác giả Charles Schulz, đã được dịch sang 25 ngôn ngữ và đăng tải trên hơn 2,600 tờ báo tại 75 quốc gia. Những nhân vật quen thuộc như Charlie Brown, chú chó Snoopy và nhóm bạn cùng nhau vui đùa, phiêu lưu và mang đến những bài học sâu sắc về tình bạn và cuộc sống.', 1, 1),
-(8, 'Áo Khoác Blouson Kéo Khóa', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484249/item/vngoods_32_484249_3x4.jpg', 'JW ANDERSON logo on the front slide fastener and left front hem.', 1, 1),
-(9, 'Áo Khoác Hai Mặt', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/482216/item/vngoods_09_482216_3x4.jpg', 'Lớp phủ chống bám nước, giúp bảo vệ bạn khỏi những cơn mưa nhỏ.* *Bề mặt vải được phủ một chất chống bám nước, giúp tăng hiệu quả chống thấm nước. Khả năng chống bám nước của lớp phủ là không vĩnh viễn.', 1, 1),
-(10, 'Áo Khoác Kiểu Sơ Mi Vải Linen Cao Cấp', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/483829/item/vngoods_04_483829_3x4.jpg', 'Chi Tiết\r\n- Slightly relaxed silhouette for a comfortable fit.\r\n\r\nChi tiết về chức năng\r\n- Dáng: Dáng thoải mái\r\n- Túi: Có túi', 1, 1),
-(11, 'AIRism Cotton Áo Thun Dáng Rộng | Kẻ Sọc', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484508/item/vngoods_00_484508_3x4.jpg', 'Chi Tiết\r\n- Simple, versatile striped pattern with thin lines.\r\n- The fabric creates a sleek silhouette.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng rộng thoải mái\r\n- Túi: Không túi\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.', 2, 1),
-(12, 'AIRism Cotton Áo Thun Dáng Rộng | Tay Lỡ', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/465185/item/vngoods_17_465185_3x4.jpg', 'Chi Tiết\r\nBộ sưu tập Uniqlo U là thành quả của một đội ngũ nhà thiết kế quốc tế tận tâm và tài năng tại Trung tâm Nghiên cứu và Phát triển Paris dưới sự dẫn dắt của Giám đốc Nghệ thuật, ông Christophe Lemaire.\r\n\r\n- Chất vải “AIRism” trơn mịn với vẻ ngoài bóng mượt như cotton.\r\n- Cổ tròn, ôm nhẹ tạo kiểu dáng gọn gàng, thích hợp cho cả nam và nữ.\r\n- Kiểu dáng thanh lịch với phần vai rủ và phom dáng rộng rãi.\r\n- Phù hợp với phong cách ngày thường hoặc thanh lịch.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng rộng thoải mái\r\n- Túi: Không túi\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra “Vật liệu” trên tag giá hoặc nhãn chăm sóc để biết chi tiết.', 2, 1),
-(13, 'AIRism Cotton Áo Thun', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/487505/item/vngoods_00_487505_3x4.jpg', 'Chi Tiết\r\n\r\n- The fabric creates a sleek silhouette.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi\r\n\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.', 2, 1),
-(14, 'Áo Thun Vải Cotton Cổ Tròn', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484080/item/vngoods_00_484080_3x4.jpg', 'Chi Tiết\r\n\r\n- Perfect for layering or wearing on its own.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi\r\n\r\n- Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.\r\n\r\nChất liệu / Cách chăm sóc\r\n\r\nVải\r\n100% Bông\r\n\r\nHướng dẫn giặt\r\nGiặt máy nước lạnh, Không giặt khô, Sấy khô ở nhiệt độ thấp', 2, 1),
-(15, 'Áo Thun Vải Dry Waffle Cổ Henley', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/483924/item/vngoods_00_483924_3x4.jpg', 'Chi Tiết\r\n\r\n- Henley neck looks great alone or layered.\r\n- Versatile regular fit.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Xuyên thấu nhẹ (Chỉ 01 OFF WHITE xuyên thấu nhẹ )\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi', 2, 1),
-(16, 'Áo Len Milano Vải Gân Có Thể Giặt Máy', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/453754/item/vngoods_10_453754_3x4.jpg', 'Chi Tiết\r\n\r\n- Phù hợp cho môi trường công sở và ngày thường.\r\n\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra “Vật liệu” trên tag giá hoặc nhãn chăm sóc để biết chi tiết.', 3, 1),
-(17, 'Áo Polo Dệt Kim Có Thể Giặt Máy', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/476997/item/vngoods_54_476997_3x4.jpg', 'Chi Tiết\r\n\r\n- Chất liệu vải jersey trơn.\r\n- Phù hợp cho cả phong cách công sở và thường ngày, dễ dàng kết hợp với mọi loại quần.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu (Chỉ 02 LIGHT GRAY xuyên thấu nhẹ )\r\n- Dáng: Dáng suông\r\n- Túi: Không túi', 3, 1),
-(18, 'Áo Len Vải Pha Cotton Có Thể Giặt Máy', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484852/item/vngoods_54_484852_3x4.jpg', 'Chi Tiết\r\n\r\n- Casual raglan sleeves in a moderately thick high-gauge fabric, perfect for layering under outerwear. Perfect for seasonal wear.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu (Chỉ 02 LIGHT GRAY xuyên thấu nhẹ )\r\n- Dáng: Dáng suông\r\n- Túi: Không túi', 3, 1),
-(19, 'Áo Polo Len Cotton Mềm | Kẻ Sọc', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484503/item/vngoods_69_484503_3x4.jpg', 'Chi Tiết\r\n\r\n- Collared design for a distinctive style point.\r\n- Relaxed silhouette.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi', 3, 1),
-(20, 'Áo Polo Len Cotton Mềm', 'H&Q', 'bg-[#9bdc28]', 'hover:bg-[#9bdc28]', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/482971/item/vngoods_09_482971_3x4.jpg', 'Chi Tiết\r\n\r\n- Collared design for a distinctive style point.\r\n- Relaxed silhouette.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi', 3, 1);
+INSERT INTO `products` (`id`, `name`, `brand_text`, `image_url`, `description`, `category_id`, `supplier_id`) VALUES
+(1, 'AirSense Áo Blazer', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/477704/item/vngoods_69_477704_3x4.jpg', 'Lấy cảm hứng từ phong cách thời trang học đường, chiếc áo khoác sáng tạo này kết hợp chất liệu nhẹ nhàng của UNIQLO với điểm nhấn da.', 1, 1),
+(2, 'AirSense Áo Khoác | Vải Wool-like | Họa Tiết', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/468671/item/vngoods_05_468671_3x4.jpg', 'Chất liệu cực kỳ thoải mái, gọn nhẹ, co giãn và mau khô, do Toray và UNIQLO phát triển.', 1, 1),
+(3, 'AirSense Áo Khoác | Vải Wool-like', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/448034/item/vngoods_08_448034_3x4.jpg', 'Chất vải nhẹ, co giãn, khô nhanh, được đồng phát triển với Toray, mang lại sự thoải mái tối ưu.', 1, 2),
+(4, 'Áo Khoác Kiểu Sơ Mi Vải Cotton Linen', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/482443/item/vngoods_30_482443_3x4.jpg', 'Combines the texture of linen and natural cotton for comfort.', 1, 1),
+(5, 'Áo Khoác Dáng Relax', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/483836/item/vngoods_09_483836_3x4.jpg', 'Cotton-nylon twill fabric with a fine weave for a lightweight, refined impression. Finished with a washed effect for a casual look.', 1, 1),
+(6, 'Áo Khoác Harrington', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484610/item/vngoods_09_484610_3x4.jpg', 'Vải dày dặn với các sợi dọc và sợi ngang khác nhau tạo nên những nếp nhăn tự nhiên, mang lại vẻ thanh lịch, phom dáng vừa vặn và chất liệu mềm mại.', 1, 1),
+(7, 'Áo Khoác Coach', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484663002/item/vngoods_55_484663002_3x4.jpg', 'Peanuts - bộ truyện tranh nổi tiếng toàn cầu được ra đời năm 1950 bởi tác giả Charles Schulz, đã được dịch sang 25 ngôn ngữ và đăng tải trên hơn 2,600 tờ báo tại 75 quốc gia. Những nhân vật quen thuộc như Charlie Brown, chú chó Snoopy và nhóm bạn cùng nhau vui đùa, phiêu lưu và mang đến những bài học sâu sắc về tình bạn và cuộc sống.', 1, 1),
+(8, 'Áo Khoác Blouson Kéo Khóa', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484249/item/vngoods_32_484249_3x4.jpg', 'JW ANDERSON logo on the front slide fastener and left front hem.', 1, 1),
+(9, 'Áo Khoác Hai Mặt', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/482216/item/vngoods_09_482216_3x4.jpg', 'Lớp phủ chống bám nước, giúp bảo vệ bạn khỏi những cơn mưa nhỏ.* *Bề mặt vải được phủ một chất chống bám nước, giúp tăng hiệu quả chống thấm nước. Khả năng chống bám nước của lớp phủ là không vĩnh viễn.', 1, 1),
+(10, 'Áo Khoác Kiểu Sơ Mi Vải Linen Cao Cấp', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/483829/item/vngoods_04_483829_3x4.jpg', 'Chi Tiết\r\n- Slightly relaxed silhouette for a comfortable fit.\r\n\r\nChi tiết về chức năng\r\n- Dáng: Dáng thoải mái\r\n- Túi: Có túi', 1, 1),
+(11, 'AIRism Cotton Áo Thun Dáng Rộng | Kẻ Sọc', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484508/item/vngoods_00_484508_3x4.jpg', 'Chi Tiết\r\n- Simple, versatile striped pattern with thin lines.\r\n- The fabric creates a sleek silhouette.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng rộng thoải mái\r\n- Túi: Không túi\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.', 2, 1),
+(12, 'AIRism Cotton Áo Thun Dáng Rộng | Tay Lỡ', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/465185/item/vngoods_17_465185_3x4.jpg', 'Chi Tiết\r\nBộ sưu tập Uniqlo U là thành quả của một đội ngũ nhà thiết kế quốc tế tận tâm và tài năng tại Trung tâm Nghiên cứu và Phát triển Paris dưới sự dẫn dắt của Giám đốc Nghệ thuật, ông Christophe Lemaire.\r\n\r\n- Chất vải “AIRism” trơn mịn với vẻ ngoài bóng mượt như cotton.\r\n- Cổ tròn, ôm nhẹ tạo kiểu dáng gọn gàng, thích hợp cho cả nam và nữ.\r\n- Kiểu dáng thanh lịch với phần vai rủ và phom dáng rộng rãi.\r\n- Phù hợp với phong cách ngày thường hoặc thanh lịch.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng rộng thoải mái\r\n- Túi: Không túi\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra “Vật liệu” trên tag giá hoặc nhãn chăm sóc để biết chi tiết.', 2, 1),
+(13, 'AIRism Cotton Áo Thun', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/487505/item/vngoods_00_487505_3x4.jpg', 'Chi Tiết\r\n\r\n- The fabric creates a sleek silhouette.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi\r\n\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.', 2, 1),
+(14, 'Áo Thun Vải Cotton Cổ Tròn', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484080/item/vngoods_00_484080_3x4.jpg', 'Chi Tiết\r\n\r\n- Perfect for layering or wearing on its own.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi\r\n\r\n- Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.\r\n\r\nChất liệu / Cách chăm sóc\r\n\r\nVải\r\n100% Bông\r\n\r\nHướng dẫn giặt\r\nGiặt máy nước lạnh, Không giặt khô, Sấy khô ở nhiệt độ thấp', 2, 1),
+(15, 'Áo Thun Vải Dry Waffle Cổ Henley', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/483924/item/vngoods_00_483924_3x4.jpg', 'Chi Tiết\r\n\r\n- Henley neck looks great alone or layered.\r\n- Versatile regular fit.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Xuyên thấu nhẹ (Chỉ 01 OFF WHITE xuyên thấu nhẹ )\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi', 2, 1),
+(16, 'Áo Len Milano Vải Gân Có Thể Giặt Máy', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/453754/item/vngoods_10_453754_3x4.jpg', 'Chi Tiết\r\n\r\n- Phù hợp cho môi trường công sở và ngày thường.\r\n\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra “Vật liệu” trên tag giá hoặc nhãn chăm sóc để biết chi tiết.', 3, 1),
+(17, 'Áo Polo Dệt Kim Có Thể Giặt Máy', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/476997/item/vngoods_54_476997_3x4.jpg', 'Chi Tiết\r\n\r\n- Chất liệu vải jersey trơn.\r\n- Phù hợp cho cả phong cách công sở và thường ngày, dễ dàng kết hợp với mọi loại quần.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu (Chỉ 02 LIGHT GRAY xuyên thấu nhẹ )\r\n- Dáng: Dáng suông\r\n- Túi: Không túi', 3, 1),
+(18, 'Áo Len Vải Pha Cotton Có Thể Giặt Máy', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484852/item/vngoods_54_484852_3x4.jpg', 'Chi Tiết\r\n\r\n- Casual raglan sleeves in a moderately thick high-gauge fabric, perfect for layering under outerwear. Perfect for seasonal wear.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu (Chỉ 02 LIGHT GRAY xuyên thấu nhẹ )\r\n- Dáng: Dáng suông\r\n- Túi: Không túi', 3, 1),
+(19, 'Áo Polo Len Cotton Mềm | Kẻ Sọc', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/484503/item/vngoods_69_484503_3x4.jpg', 'Chi Tiết\r\n\r\n- Collared design for a distinctive style point.\r\n- Relaxed silhouette.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi', 3, 1),
+(20, 'Áo Polo Len Cotton Mềm', 'H&Q', 'https://image.uniqlo.com/UQ/ST3/vn/imagesgoods/482971/item/vngoods_09_482971_3x4.jpg', 'Chi Tiết\r\n\r\n- Collared design for a distinctive style point.\r\n- Relaxed silhouette.\r\n\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng thoải mái\r\n- Túi: Không túi', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -658,7 +694,7 @@ ALTER TABLE `carts`
 -- AUTO_INCREMENT cho bảng `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -682,13 +718,13 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT cho bảng `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
@@ -736,7 +772,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `wishlist`
 --
 ALTER TABLE `wishlist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

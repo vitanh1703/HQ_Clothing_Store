@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CheckCircle, XCircle } from "lucide-react";
+import axios from "axios";
 
 const PaymentCallback = () => {
   const [searchParams] = useSearchParams();
@@ -9,16 +10,30 @@ const PaymentCallback = () => {
 
   const vnp_ResponseCode = searchParams.get("vnp_ResponseCode");
   const vnp_Amount = searchParams.get("vnp_Amount");
+  const vnp_TxnRef = searchParams.get("vnp_TxnRef");
 
   useEffect(() => {
-    // VNPay trả về mã 00 là giao dịch thành công
-    if (vnp_ResponseCode === "00") {
-      setStatus("success");
-      localStorage.removeItem("selectedPromo");
-    } else if (vnp_ResponseCode) {
-      setStatus("error");
-    }
-  }, [vnp_ResponseCode]);
+    const updateOrderStatus = async () => {
+      // VNPay trả về mã 00 là giao dịch thành công
+      if (vnp_ResponseCode === "00" && vnp_TxnRef) {
+        try {
+          // Gọi API cập nhật trạng thái đơn hàng thành "Success" trong Database
+          await axios.put(`https://localhost:7137/api/orders/${vnp_TxnRef}/status`, {
+            status: "Success"
+          });
+          setStatus("success");
+          localStorage.removeItem("selectedPromo");
+        } catch (error) {
+          console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+          setStatus("error");
+        }
+      } else if (vnp_ResponseCode) {
+        setStatus("error");
+      }
+    };
+
+    updateOrderStatus();
+  }, [vnp_ResponseCode, vnp_TxnRef]);
 
   if (status === "loading") {
     return <div className="min-h-screen flex items-center justify-center font-bold">Đang xử lý kết quả thanh toán...</div>;

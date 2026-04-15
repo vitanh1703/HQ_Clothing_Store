@@ -384,6 +384,18 @@
         }
       }
     },
+    "/api/Orders/cleanup-unpaid": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/auth/forgot-password": {
       "post": {
         "tags": [

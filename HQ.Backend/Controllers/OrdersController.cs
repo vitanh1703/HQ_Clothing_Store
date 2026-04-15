@@ -1,13 +1,14 @@
+using DocumentFormat.OpenXml.InkML;
 using HQ.Backend.Data;
+using HQ.Backend.DTOs;
 using HQ.Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using HQ.Backend.DTOs;
 //using DocumentFormat.OpenXml.Drawing.Diagrams;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HQ.Backend.Controllers
 {
@@ -39,7 +40,7 @@ namespace HQ.Backend.Controllers
                     Phone = request.Phone,
                     Address = request.Address,
                     TotalAmount = request.TotalAmount,
-                    OrderCode = orderCode, // Mã này dùng để khách nhập vào Nội dung CK
+                    OrderCode = orderCode, 
                     Status = "Pending",
                     OrderDate = DateTime.Now,
                     PaymentDate = null
@@ -185,14 +186,18 @@ namespace HQ.Backend.Controllers
                     {
                         int userId = Convert.ToInt32(userIdObj);
 
-                        // Xóa toàn bộ sản phẩm trong giỏ hàng của user này
                         using var clearCartCmd = conn.CreateCommand();
-                        clearCartCmd.CommandText = "DELETE FROM cart_items WHERE cart_id = (SELECT id FROM carts WHERE user_id = @userId)";
+                        clearCartCmd.CommandText = "DELETE FROM cart_items WHERE cart_id = (SELECT id FROM carts WHERE user_id = @userId) AND variant_id IN (SELECT variant_id FROM order_items WHERE order_id = @id)";
 
                         var pUserId = clearCartCmd.CreateParameter();
                         pUserId.ParameterName = "@userId";
                         pUserId.Value = userId;
                         clearCartCmd.Parameters.Add(pUserId);
+
+                        var pOrderId = clearCartCmd.CreateParameter();
+                        pOrderId.ParameterName = "@id";
+                        pOrderId.Value = id;
+                        clearCartCmd.Parameters.Add(pOrderId);
 
                         await clearCartCmd.ExecuteNonQueryAsync();
                     }
@@ -206,6 +211,27 @@ namespace HQ.Backend.Controllers
             }
         }
 
+        [HttpDelete("cleanup-unpaid")]
+        public async Task<IActionResult> CleanupUnpaidOrders()
+        {
+            try
+            {
+                // Sử dụng thời gian của Database (NOW()) để so sánh với cột order_date
+                var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                    "DELETE FROM orders WHERE status = 'Pending' AND order_date <= NOW() - INTERVAL 24 HOUR"
+                );
+
+                if (rowsAffected == 0)
+                {
+                    return Ok(new { message = "Không có đơn hàng nào quá hạn cần xóa." });
+                }
+
+                return Ok(new { message = $"Đã xóa thành công {rowsAffected} đơn hàng chưa thanh toán quá 24h." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi xóa đơn hàng quá hạn", error = ex.Message });
+            }
+        }
     }
 }
-  

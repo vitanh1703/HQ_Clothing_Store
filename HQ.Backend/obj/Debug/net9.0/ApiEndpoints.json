@@ -228,6 +228,16 @@
   },
   {
     "ContainingType": "HQ.Backend.Controllers.OrdersController",
+    "Method": "CleanupUnpaidOrders",
+    "RelativePath": "api/Orders/cleanup-unpaid",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.OrdersController",
     "Method": "CreateOrder",
     "RelativePath": "api/Orders/create",
     "HttpMethod": "POST",

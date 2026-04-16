@@ -14,10 +14,8 @@ const PaymentCallback = () => {
 
   useEffect(() => {
     const updateOrderStatus = async () => {
-      // VNPay trả về mã 00 là giao dịch thành công
       if (vnp_ResponseCode === "00" && vnp_TxnRef) {
         try {
-          // Gọi API cập nhật trạng thái đơn hàng thành "Success" trong Database
           await axios.put(`https://localhost:7137/api/orders/${vnp_TxnRef}/status`, {
             status: "Success"
           });

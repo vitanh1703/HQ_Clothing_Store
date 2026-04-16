@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 15, 2026 lúc 03:31 AM
+-- Thời gian đã tạo: Th4 14, 2026 lúc 04:28 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -64,12 +64,12 @@ CREATE TABLE `cart_items` (
 INSERT INTO `cart_items` (`id`, `cart_id`, `variant_id`, `quantity`) VALUES
 (8, 3, 1, 1),
 (9, 3, 4, 1),
+(17, 2, 3, 1),
 (22, 4, 3, 1),
 (23, 4, 1, 1),
 (29, 5, 4, 2),
 (30, 5, 6, 1),
-(33, 6, 44, 1),
-(46, 2, 41, 1);
+(33, 6, 44, 1);
 
 -- --------------------------------------------------------
 
@@ -175,31 +175,8 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `order_code`, `total_amount`, `status`, `order_date`, `full_name`, `email`, `phone`, `address`, `payment_date`) VALUES
-(15, 4, 'HQ2604141040944', 10000.00, 'Success', '2026-04-14 03:40:26', 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'Hà Nội', NULL),
-(17, 4, 'HQ2604150739612', 10000.00, 'Pending', '2026-04-15 00:39:01', 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', NULL),
-(18, 4, 'HQ2604150740990', 10000.00, 'Pending', '2026-04-15 00:40:54', 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', NULL),
-(19, 4, 'HQ2604150741891', 10000.00, 'Pending', '2026-04-15 00:41:15', 'Diêm Việt Anh', 'diema448@gmail.com', '0328662317', 'hà nội', NULL),
-(20, 4, 'HQ2604150744709', 10000.00, 'Success', '2026-04-15 00:44:48', 'Diêm Anh ', 'diema448@gmail.com', '0328662317', '1234567', NULL),
-(21, 4, 'HQ2604150746967', 220000.00, 'Success', '2026-04-15 00:46:27', '0328662317', 'diema448@gmail.com', '0328662317', '17032', NULL),
-(22, 4, 'HQ2604150751534', 450000.00, 'Success', '2026-04-15 00:51:51', 'DIêm Việt ANh', 'diema448@gmail.com', '0328662317', 'Hà Nội', NULL),
-(23, 4, 'HQ2604150754911', 250000.00, 'Success', '2026-04-15 00:54:14', 'Dieem Vieetj ANh', 'diema448@gmail.com', '0328662317', 'Hà Nội', NULL);
-
---
--- Bẫy `orders`
---
-DELIMITER $$
-CREATE TRIGGER `after_order_cancel` AFTER UPDATE ON `orders` FOR EACH ROW BEGIN
-    -- Kiểm tra nếu trạng thái chuyển sang 'Cancel'
-    IF NEW.status = 'Cancel' AND OLD.status <> 'Cancel' THEN
-        -- Sử dụng một con trỏ hoặc cập nhật trực tiếp qua JOIN
-        UPDATE product_variants pv
-        JOIN order_items oi ON pv.id = oi.variant_id
-        SET pv.stock_quantity = pv.stock_quantity + oi.quantity
-        WHERE oi.order_id = NEW.id;
-    END IF;
-END
-$$
-DELIMITER ;
+(1, 7, 'HQ2604100902115', 400000.00, 'Pending', '2026-04-10 02:02:05', 'nguyen hao', 'hao1512005@gmail.com', '0974636727', 'ha noi', NULL),
+(4, 8, 'HQ2604102133430', 2331000.00, 'Pending', '2026-04-10 14:33:22', 'Nguyễn Hảo', 'hao1512005@gmail.com', '0947764463', 'haf noi', NULL);
 
 -- --------------------------------------------------------
 
@@ -220,26 +197,11 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`id`, `order_id`, `variant_id`, `quantity`, `price_at_purchase`) VALUES
-(25, 15, 3, 1, 10000.00),
-(27, 17, 3, 1, 10000.00),
-(28, 18, 3, 1, 10000.00),
-(29, 19, 3, 1, 10000.00),
-(30, 20, 3, 1, 10000.00),
-(31, 21, 266, 1, 250000.00),
-(32, 22, 1, 1, 450000.00),
-(33, 23, 266, 1, 250000.00);
-
---
--- Bẫy `order_items`
---
-DELIMITER $$
-CREATE TRIGGER `after_order_item_insert` AFTER INSERT ON `order_items` FOR EACH ROW BEGIN
-    UPDATE product_variants
-    SET stock_quantity = stock_quantity - NEW.quantity
-    WHERE id = NEW.variant_id;
-END
-$$
-DELIMITER ;
+(1, 1, 4, 2, 250000.00),
+(5, 4, 8, 2, 520000.00),
+(8, 4, 6, 1, 650000.00),
+(9, 4, 44, 1, 450000.00),
+(11, 4, 42, 1, 450000.00);
 
 -- --------------------------------------------------------
 
@@ -694,7 +656,7 @@ ALTER TABLE `carts`
 -- AUTO_INCREMENT cho bảng `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -718,13 +680,13 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
@@ -772,7 +734,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `wishlist`
 --
 ALTER TABLE `wishlist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

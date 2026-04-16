@@ -1,6 +1,4 @@
-import React from "react";  
 import { useNavigate } from "react-router-dom";
-
 
 const AboutUsPage = () => {
     const navigate = useNavigate();
@@ -33,7 +31,7 @@ const AboutUsPage = () => {
           <img
             src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a"
             alt="store"
-            className="rounded-xl w-full h-[300px] object-cover"
+            className="rounded-xl w-full h-75 object-cover"
           />
         </div>
 
@@ -65,7 +63,7 @@ const AboutUsPage = () => {
           <img
             src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f"
             alt="appointment"
-            className="rounded-xl w-full h-[300px] object-cover"
+            className="rounded-xl w-full h-75 object-cover"
           />
 
           <div>

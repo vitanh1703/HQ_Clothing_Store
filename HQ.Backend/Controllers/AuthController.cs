@@ -48,18 +48,7 @@ namespace HQ.Backend.Controllers
                 return BadRequest(new { message = "Tài khoản của bạn đã bị khóa!" });
             }
 
-            // Ensure role is not null or empty
-            if (string.IsNullOrEmpty(user.Role))
-            {
-                user.Role = "Customer"; // Default role assignment
-            }
-
-            Console.WriteLine($"User Role: {user.Role}"); // Log role for debugging
-
             var fakeToken = "HQ-STORE-TOKEN-" + Guid.NewGuid().ToString();
-
-            // Ensure role is returned correctly
-            var userRole = user.Role ?? "Customer";
 
             return Ok(new
             {
@@ -70,7 +59,7 @@ namespace HQ.Backend.Controllers
                     id = user.Id,
                     email = user.Email,
                     full_name = user.FullName,
-                    role = userRole, // Ensure role is included
+                    role = user.Role,
                     avatar = user.AvatarUrl,
                     address = user.Address,
                     phone = user.Phone

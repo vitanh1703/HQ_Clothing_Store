@@ -1,13 +1,14 @@
+using DocumentFormat.OpenXml.InkML;
 using HQ.Backend.Data;
+using HQ.Backend.DTOs;
 using HQ.Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using HQ.Backend.DTOs;
 //using DocumentFormat.OpenXml.Drawing.Diagrams;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HQ.Backend.Controllers
 {
@@ -39,7 +40,7 @@ namespace HQ.Backend.Controllers
                     Phone = request.Phone,
                     Address = request.Address,
                     TotalAmount = request.TotalAmount,
-                    OrderCode = orderCode, // Mã này dùng để khách nhập vào Nội dung CK
+                    OrderCode = orderCode, 
                     Status = "Pending",
                     OrderDate = DateTime.Now,
                     PaymentDate = null
@@ -140,6 +141,118 @@ namespace HQ.Backend.Controllers
 
             return Ok(orders);
         }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] UpdateOrderStatusRequest request)
+        {
+            try
+            {
+                var conn = _context.Database.GetDbConnection();
+                if (conn.State != System.Data.ConnectionState.Open)
+                    await conn.OpenAsync();
+
+                // 1. Cập nhật trạng thái đơn hàng
+                using var updateCmd = conn.CreateCommand();
+                updateCmd.CommandText = "UPDATE orders SET status = @status WHERE id = @id";
+
+                var pStatus = updateCmd.CreateParameter();
+                pStatus.ParameterName = "@status";
+                pStatus.Value = request.Status;
+                updateCmd.Parameters.Add(pStatus);
+
+                var pId = updateCmd.CreateParameter();
+                pId.ParameterName = "@id";
+                pId.Value = id;
+                updateCmd.Parameters.Add(pId);
+
+                var rowsAffected = await updateCmd.ExecuteNonQueryAsync();
+                if (rowsAffected == 0)
+                    return NotFound(new { message = "Không tìm thấy đơn hàng để cập nhật" });
+
+                // 2. Nếu thanh toán thành công, tự động dọn dẹp giỏ hàng của người dùng
+                if (request.Status == "Success")
+                {
+                    using var getUserIdCmd = conn.CreateCommand();
+                    getUserIdCmd.CommandText = "SELECT user_id FROM orders WHERE id = @id";
+
+                    var pId2 = getUserIdCmd.CreateParameter();
+                    pId2.ParameterName = "@id";
+                    pId2.Value = id;
+                    getUserIdCmd.Parameters.Add(pId2);
+
+                    var userIdObj = await getUserIdCmd.ExecuteScalarAsync();
+
+                    if (userIdObj != null && userIdObj != DBNull.Value)
+                    {
+                        int userId = Convert.ToInt32(userIdObj);
+
+                        using var clearCartCmd = conn.CreateCommand();
+                        clearCartCmd.CommandText = "DELETE FROM cart_items WHERE cart_id = (SELECT id FROM carts WHERE user_id = @userId) AND variant_id IN (SELECT variant_id FROM order_items WHERE order_id = @id)";
+
+                        var pUserId = clearCartCmd.CreateParameter();
+                        pUserId.ParameterName = "@userId";
+                        pUserId.Value = userId;
+                        clearCartCmd.Parameters.Add(pUserId);
+
+                        var pOrderId = clearCartCmd.CreateParameter();
+                        pOrderId.ParameterName = "@id";
+                        pOrderId.Value = id;
+                        clearCartCmd.Parameters.Add(pOrderId);
+
+                        await clearCartCmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                return Ok(new { message = "Cập nhật trạng thái đơn hàng thành công" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi cập nhật trạng thái đơn hàng", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("cleanup-unpaid")]
+        public async Task<IActionResult> CleanupUnpaidOrders()
+        {
+            try
+            {
+                var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                    "UPDATE orders SET status = 'Cancel' WHERE status = 'Pending' AND order_date <= NOW() - INTERVAL 24 HOUR"
+                );
+
+                if (rowsAffected == 0)
+                {
+                    return Ok(new { message = "Không có đơn hàng nào quá hạn cần xử lý." });
+                }
+
+                return Ok(new { message = $"Đã hủy thành công {rowsAffected} đơn hàng chưa thanh toán quá 24h và hoàn trả kho." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi xử lý đơn hàng quá hạn", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("delete-canceled")]
+        public async Task<IActionResult> DeleteCanceledOrders()
+        {
+            try
+            {
+                var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                    "DELETE FROM orders WHERE status = 'Cancel'"
+                );
+
+                if (rowsAffected == 0)
+                {
+                    return Ok(new { message = "Không có đơn hàng đã hủy nào cần xóa." });
+                }
+
+                return Ok(new { message = $"Đã xóa thành công {rowsAffected} đơn hàng đã hủy khỏi hệ thống." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi xóa đơn hàng đã hủy", error = ex.Message });
+            }
+        }
     }
 }
-  

@@ -8,7 +8,6 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState(600); 
   const [copiedAccount, setCopiedAccount] = useState(false);
-
   const { checkoutData, totalAmount, form } = (location.state as {
     checkoutData: CheckoutResponse;
     totalAmount: number;

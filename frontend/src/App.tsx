@@ -20,11 +20,12 @@ import ShippingPolicy from './pages/ShippingPolicy';
 import PaymentPage from './pages/PaymentPage';
 import FAQPage from './pages/FAQPage';
 import AboutUsPage from './pages/Aboutus';
-import AdminDashboard from './pages/admin/AdminDashboard';
+import PaymentCallback from './pages/PaymentCallback';
+
 
 function App() {
   const location = useLocation();
-  const hideLayoutPaths = ["/auth", "/logout", "/admin"];
+  const hideLayoutPaths = ["/auth", "/logout"];
   const isHideLayout = hideLayoutPaths.includes(location.pathname);
 
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/payment-callback" element={<PaymentCallback />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
@@ -54,7 +56,6 @@ function App() {
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/aboutus" element={<AboutUsPage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold italic">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

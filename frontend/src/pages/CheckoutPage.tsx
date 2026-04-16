@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { cartApi, promotionsApi } from "../services/api";
+import { promotionsApi } from "../services/api";
 import type { CheckoutCartItem, CheckoutResponse, PromotionItem, PromotionValidationResult } from "../services/api";
 import { PromoSelectionModal } from "../components/PromoSelectionModal";
 import { checkoutController } from "../services/controller";
@@ -26,7 +26,7 @@ const CheckoutPage = () => {
   const [promoResult, setPromoResult] = useState<PromotionValidationResult | null>(null);
   const [promotions, setPromotions] = useState<PromotionItem[]>([]);
   const [showPromoModal, setShowPromoModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<"bank" | "cod">("bank");
+  const [paymentMethod, setPaymentMethod] = useState<"bank" | "vnpay" | "cod">("bank");
 
   const userId = Number(localStorage.getItem("userId")) || 1;
 
@@ -161,13 +161,20 @@ const CheckoutPage = () => {
       const response = await axios.post("https://localhost:7137/api/orders/create", orderPayload);
       const savedOrder = response.data; // Đây là đơn hàng đã có OrderCode từ DB
 
-      if (paymentMethod === "bank") {
-        // 3. Chuyển sang trang thanh toán kèm theo dữ liệu THẬT từ DB
+      if (paymentMethod === "vnpay") {
+        // 3. Gọi API lấy URL thanh toán VNPay và chuyển hướng
+        const paymentRes = await axios.post("https://localhost:7137/api/payment/create-payment", {
+          orderId: savedOrder.id,
+          amount: totalAfterDiscount
+        });
+        window.location.href = paymentRes.data.url;
+      } else if (paymentMethod === "bank") {
+        // 3. Chuyển sang trang thanh toán bằng mã QR kèm dữ liệu
         navigate("/payment", {
           state: {
             checkoutData: {
               ...checkoutData,
-              orderCode: savedOrder.orderCode, // Quan trọng: Lấy mã từ server
+              orderCode: savedOrder.orderCode,
               id: savedOrder.id
             },
             totalAmount: totalAfterDiscount,
@@ -358,8 +365,22 @@ const CheckoutPage = () => {
                   className="h-4 w-4"
                 />
                 <div>
-                  <p className="font-semibold">Ngân hàng</p>
-                  <p className="text-gray-500">Thanh toán trước qua chuyển khoản</p>
+                  <p className="font-semibold">Chuyển khoản (Mã QR)</p>
+                  <p className="text-gray-500">Quét mã QR để thanh toán trực tiếp qua ứng dụng ngân hàng</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 rounded-xl border border-gray-300 p-4 cursor-pointer">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="vnpay"
+                  checked={paymentMethod === "vnpay"}
+                  onChange={() => setPaymentMethod("vnpay")}
+                  className="h-4 w-4"
+                />
+                <div>
+                  <p className="font-semibold">Thanh toán VNPay</p>
+                  <p className="text-gray-500">Thanh toán an toàn qua cổng VNPay (Hỗ trợ ATM, Visa, Master...)</p>
                 </div>
               </label>
               <label className="flex items-center gap-3 rounded-xl border border-gray-300 p-4 cursor-pointer">

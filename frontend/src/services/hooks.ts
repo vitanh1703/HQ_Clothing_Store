@@ -13,8 +13,6 @@ export const useAuth = () => {
       setLoading(true);
       const data = await authApi.login({ email, password }); 
       
-      console.log("User data:", data.user); // Log user data for debugging
-      
       localStorage.setItem("userId", data.user.id.toString());
       localStorage.setItem("user", JSON.stringify(data.user));
       if (data.token) localStorage.setItem("token", data.token);

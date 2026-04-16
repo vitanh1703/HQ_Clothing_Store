@@ -252,7 +252,7 @@ const ProfilePage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Địa chỉ</label>
-                    <textarea value={editAddress} onChange={e => setEditAddress(e.target.value)} required className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-black focus:ring-1 focus:ring-black min-h-[80px]"></textarea>
+                    <textarea value={editAddress} onChange={e => setEditAddress(e.target.value)} required className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-black focus:ring-1 focus:ring-black min-h-20"></textarea>
                   </div>
                   <button type="submit" className="w-full bg-black text-white font-bold uppercase tracking-widest text-xs py-3 rounded-lg mt-2 hover:bg-gray-800 transition-colors">
                     Lưu thông tin

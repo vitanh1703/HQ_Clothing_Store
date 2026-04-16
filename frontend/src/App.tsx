@@ -21,11 +21,13 @@ import PaymentPage from './pages/PaymentPage';
 import FAQPage from './pages/FAQPage';
 import AboutUsPage from './pages/Aboutus';
 import PaymentCallback from './pages/PaymentCallback';
+import AdminDashboard from './pages/admin/AdminDashboard';
 // Main App component với cấu trúc điều hướng và layout
 
 function App() {
   const location = useLocation();
-  const hideLayoutPaths = ["/auth", "/logout"];
+  
+  const hideLayoutPaths = ["/auth", "/logout", "/admin"];
   const isHideLayout = hideLayoutPaths.includes(location.pathname);
 
   return (
@@ -56,6 +58,7 @@ function App() {
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/aboutus" element={<AboutUsPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold italic">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

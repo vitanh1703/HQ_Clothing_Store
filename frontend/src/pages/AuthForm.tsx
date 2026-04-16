@@ -80,18 +80,19 @@ const AuthForm = () => {
 // Đăng nhập bằng email và mật khẩu
     try {
       const data = await login(email, password);
+      const userRole = data.user?.role || "Customer"; // Default to 'Customer' if role is missing
+      console.log("User role from API:", userRole); // Debug log
       localStorage.setItem("auth", JSON.stringify(data));
-      try {
-        const userId = data.user?.id || data.user?.Id;
-        if (userId) {
-          const res = await axios.get(`https://localhost:7137/api/wishlist/${userId}`);
-          localStorage.setItem("wishlistVariantIds", JSON.stringify(res.data));
-        }
-      } catch (err) {
-        console.error("Lỗi lấy danh sách yêu thích:", err);
+       console.log("Data saved to localStorage:", localStorage.getItem("auth")); // Debug log
+      
+      // Case-insensitive comparison
+      if (userRole.toLowerCase() === 'admin') {
+        toast.success("Chào mừng Admin trở lại!");
+        navigate("/admin");
+      } else {
+        toast.success("Chào mừng bạn trở lại!");
+        navigate("/home");
       }
-      toast.success("Chào mừng bạn trở lại!");
-      navigate("/home");
     } catch (err: any) {
       toast.error(err.message || "Đăng nhập thất bại");
     }
@@ -131,7 +132,12 @@ const AuthForm = () => {
         console.error("Lỗi lấy danh sách yêu thích:", err);
       }
       toast.success(`Chào mừng ${data.user.full_name} trở lại!`);
-      navigate("/home");
+      const userRole = data.user?.role || "Customer";
+      if (userRole.toLowerCase() === 'admin') {
+        navigate("/admin");
+      } else {
+        navigate("/home");
+      }
     } catch (error: any) {
       toast.error(error.message || "Lỗi xác thực Google");
     }

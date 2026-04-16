@@ -21,7 +21,7 @@ import PaymentPage from './pages/PaymentPage';
 import FAQPage from './pages/FAQPage';
 import AboutUsPage from './pages/Aboutus';
 import PaymentCallback from './pages/PaymentCallback';
-
+// Main App component với cấu trúc điều hướng và layout
 
 function App() {
   const location = useLocation();

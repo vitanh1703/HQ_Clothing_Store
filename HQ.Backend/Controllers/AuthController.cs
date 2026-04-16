@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
-
+// Controller xử lý đăng ký, đăng nhập và đăng nhập Google
 namespace HQ.Backend.Controllers
 {
     [Route("api/[controller]")]

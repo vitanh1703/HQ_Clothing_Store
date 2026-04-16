@@ -254,6 +254,16 @@
   },
   {
     "ContainingType": "HQ.Backend.Controllers.OrdersController",
+    "Method": "DeleteCanceledOrders",
+    "RelativePath": "api/Orders/delete-canceled",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.OrdersController",
     "Method": "GetUserOrders",
     "RelativePath": "api/Orders/user/{userId}",
     "HttpMethod": "GET",

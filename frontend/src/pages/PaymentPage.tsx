@@ -8,7 +8,6 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState(600); 
   const [copiedAccount, setCopiedAccount] = useState(false);
-// Dữ liệu checkout được truyền từ CheckoutPage qua state khi điều hướng
   const { checkoutData, totalAmount, form } = (location.state as {
     checkoutData: CheckoutResponse;
     totalAmount: number;

@@ -18,10 +18,7 @@ interface SidebarFiltersProps {
 }
 
 const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFiltersProps) => {
-  // State để đóng/mở các mục (Accordion)
   const [openMenus, setOpenMenus] = useState<string[]>(["Kích thước", "Khoảng giá"]);
-  
-  // Filter states
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 2000000 });
@@ -34,7 +31,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
     );
   };
 
-  // Extract unique sizes and colors from products
   const extractedSizes = new Set<string>();
   const extractedColors = new Set<string>();
   let minPrice = Infinity;
@@ -52,7 +48,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
   const sizes = Array.from(extractedSizes).sort();
   const colors = Array.from(extractedColors);
 
-  // Vietnamese color mapping to hex codes - STATIC
   const colorMap: Record<string, string> = useMemo(() => ({
     "Trắng": "#FFFFFF",
     "Đen": "#000000",
@@ -69,14 +64,12 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
     "Xanh Dương": "#0000FF",
   }), []);
 
-  // Memoized color hex mapping
   const getColorHex = useMemo(() => {
     return (colorName: string) => {
-      return colorMap[colorName] || "#CCCCCC"; // fallback to gray, not random
+      return colorMap[colorName] || "#CCCCCC"; 
     };
   }, [colorMap]);
 
-  // Emit filter changes to parent
   useEffect(() => {
     onFilterChange({
       sizes: selectedSizes,
@@ -126,7 +119,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
     setSelectedRating(null);
   };
 
-  // Determine availability status from stock quantity
   const hasInStock = products.some(p => 
     p.variants?.some(v => v.stockQuantity > 0)
   );
@@ -153,7 +145,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
         )}
       </div>
 
-      {/* 1. SIZE - Dạng Button Grid */}
       <div className="mb-8">
         <div 
           className="flex justify-between items-center py-3 cursor-pointer group"
@@ -187,7 +178,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
         )}
       </div>
 
-      {/* 2. AVAILABILITY - Dynamic based on stock_quantity */}
       <FilterWrapper title="Tình trạng" isOpen={openMenus.includes("Tình trạng")} onToggle={() => toggleMenu("Tình trạng")}>
         <div className="space-y-2 mt-2">
           {hasInStock && (
@@ -218,7 +208,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
         </div>
       </FilterWrapper>
 
-      {/* 3. COLORS - Dạng Vòng tròn màu */}
       <FilterWrapper title="Màu sắc" isOpen={openMenus.includes("Màu sắc")} onToggle={() => toggleMenu("Màu sắc")}>
         <div className="flex flex-wrap gap-3 mt-3">
           {loading ? (
@@ -249,7 +238,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
         </div>
       </FilterWrapper>
 
-      {/* 4. PRICE RANGE - Dạng Range Slider đơn giản */}
       <FilterWrapper title="Khoảng giá" isOpen={openMenus.includes("Khoảng giá")} onToggle={() => toggleMenu("Khoảng giá")}>
         <div className="mt-4 px-2">
           <input 
@@ -270,7 +258,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
         </div>
       </FilterWrapper>
 
-      {/* 5. RATINGS - Filter products by average rating */}
       <FilterWrapper title="Đánh giá" isOpen={openMenus.includes("Đánh giá")} onToggle={() => toggleMenu("Đánh giá")}>
         <div className="space-y-2 mt-3">
           {[5, 4, 3, 2, 1].map(star => (
@@ -305,7 +292,6 @@ const SidebarFilters = ({ products, onFilterChange, loading = false }: SidebarFi
   );
 };
 
-// Component con để tái sử dụng hiệu ứng đóng mở
 const FilterWrapper = ({ title, children, isOpen, onToggle }: any) => (
   <div className="border-b border-gray-100 py-4 transition-all">
     <div className="flex justify-between items-center cursor-pointer group" onClick={onToggle}>

@@ -664,3 +664,6 @@ D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\refint\HQ.Backend.dll
 D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.pdb
 D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\HQ.Backend.genruntimeconfig.cache
 D:\HQ_Clothing_Store\HQ.Backend\obj\Debug\net9.0\ref\HQ.Backend.dll
+E:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
+E:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\DocumentFormat.OpenXml.Framework.dll
+E:\HQ_Clothing_Store\HQ.Backend\bin\Debug\net9.0\System.IO.Packaging.dll

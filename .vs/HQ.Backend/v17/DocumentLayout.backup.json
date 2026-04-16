@@ -50,12 +50,21 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+<<<<<<< HEAD
               "Title": "ReviewsController.cs",
               "DocumentMoniker": "E:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\ReviewsController.cs",
               "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\ReviewsController.cs",
               "ToolTip": "E:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\ReviewsController.cs",
               "RelativeToolTip": "HQ.Backend\\Controllers\\ReviewsController.cs",
               "ViewState": "AgIAAC8AAAAAAAAAAAAwwDAAAAAeAAAAAAAAAA==",
+=======
+              "Title": "OrdersController.cs",
+              "DocumentMoniker": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\OrdersController.cs",
+              "RelativeDocumentMoniker": "HQ.Backend\\Controllers\\OrdersController.cs",
+              "ToolTip": "D:\\HQ_Clothing_Store\\HQ.Backend\\Controllers\\OrdersController.cs",
+              "RelativeToolTip": "HQ.Backend\\Controllers\\OrdersController.cs",
+              "ViewState": "AgIAAN4AAAAAAAAAAAAcwNQAAAAAAAAAAAAAAA==",
+>>>>>>> cb40bc940d618111b2e1d232e91af9326b351f5e
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-15T10:10:01.622Z",
               "EditorCaption": ""

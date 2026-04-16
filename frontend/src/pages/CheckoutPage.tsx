@@ -130,7 +130,7 @@ const CheckoutPage = () => {
     localStorage.removeItem("selectedPromo");
   };
 
-  const handlePlaceOrder = async () => { // Thêm async ở đây
+  const handlePlaceOrder = async () => { 
     if (!checkoutData || checkoutData.items.length === 0) {
       return alert("Không có sản phẩm nào để thanh toán.");
     }
@@ -141,7 +141,6 @@ const CheckoutPage = () => {
     }
 
     try {
-      // 1. Chuẩn bị dữ liệu gửi lên Backend
       const orderPayload = {
         userId: userId,
         fullName: form.fullName,
@@ -156,20 +155,16 @@ const CheckoutPage = () => {
         }))
       };
 
-      // 2. Gọi API để lưu đơn hàng vào DB (Sử dụng endpoint đã viết ở Backend)
-      // Giả sử bạn dùng axios trực tiếp hoặc qua service
       const response = await axios.post("https://localhost:7137/api/orders/create", orderPayload);
-      const savedOrder = response.data; // Đây là đơn hàng đã có OrderCode từ DB
+      const savedOrder = response.data; 
 
       if (paymentMethod === "vnpay") {
-        // 3. Gọi API lấy URL thanh toán VNPay và chuyển hướng
         const paymentRes = await axios.post("https://localhost:7137/api/payment/create-payment", {
           orderId: savedOrder.id,
           amount: totalAfterDiscount
         });
         window.location.href = paymentRes.data.url;
       } else if (paymentMethod === "bank") {
-        // 3. Chuyển sang trang thanh toán bằng mã QR kèm dữ liệu
         navigate("/payment", {
           state: {
             checkoutData: {
@@ -182,7 +177,6 @@ const CheckoutPage = () => {
           }
         });
       } else {
-        // Xử lý cho COD (Thanh toán khi nhận hàng)
         alert(`Đã tạo đơn hàng thành công! Mã đơn: ${savedOrder.orderCode}. Cảm ơn bạn.`);
         navigate("/home");
       }

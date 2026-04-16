@@ -77,7 +77,7 @@ const AuthForm = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-
+// Đăng nhập bằng email và mật khẩu
     try {
       const data = await login(email, password);
       localStorage.setItem("auth", JSON.stringify(data));

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { authApi, productApi, cartApi, newsApi, servicesApi, promotionsApi, reviewApi, type Product, type NewsItem, type ServiceItem, type PromotionItem, type Category, type NewsTitle, type Review } from "./api";
 import { authController } from "./controller";
-
+// Các hook tùy chỉnh để quản lý trạng thái và logic liên quan đến API
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);
 

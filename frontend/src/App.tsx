@@ -21,9 +21,13 @@ import PaymentPage from './pages/PaymentPage';
 import FAQPage from './pages/FAQPage';
 import AboutUsPage from './pages/Aboutus';
 import PaymentCallback from './pages/PaymentCallback';
+<<<<<<< HEAD
 import CustomerManager from './pages/admin/CustomerManager';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
+=======
+// Main App component với cấu trúc điều hướng và layout
+>>>>>>> 75e862166808048ac2f7038ebf2c406d1c8179a9
 
 function App() {
   const location = useLocation();

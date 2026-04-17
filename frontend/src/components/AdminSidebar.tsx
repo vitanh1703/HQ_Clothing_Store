@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiShoppingCart, FiUsers, FiBox, FiBarChart, FiSettings, FiLogOut } from 'react-icons/fi';
 
 interface AdminSidebarProps {
@@ -7,6 +8,7 @@ interface AdminSidebarProps {
 }
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen }) => {
+  const navigate = useNavigate();
   return (
     <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-blue-600 text-white transition-all duration-300 flex flex-col shadow-xl`}>
       <div className="p-4 border-b border-blue-700 flex items-center gap-3 hover:bg-blue-700 transition cursor-pointer">
@@ -31,7 +33,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen }) => {
         <div className="px-2 mb-6">
           <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Quản lý cơ bản</p>
           <div className="space-y-2">
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
+            <button 
+              onClick={() => navigate('/customers')}
+              className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition"
+            >
               <FiUsers className="shrink-0" /> {sidebarOpen && 'Khách hàng'}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition relative">

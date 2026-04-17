@@ -6,7 +6,7 @@ interface AdminSidebarProps {
   setSidebarOpen: (open: boolean) => void;
 }
 
-const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen }) => {
   return (
     <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-blue-600 text-white transition-all duration-300 flex flex-col shadow-xl`}>
       <div className="p-4 border-b border-blue-700 flex items-center gap-3 hover:bg-blue-700 transition cursor-pointer">
@@ -23,7 +23,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
         <div className="px-2 mb-6">
           <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Tổng quan</p>
           <button className="w-full flex items-center gap-3 px-4 py-3 bg-blue-700 hover:bg-blue-800 rounded-lg text-sm font-medium transition">
-            <FiBarChart className="flex-shrink-0" /> {sidebarOpen && 'Dashboard'}
+            <FiBarChart className="shrink-0" /> {sidebarOpen && 'Dashboard'}
           </button>
         </div>
 
@@ -32,23 +32,23 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
           <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Quản lý cơ bản</p>
           <div className="space-y-2">
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiUsers className="flex-shrink-0" /> {sidebarOpen && 'Khách hàng'}
+              <FiUsers className="shrink-0" /> {sidebarOpen && 'Khách hàng'}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition relative">
-              <FiUsers className="flex-shrink-0" /> {sidebarOpen && 'Khách hàng hết hạn'}
+              <FiUsers className="shrink-0" /> {sidebarOpen && 'Khách hàng hết hạn'}
               {sidebarOpen && <span className="ml-auto bg-red-500 text-xs rounded-full w-5 h-5 flex items-center justify-center">1</span>}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBox className="flex-shrink-0" /> {sidebarOpen && 'Nhà cung cấp'}
+              <FiBox className="shrink-0" /> {sidebarOpen && 'Nhà cung cấp'}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBox className="flex-shrink-0" /> {sidebarOpen && 'Sản phẩm'}
+              <FiBox className="shrink-0" /> {sidebarOpen && 'Sản phẩm'}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBox className="flex-shrink-0" /> {sidebarOpen && 'Danh mục'}
+              <FiBox className="shrink-0" /> {sidebarOpen && 'Danh mục'}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBox className="flex-shrink-0" /> {sidebarOpen && 'Kho hàng'}
+              <FiBox className="shrink-0" /> {sidebarOpen && 'Kho hàng'}
             </button>
           </div>
         </div>
@@ -58,10 +58,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
           <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Ngành vụ</p>
           <div className="space-y-2">
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBarChart className="flex-shrink-0" /> {sidebarOpen && 'Công nợ'}
+              <FiBarChart className="shrink-0" /> {sidebarOpen && 'Công nợ'}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiShoppingCart className="flex-shrink-0" /> {sidebarOpen && 'Quản lý đơn hàng'}
+              <FiShoppingCart className="shrink-0" /> {sidebarOpen && 'Quản lý đơn hàng'}
             </button>
           </div>
         </div>
@@ -70,7 +70,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
         <div className="px-2 mb-6">
           <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Báo cáo</p>
           <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-            <FiBarChart className="flex-shrink-0" /> {sidebarOpen && 'Báo cáo'}
+            <FiBarChart className="shrink-0" /> {sidebarOpen && 'Báo cáo'}
           </button>
         </div>
 
@@ -79,10 +79,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
           <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Hệ thống</p>
           <div className="space-y-2">
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiSettings className="flex-shrink-0" /> {sidebarOpen && 'Cài đặt'}
+              <FiSettings className="shrink-0" /> {sidebarOpen && 'Cài đặt'}
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBarChart className="flex-shrink-0" /> {sidebarOpen && 'Thông Tin Shop'}
+              <FiBarChart className="shrink-0" /> {sidebarOpen && 'Thông Tin Shop'}
             </button>
           </div>
         </div>
@@ -97,7 +97,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
           }}
           className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition text-red-300 hover:text-red-200"
         >
-          <FiLogOut className="flex-shrink-0" /> {sidebarOpen && 'Đăng xuất'}
+          <FiLogOut className="shrink-0" /> {sidebarOpen && 'Đăng xuất'}
         </button>
       </div>
     </div>

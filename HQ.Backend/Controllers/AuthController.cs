@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
-// Controller xử lý đăng ký, đăng nhập và đăng nhập Google
+using System.Net;
+using System.Net.Mail;
+using System.Collections.Concurrent;
+
 namespace HQ.Backend.Controllers
 {
     [Route("api/[controller]")]
@@ -15,6 +18,9 @@ namespace HQ.Backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private static readonly ConcurrentDictionary<string, (string Otp, DateTime Expiry, int FailedAttempts, User PendingUser)> _registerOtpStorage = new();
+
+        public class VerifyRegisterOtpDto { public string Email { get; set; } public string Otp { get; set; } }
 
         public AuthController(AppDbContext context) { _context = context; }
 
@@ -30,6 +36,68 @@ namespace HQ.Backend.Controllers
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+            return Ok(new { message = "Đăng ký thành công!" });
+        }
+
+        [HttpPost("send-register-otp")]
+        public async Task<IActionResult> SendRegisterOtp([FromBody] User user)
+        {
+            if (await _context.Users.AnyAsync(u => u.Email == user.Email))
+                return BadRequest(new { message = "Email đã được sử dụng!" });
+
+            string otp = new Random().Next(100000, 999999).ToString();
+            
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.CreatedAt = DateTime.Now;
+            user.Status = true;
+            user.Role = "Customer";
+
+            _registerOtpStorage[user.Email] = (otp, DateTime.Now.AddMinutes(5), 0, user);
+
+            bool isSent = await SendEmailAsync(user.Email, "Mã OTP đăng ký tài khoản - H&Q Store", 
+                $"Xin chào,\n\nMã OTP để đăng ký tài khoản của bạn là: {otp}\n\nMã này có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã này với bất kỳ ai.");
+
+            if (isSent) 
+                return Ok(new { message = "Mã OTP đã được gửi!" });
+            
+            return StatusCode(500, new { message = "Gửi mail thất bại, kiểm tra kết nối mạng hoặc cấu hình SMTP!" });
+        }
+
+        [HttpPost("verify-register-otp")]
+        public async Task<IActionResult> VerifyRegisterOtp([FromBody] VerifyRegisterOtpDto request)
+        {
+            if (!_registerOtpStorage.TryGetValue(request.Email, out var data))
+                return BadRequest(new { message = "OTP không tồn tại hoặc đã hết hạn." });
+
+            if (DateTime.Now > data.Expiry)
+            {
+                _registerOtpStorage.TryRemove(request.Email, out _);
+                return BadRequest(new { message = "OTP đã hết hạn." });
+            }
+
+            if (data.Otp != request.Otp)
+            {
+                int failedAttempts = data.FailedAttempts + 1;
+                if (failedAttempts >= 5)
+                {
+                    _registerOtpStorage.TryRemove(request.Email, out _);
+                    return BadRequest(new { message = "Bạn đã nhập sai quá 5 lần. Mã OTP đã bị hủy!" });
+                }
+                _registerOtpStorage[request.Email] = (data.Otp, data.Expiry, failedAttempts, data.PendingUser);
+                return BadRequest(new { message = $"Mã OTP không đúng. Bạn còn {5 - failedAttempts} lần thử." });
+            }
+
+            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+            {
+                _registerOtpStorage.TryRemove(request.Email, out _);
+                return BadRequest(new { message = "Email đã được sử dụng!" });
+            }
+
+            _context.Users.Add(data.PendingUser);
+            await _context.SaveChangesAsync();
+
+            _registerOtpStorage.TryRemove(request.Email, out _);
+
             return Ok(new { message = "Đăng ký thành công!" });
         }
 
@@ -49,16 +117,14 @@ namespace HQ.Backend.Controllers
             }
             if (string.IsNullOrEmpty(user.Role))
             {
-                user.Role = "Customer"; // Default role assignment
+                user.Role = "Customer"; 
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
             }
 
-            Console.WriteLine($"User Role: {user.Role}"); // Log role for debugging
+            Console.WriteLine($"User Role: {user.Role}"); 
 
             var fakeToken = "HQ-STORE-TOKEN-" + Guid.NewGuid().ToString();
-
-             // Ensure role is returned correctly
             var userRole = user.Role ?? "Customer";
 
             return Ok(new
@@ -149,6 +215,34 @@ namespace HQ.Backend.Controllers
             }
 
             return Ok(new { message = "Xác thực Admin thành công!" });
+        }
+
+        private async Task<bool> SendEmailAsync(string toEmail, string subject, string body)
+        {
+            try
+            {
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new NetworkCredential("diema448@gmail.com", "gyykaypfhslrkvew");
+                    smtp.EnableSsl = true;
+
+                    MailMessage mail = new MailMessage
+                    {
+                        From = new MailAddress("diema448@gmail.com", "H&Q Store"),
+                        Subject = subject,
+                        Body = body
+                    };
+                    mail.To.Add(toEmail);
+
+                    await smtp.SendMailAsync(mail);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Email Error: " + ex.Message);
+                return false;
+            }
         }
     }
 }

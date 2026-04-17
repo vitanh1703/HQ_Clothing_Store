@@ -81,6 +81,22 @@
   },
   {
     "ContainingType": "HQ.Backend.Controllers.AuthController",
+    "Method": "SendRegisterOtp",
+    "RelativePath": "api/Auth/send-register-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "HQ.Backend.Models.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.AuthController",
     "Method": "VerifyAdmin",
     "RelativePath": "api/Auth/verify-admin/{id}",
     "HttpMethod": "GET",
@@ -106,6 +122,22 @@
       {
         "Name": "request",
         "Type": "HQ.Backend.Controllers.PasswordResetController\u002BVerifyOtpDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HQ.Backend.Controllers.AuthController",
+    "Method": "VerifyRegisterOtp",
+    "RelativePath": "api/Auth/verify-register-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "HQ.Backend.Controllers.AuthController\u002BVerifyRegisterOtpDto",
         "IsRequired": true
       }
     ],

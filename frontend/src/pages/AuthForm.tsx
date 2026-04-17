@@ -15,8 +15,14 @@ const AuthForm = () => {
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
   
-  const { login, register, loginWithGoogle, loading } = useAuth();
+  const [registerStep, setRegisterStep] = useState<0 | 1>(0);
+  const [registerData, setRegisterData] = useState<any>(null);
+  const [registerOtp, setRegisterOtp] = useState('');
+  const [registerCooldown, setRegisterCooldown] = useState(0);
+
+  const { login, loginWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,9 +48,18 @@ const AuthForm = () => {
     }
   }, [cooldown]);
 
+  useEffect(() => {
+    if (registerCooldown > 0) {
+      const timer = setTimeout(() => setRegisterCooldown(registerCooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [registerCooldown]);
+
   const handleSendOtp = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!forgotEmail) return toast.error("Vui lòng nhập email!");
+    if (isSendingOtp) return;
+    setIsSendingOtp(true);
     try {
       await axios.post("https://localhost:7137/api/auth/forgot-password", { email: forgotEmail });
       toast.success("Mã OTP đã được gửi đến email của bạn!");
@@ -52,6 +67,8 @@ const AuthForm = () => {
       setCooldown(60);
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Lỗi gửi OTP hoặc email không tồn tại!");
+    } finally {
+      setIsSendingOtp(false);
     }
   };
 
@@ -86,16 +103,14 @@ const AuthForm = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-// Đăng nhập bằng email và mật khẩu
     try {
       const data = await login(email, password);
-      const userRole = data.user?.role || "Customer"; // Default to 'Customer' if role is missing
-      console.log("User role from API:", userRole); // Debug log
+      const userRole = data.user?.role || "Customer"; 
+      console.log("User role from API:", userRole); 
       sessionStorage.setItem("auth", JSON.stringify(data));
       sessionStorage.setItem("userId", String(data.user?.id || data.user?.Id));
-       console.log("Data saved to sessionStorage:", sessionStorage.getItem("auth")); // Debug log
-      
-      // Case-insensitive comparison
+       console.log("Data saved to sessionStorage:", sessionStorage.getItem("auth")); 
+
       if (userRole.toLowerCase() === 'admin') {
         toast.success("Chào mừng Admin trở lại!");
         navigate("/admin");
@@ -111,20 +126,59 @@ const AuthForm = () => {
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const registerData = {
-      name: formData.get("name") as string,
-      lastname: formData.get("lastname") as string,
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+
+    if (password !== confirmPassword) {
+      return toast.error("Mật khẩu không khớp!");
+    }
+
+    const data = {
+      fullName: `${formData.get("name")} ${formData.get("lastname")}`,
       email: formData.get("email") as string,
-      password: formData.get("password") as string,
-      confirmPassword: formData.get("confirmPassword") as string,
+      password: password,
     };
 
+    if (isSendingOtp) return;
+    setIsSendingOtp(true);
     try {
-      await register(registerData);
+      await axios.post("https://localhost:7137/api/auth/send-register-otp", data);
+      setRegisterData(data);
+      setRegisterStep(1);
+      setRegisterCooldown(60);
+      toast.success("Mã OTP đã được gửi đến email của bạn!");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi gửi OTP!");
+    } finally {
+      setIsSendingOtp(false);
+    }
+  };
+
+  const handleVerifyRegisterOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post("https://localhost:7137/api/auth/verify-register-otp", { email: registerData.email, otp: registerOtp });
       toast.success("Đăng ký thành công! Hãy đăng nhập nhé.");
       setIsRightPanelActive(false);
+      setRegisterStep(0);
+      setRegisterData(null);
+      setRegisterOtp('');
     } catch (err: any) {
-      toast.error(err.message || "Đăng ký thất bại");
+      toast.error(err.response?.data?.message || "OTP không hợp lệ hoặc đã hết hạn!");
+    }
+  };
+
+  const handleResendRegisterOtp = async () => {
+    if (!registerData || isSendingOtp) return;
+    setIsSendingOtp(true);
+    try {
+      await axios.post("https://localhost:7137/api/auth/send-register-otp", registerData);
+      setRegisterCooldown(60);
+      toast.success("Mã OTP đã được gửi lại!");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Lỗi gửi OTP!");
+    } finally {
+      setIsSendingOtp(false);
     }
   };
 
@@ -162,6 +216,7 @@ const AuthForm = () => {
         {/* --- FORM ĐĂNG KÝ --- */}
         <div className={`absolute top-0 h-full transition-all duration-600 ease-in-out left-0 w-1/2 z-1 opacity-0 
           ${isRightPanelActive ? 'translate-x-full opacity-100 z-5 animate-show' : ''}`}>
+          {registerStep === 0 ? (
           <form onSubmit={handleRegisterSubmit} className="bg-white flex items-center justify-center flex-col px-10 h-full text-center">
             <h1 className="text-3xl font-bold mb-2">Tạo tài khoản mới</h1>
             <p className="text-gray-500 mb-6 text-sm">Vui lòng điền thông tin bên dưới</p>
@@ -182,12 +237,30 @@ const AuthForm = () => {
 
             <input name="confirmPassword" type={showPassword ? "text" : "password"} placeholder="Xác nhận mật khẩu" required className="border border-gray-300 p-3 mb-6 w-full rounded-lg outline-none focus:ring-1 focus:ring-black" />
             
-            <button type="submit" disabled={loading} className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 disabled:bg-gray-400 cursor-pointer">
-              {loading ? "Đang xử lý..." : "Đăng ký ngay"}
+            <button type="submit" disabled={loading || isSendingOtp} className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 disabled:bg-gray-400 cursor-pointer">
+              {loading || isSendingOtp ? "Đang xử lý..." : "Đăng ký ngay"}
             </button>
             
             <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Auth Fail")} theme="outline" width="340px" text="signup_with" />
           </form>
+          ) : (
+          <form onSubmit={handleVerifyRegisterOtp} className="bg-white flex items-center justify-center flex-col px-10 h-full text-center">
+            <h1 className="text-3xl font-bold mb-2">Xác thực Email</h1>
+            <p className="text-gray-500 mb-6 text-sm">Nhập mã OTP đã được gửi đến {registerData?.email}</p>
+            
+            <input type="text" placeholder="Nhập mã OTP (6 số)" value={registerOtp} onChange={e => setRegisterOtp(e.target.value)} required className="border border-gray-300 p-3 mb-6 w-full rounded-lg outline-none focus:ring-1 focus:ring-black text-center text-xl tracking-widest font-bold" maxLength={6} />
+            
+            <button type="submit" className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 cursor-pointer">
+              Xác nhận OTP
+            </button>
+            <button type="button" onClick={handleResendRegisterOtp} disabled={registerCooldown > 0 || isSendingOtp} className="w-full text-sm font-bold text-gray-500 hover:text-black transition-colors disabled:opacity-50 cursor-pointer">
+              {isSendingOtp ? "Đang gửi..." : (registerCooldown > 0 ? `Gửi lại mã (${registerCooldown}s)` : "Gửi lại mã OTP")}
+            </button>
+            <button type="button" onClick={() => setRegisterStep(0)} className="mt-4 text-sm font-bold text-gray-500 hover:underline cursor-pointer">
+              Quay lại
+            </button>
+          </form>
+          )}
         </div>
 
         {/* --- FORM ĐĂNG NHẬP --- */}
@@ -243,8 +316,8 @@ const AuthForm = () => {
                   <div className="w-full mb-4">
                       <input type="email" placeholder="Địa chỉ email của bạn" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required className="border border-gray-300 p-3 w-full rounded-lg outline-none focus:ring-1 focus:ring-black" />
                   </div>
-                  <button type="submit" className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 cursor-pointer">
-                    Gửi mã OTP
+                  <button type="submit" disabled={isSendingOtp} className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 disabled:bg-gray-400 cursor-pointer">
+                    {isSendingOtp ? "Đang gửi..." : "Gửi mã OTP"}
                   </button>
               </form>
             )}
@@ -257,8 +330,8 @@ const AuthForm = () => {
                   <button type="submit" className="w-full rounded-lg bg-black text-white font-bold py-3 uppercase active:scale-95 transition-all mb-3 cursor-pointer">
                     Xác nhận OTP
                   </button>
-                  <button type="button" onClick={() => handleSendOtp()} disabled={cooldown > 0} className="w-full text-sm font-bold text-gray-500 hover:text-black transition-colors disabled:opacity-50 cursor-pointer">
-                    {cooldown > 0 ? `Gửi lại mã (${cooldown}s)` : "Gửi lại mã OTP"}
+                  <button type="button" onClick={() => handleSendOtp()} disabled={cooldown > 0 || isSendingOtp} className="w-full text-sm font-bold text-gray-500 hover:text-black transition-colors disabled:opacity-50 cursor-pointer">
+                    {isSendingOtp ? "Đang gửi..." : (cooldown > 0 ? `Gửi lại mã (${cooldown}s)` : "Gửi lại mã OTP")}
                   </button>
               </form>
             )}
@@ -290,7 +363,7 @@ const AuthForm = () => {
             <div className={`absolute flex flex-col items-center justify-center px-10 text-center top-0 h-full w-1/2 transition-transform duration-600 ${isRightPanelActive ? 'translate-x-0' : '-translate-x-[20%]'}`}>
               <h1 className="text-3xl font-bold">Chào bạn mới!</h1>
               <p className="text-sm font-light my-5">Gia nhập H&Q Store để khám phá phong cách thời trang mới nhất.</p>
-              <button onClick={() => setIsRightPanelActive(false)} className="bg-transparent border border-white rounded-full text-white text-xs font-bold py-3 px-11 uppercase cursor-pointer hover:bg-white hover:text-black transition-all">Đăng nhập</button>
+              <button onClick={() => { setIsRightPanelActive(false); setRegisterStep(0); }} className="bg-transparent border border-white rounded-full text-white text-xs font-bold py-3 px-11 uppercase cursor-pointer hover:bg-white hover:text-black transition-all">Đăng nhập</button>
             </div>
             <div className={`absolute flex flex-col items-center justify-center px-10 text-center top-0 right-0 h-full w-1/2 transition-transform duration-600 ${isRightPanelActive ? 'translate-x-[20%]' : 'translate-x-0'}`}>
               <h1 className="text-3xl font-bold">Khám phá ngay!</h1>

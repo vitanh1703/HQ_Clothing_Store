@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+﻿﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -132,7 +132,7 @@ const ProductDetailPage = () => {
       return;
     }
 
-    const userId = Number(localStorage.getItem("userId"));
+    const userId = Number(sessionStorage.getItem("userId"));
 
     if (!userId) {
       alert("Chưa đăng nhập!");

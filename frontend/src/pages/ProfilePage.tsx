@@ -19,7 +19,7 @@ const ProfilePage = () => {
   const [editAddress, setEditAddress] = useState('');
 
   useEffect(() => {
-    const auth = localStorage.getItem("auth");
+    const auth = sessionStorage.getItem("auth");
     if (!auth) {
       navigate("/auth");
       return;
@@ -86,13 +86,13 @@ const ProfilePage = () => {
       alert("Cập nhật thông tin thành công!");
       
       setUser({ ...user, fullName: editFullName, full_name: editFullName, phone: editPhone, address: editAddress });
-      const auth = JSON.parse(localStorage.getItem("auth") || '{}');
+      const auth = JSON.parse(sessionStorage.getItem("auth") || '{}');
       if (auth.user) {
         auth.user.fullName = editFullName;
         auth.user.full_name = editFullName;
         auth.user.phone = editPhone;
         auth.user.address = editAddress;
-        localStorage.setItem("auth", JSON.stringify(auth));
+        sessionStorage.setItem("auth", JSON.stringify(auth));
       }
       setShowEditProfile(false);
     } catch (error: any) {

@@ -20,9 +20,18 @@ const AuthForm = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedAuth = localStorage.getItem("auth");
+    const savedAuth = sessionStorage.getItem("auth");
     if (savedAuth) {
-      navigate("/home");
+      try {
+        const parsed = JSON.parse(savedAuth);
+        if (parsed.user?.role?.toLowerCase() === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/home");
+        }
+      } catch {
+        navigate("/home");
+      }
     }
   }, [navigate]);
 
@@ -82,8 +91,9 @@ const AuthForm = () => {
       const data = await login(email, password);
       const userRole = data.user?.role || "Customer"; // Default to 'Customer' if role is missing
       console.log("User role from API:", userRole); // Debug log
-      localStorage.setItem("auth", JSON.stringify(data));
-       console.log("Data saved to localStorage:", localStorage.getItem("auth")); // Debug log
+      sessionStorage.setItem("auth", JSON.stringify(data));
+      sessionStorage.setItem("userId", String(data.user?.id || data.user?.Id));
+       console.log("Data saved to sessionStorage:", sessionStorage.getItem("auth")); // Debug log
       
       // Case-insensitive comparison
       if (userRole.toLowerCase() === 'admin') {
@@ -122,11 +132,13 @@ const AuthForm = () => {
     try {
       const idToken = credentialResponse.credential;
       const data = await loginWithGoogle(idToken);
+      sessionStorage.setItem("auth", JSON.stringify(data));
+      sessionStorage.setItem("userId", String(data.user?.id || data.user?.Id));
       try {
         const userId = data.user?.id || data.user?.Id;
         if (userId) {
           const res = await axios.get(`https://localhost:7137/api/wishlist/${userId}`);
-          localStorage.setItem("wishlistVariantIds", JSON.stringify(res.data));
+          sessionStorage.setItem("wishlistVariantIds", JSON.stringify(res.data));
         }
       } catch (err) {
         console.error("Lỗi lấy danh sách yêu thích:", err);

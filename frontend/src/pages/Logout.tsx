@@ -6,9 +6,9 @@ const Logout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("auth");
-    localStorage.removeItem("cart"); 
-    localStorage.clear(); 
+    sessionStorage.removeItem("auth");
+    sessionStorage.removeItem("cart"); 
+    sessionStorage.clear(); 
 
     const timer = setTimeout(() => {
       navigate("/");

@@ -20,7 +20,7 @@ const PaymentCallback = () => {
             status: "Success"
           });
           setStatus("success");
-          localStorage.removeItem("selectedPromo");
+          sessionStorage.removeItem("selectedPromo");
         } catch (error) {
           console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
           setStatus("error");

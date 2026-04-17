@@ -92,7 +92,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
       <div className="border-t border-blue-700 p-4">
         <button 
           onClick={() => {
-            localStorage.clear();
+            sessionStorage.clear();
             window.location.href = "/auth";
           }}
           className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition text-red-300 hover:text-red-200"

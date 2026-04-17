@@ -37,14 +37,14 @@ const getColorHex = (colorName: string) => {
 };
 
 const getUserId = () => {
-  const auth = localStorage.getItem("auth");
+  const auth = sessionStorage.getItem("auth");
   if (auth) {
     try {
       const parsed = JSON.parse(auth);
       return parsed.user?.id || parsed.user?.Id;
     } catch (e) {}
   }
-  return Number(localStorage.getItem("userId")) || null;
+  return Number(sessionStorage.getItem("userId")) || null;
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -82,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   useEffect(() => {
     const checkWishlist = () => {
       if (!activeVariant) return;
-      const stored = localStorage.getItem(WISHLIST_KEY);
+      const stored = sessionStorage.getItem(WISHLIST_KEY);
       const wishlist: number[] = stored ? JSON.parse(stored) : [];
       setIsFavorite(wishlist.includes(activeVariant.id));
     };
@@ -93,12 +93,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   }, [activeVariant]);
 
   const updateWishlistStorage = (variantId: number, add: boolean) => {
-    const stored = localStorage.getItem(WISHLIST_KEY);
+    const stored = sessionStorage.getItem(WISHLIST_KEY);
     const wishlist: number[] = stored ? JSON.parse(stored) : [];
     const next = add
       ? Array.from(new Set([...wishlist, variantId]))
       : wishlist.filter((id) => id !== variantId);
-    localStorage.setItem(WISHLIST_KEY, JSON.stringify(next));
+    sessionStorage.setItem(WISHLIST_KEY, JSON.stringify(next));
     setIsFavorite(add);
     window.dispatchEvent(new Event("wishlistUpdated"));
   };
@@ -147,7 +147,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const auth = localStorage.getItem("auth");
+    const auth = sessionStorage.getItem("auth");
     if (!auth) {
       alert("Vui lòng đăng nhập để thực hiện mua sắm tại H&Q Store!");
       navigate("/auth");

@@ -9,7 +9,7 @@ const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
 
   React.useEffect(() => {
-    const auth = localStorage.getItem("auth");
+    const auth = sessionStorage.getItem("auth");
     if (auth) {
       const user = JSON.parse(auth).user;
       console.log("Admin page - User role:", user?.role);

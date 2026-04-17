@@ -1,4 +1,4 @@
-﻿using Google.Apis.Auth;
+﻿﻿using Google.Apis.Auth;
 using HQ.Backend.Data;
 using HQ.Backend.DTOs;
 using HQ.Backend.Models;
@@ -50,6 +50,8 @@ namespace HQ.Backend.Controllers
             if (string.IsNullOrEmpty(user.Role))
             {
                 user.Role = "Customer"; // Default role assignment
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
             }
 
             Console.WriteLine($"User Role: {user.Role}"); // Log role for debugging
@@ -105,6 +107,12 @@ namespace HQ.Backend.Controllers
                     _context.Users.Add(user);
                     await _context.SaveChangesAsync();
                 }
+                else if (string.IsNullOrEmpty(user.Role))
+                {
+                    user.Role = "Customer";
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                }
 
                 return Ok(new
                 {
@@ -115,6 +123,7 @@ namespace HQ.Backend.Controllers
                         id = user.Id,
                         email = user.Email,
                         full_name = user.FullName,
+                        role = user.Role ?? "Customer",
                         avatar = user.AvatarUrl,
                         address = user.Address,
                         phone = user.Phone
@@ -125,6 +134,21 @@ namespace HQ.Backend.Controllers
             {
                 return BadRequest(new { message = "Xác thực Google thất bại", error = ex.Message });
             }
+        }
+
+        [HttpGet("verify-admin/{id}")]
+        public async Task<IActionResult> VerifyAdmin(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound(new { message = "Không tìm thấy người dùng!" });
+
+            if (string.IsNullOrEmpty(user.Role) || !user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return Unauthorized(new { message = "Bạn không có quyền truy cập trang quản trị!" });
+            }
+
+            return Ok(new { message = "Xác thực Admin thành công!" });
         }
     }
 }

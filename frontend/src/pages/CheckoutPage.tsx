@@ -28,7 +28,7 @@ const CheckoutPage = () => {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"bank" | "vnpay" | "cod">("bank");
 
-  const userId = Number(localStorage.getItem("userId")) || 1;
+  const userId = Number(sessionStorage.getItem("userId")) || 1;
 
   useEffect(() => {
     if (!selectedItems || selectedItems.length === 0) {
@@ -100,11 +100,11 @@ const CheckoutPage = () => {
       const result = await promotionsApi.validateCode(promoCode.trim());
       setPromoResult(result);
       setPromoMessage(`Áp dụng mã ${result.code} thành công!`);
-      localStorage.setItem("selectedPromo", JSON.stringify(result));
+      sessionStorage.setItem("selectedPromo", JSON.stringify(result));
     } catch (err: any) {
       setPromoResult(null);
       setPromoMessage(err.response?.data?.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
-      localStorage.removeItem("selectedPromo");
+      sessionStorage.removeItem("selectedPromo");
     }
   };
 
@@ -115,11 +115,11 @@ const CheckoutPage = () => {
       const result = await promotionsApi.validateCode(promo.code);
       setPromoResult(result);
       setPromoMessage(`Áp dụng mã ${result.code} thành công!`);
-      localStorage.setItem("selectedPromo", JSON.stringify(result));
+      sessionStorage.setItem("selectedPromo", JSON.stringify(result));
     } catch (err: any) {
       setPromoResult(null);
       setPromoMessage(err.response?.data?.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
-      localStorage.removeItem("selectedPromo");
+      sessionStorage.removeItem("selectedPromo");
     }
   };
 
@@ -127,7 +127,7 @@ const CheckoutPage = () => {
     setPromoCode("");
     setPromoResult(null);
     setPromoMessage("");
-    localStorage.removeItem("selectedPromo");
+    sessionStorage.removeItem("selectedPromo");
   };
 
   const handlePlaceOrder = async () => { 

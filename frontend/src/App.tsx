@@ -1,4 +1,6 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useState, useEffect, type JSX } from 'react';
+import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Header'; 
@@ -24,13 +26,51 @@ import PaymentCallback from './pages/PaymentCallback';
 import CustomerManager from './pages/admin/CustomerManager';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
+const RootRedirect = () => {
+  const auth = sessionStorage.getItem("auth");
+  if (auth) {
+    try {
+      const user = JSON.parse(auth).user;
+      if (user?.role?.toLowerCase() === 'admin') {
+        return <Navigate to="/admin" replace />;
+      }
+    } catch {}
+  }
+  return <Navigate to="/home" replace />;
+};
+
+const AdminRoute = ({ children }: { children: JSX.Element }) => {
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const userId = sessionStorage.getItem("userId");
+      if (!userId) {
+        setIsAuthorized(false);
+        return;
+      }
+      try {
+        await axios.get(`https://localhost:7137/api/auth/verify-admin/${userId}`);
+        setIsAuthorized(true);
+      } catch {
+        setIsAuthorized(false);
+      }
+    };
+    checkAdmin();
+  }, []);
+
+  if (isAuthorized === null) return <div className="min-h-screen flex items-center justify-center font-bold text-gray-500">Đang kiểm tra quyền truy cập...</div>;
+  return isAuthorized ? children : <Navigate to="/home" replace />;
+};
+
 function App() {
   const location = useLocation();
   
   const hideLayoutPaths = ["/auth", "/logout"];
   const isHideLayout =
     hideLayoutPaths.includes(location.pathname) ||
-    location.pathname.startsWith("/admin");
+    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/customers");
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -40,7 +80,7 @@ function App() {
 
       <div className="main-content grow">
         <Routes>
-          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/" element={<RootRedirect />} />
           <Route path="/home" element={<Home />} />
           <Route path="/auth" element={<AuthForm />} />
           <Route path="/logout" element={<Logout />} />
@@ -60,8 +100,8 @@ function App() {
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/aboutus" element={<AboutUsPage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/customers" element={<CustomerManager />} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/customers" element={<AdminRoute><CustomerManager /></AdminRoute>} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold italic">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

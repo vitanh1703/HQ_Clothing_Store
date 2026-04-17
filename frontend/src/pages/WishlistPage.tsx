@@ -29,14 +29,14 @@ const WishlistPage = () => {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
 
   const getUserId = () => {
-    const auth = localStorage.getItem("auth");
+    const auth = sessionStorage.getItem("auth");
     if (auth) {
       try {
         const parsed = JSON.parse(auth);
         return parsed.user?.id || parsed.user?.Id;
       } catch (e) {}
     }
-    return Number(localStorage.getItem("userId")) || null;
+    return Number(sessionStorage.getItem("userId")) || null;
   };
 
   useEffect(() => {
@@ -45,13 +45,13 @@ const WishlistPage = () => {
       axios.get(`https://localhost:7137/api/wishlist/${userId}`)
         .then((res) => {
           setWishlistVariantIds(res.data);
-          localStorage.setItem("wishlistVariantIds", JSON.stringify(res.data));
+          sessionStorage.setItem("wishlistVariantIds", JSON.stringify(res.data));
         })
         .catch((err) => {
           console.error("Lỗi lấy danh sách yêu thích:", err);
         });
     } else {
-      const stored = localStorage.getItem("wishlistVariantIds");
+      const stored = sessionStorage.getItem("wishlistVariantIds");
       const variantIds = stored ? (JSON.parse(stored) as number[]) : DEFAULT_WISHLIST;
       setWishlistVariantIds(variantIds);
     }
@@ -83,7 +83,7 @@ const WishlistPage = () => {
   }, [products, wishlistVariantIds]);
 
   const saveWishlist = (variantIds: number[]) => {
-    localStorage.setItem("wishlistVariantIds", JSON.stringify(variantIds));
+    sessionStorage.setItem("wishlistVariantIds", JSON.stringify(variantIds));
     setWishlistVariantIds(variantIds);
     window.dispatchEvent(new Event("wishlistUpdated"));
   };

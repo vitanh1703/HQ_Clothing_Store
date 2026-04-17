@@ -35,7 +35,7 @@ const CartPage = () => {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
-  const userId = Number(localStorage.getItem("userId")) || 1;
+  const userId = Number(sessionStorage.getItem("userId")) || 1;
 
   useEffect(() => {
     fetchCart();
@@ -64,7 +64,7 @@ const CartPage = () => {
   };
 
   const restorePromo = () => {
-    const stored = localStorage.getItem("selectedPromo");
+    const stored = sessionStorage.getItem("selectedPromo");
     if (!stored) return;
 
     try {
@@ -73,7 +73,7 @@ const CartPage = () => {
       setPromoResult(parsed);
       setPromoMessage(`Mã ${parsed.code} đã được áp dụng.`);
     } catch {
-      localStorage.removeItem("selectedPromo");
+      sessionStorage.removeItem("selectedPromo");
     }
   };
 
@@ -132,11 +132,11 @@ const CartPage = () => {
       const result = await promotionsApi.validateCode(promoCode.trim());
       setPromoResult(result);
       setPromoMessage(`Áp dụng mã ${result.code} thành công!`);
-      localStorage.setItem("selectedPromo", JSON.stringify(result));
+      sessionStorage.setItem("selectedPromo", JSON.stringify(result));
     } catch (err: any) {
       setPromoResult(null);
       setPromoMessage(err.response?.data?.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
-      localStorage.removeItem("selectedPromo");
+      sessionStorage.removeItem("selectedPromo");
     } finally {
       setIsApplyingPromo(false);
     }
@@ -149,11 +149,11 @@ const CartPage = () => {
       const result = await promotionsApi.validateCode(promo.code);
       setPromoResult(result);
       setPromoMessage(`Áp dụng mã ${result.code} thành công!`);
-      localStorage.setItem("selectedPromo", JSON.stringify(result));
+      sessionStorage.setItem("selectedPromo", JSON.stringify(result));
     } catch (err: any) {
       setPromoResult(null);
       setPromoMessage(err.response?.data?.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
-      localStorage.removeItem("selectedPromo");
+      sessionStorage.removeItem("selectedPromo");
     }
   };
 
@@ -161,7 +161,7 @@ const CartPage = () => {
     setPromoCode("");
     setPromoResult(null);
     setPromoMessage("");
-    localStorage.removeItem("selectedPromo");
+    sessionStorage.removeItem("selectedPromo");
   };
 
   const selectedCartItems = cart?.items.filter(item =>

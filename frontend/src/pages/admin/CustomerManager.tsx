@@ -182,13 +182,6 @@ const CustomerManager = () => {
                       Chi tiết
                     </button>
                     <button
-                      onClick={() => handleOpenDetails(customer)}
-                      className="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                      aria-label="Sửa khách hàng"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
                       onClick={() => handleDeleteCustomer(customer.id)}
                       className="p-2 bg-[#ff3d00] text-white rounded-md hover:bg-red-600"
                       aria-label="Xóa khách hàng"
@@ -208,7 +201,7 @@ const CustomerManager = () => {
         onClose={() => setIsModalOpen(false)}
         customer={selectedCustomer}
         orders={selectedOrders}
-        onSave={handleSaveCustomer}
+        // onSave={handleSaveCustomer}
       />
     </div>
   );

@@ -78,3 +78,25 @@ public class UpdateOrderStatusRequest
 {
     public string Status { get; set; }
 }
+
+public class CreateSupplierRequest
+{
+    public string Name { get; set; } = null!;
+    public string? Phone { get; set; }
+    public string? Address { get; set; }
+}
+
+public class UpdateSupplierRequest
+{
+    public string Name { get; set; } = null!;
+    public string? Phone { get; set; }
+    public string? Address { get; set; }
+}
+
+public class SupplierDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string? Phone { get; set; }
+    public string? Address { get; set; }
+}

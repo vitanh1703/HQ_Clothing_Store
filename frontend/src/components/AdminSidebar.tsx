@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiShoppingCart, FiUsers, FiBox, FiBarChart, FiSettings, FiLogOut, FiTag, FiHome, FiFileText } from 'react-icons/fi';
+import { FiShoppingCart, FiUsers, FiBox, FiBarChart, FiLogOut, FiTag, FiHome, FiFileText } from 'react-icons/fi';
 
 interface AdminSidebarProps {
   sidebarOpen: boolean;

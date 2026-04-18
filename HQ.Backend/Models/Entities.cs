@@ -245,3 +245,20 @@ public class OrderItem
     public decimal PriceAtPurchase { get; set; }
     public Order Order { get; set; }
 }
+
+[Table("suppliers")]
+public class Supplier
+{
+    [Key]
+    [Column("id")]
+    public int Id { get; set; }
+
+    [Column("name")]
+    public string Name { get; set; } = null!;
+
+    [Column("phone")]
+    public string? Phone { get; set; }
+
+    [Column("address")]
+    public string? Address { get; set; }
+}

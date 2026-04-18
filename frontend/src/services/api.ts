@@ -141,6 +141,13 @@ export interface Review {
   userName?: string;
 }
 
+export interface Supplier {
+  id: number;
+  name: string;
+  phone?: string;
+  address?: string;
+}
+
 export const authApi = {
   login: async (loginData: any) => {
     const response = await axios.post(`${API_BASE}/Auth/login`, {
@@ -242,5 +249,28 @@ export const reviewApi = {
   getByRating: async (rating: number): Promise<Review[]> => {
     const response = await axios.get(`${API_BASE}/Reviews/rating/${rating}`);
     return response.data;
+  }
+};
+
+export const supplierApi = {
+  getAll: async (): Promise<Supplier[]> => {
+    try {
+      const response = await axios.get(`${API_BASE}/Suppliers`);
+      return response.data;
+    } catch (error) {
+      console.log('Supplier endpoint not available, returning empty array');
+      return [];
+    }
+  },
+  create: async (supplier: Omit<Supplier, 'id'>): Promise<Supplier> => {
+    const response = await axios.post(`${API_BASE}/Suppliers`, supplier);
+    return response.data;
+  },
+  update: async (id: number, supplier: Partial<Supplier>): Promise<Supplier> => {
+    const response = await axios.put(`${API_BASE}/Suppliers/${id}`, supplier);
+    return response.data;
+  },
+  delete: async (id: number): Promise<void> => {
+    await axios.delete(`${API_BASE}/Suppliers/${id}`);
   }
 };

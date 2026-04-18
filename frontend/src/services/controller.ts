@@ -84,3 +84,39 @@ export const checkoutController = {
     return { success: true };
   },
 };
+
+export const supplierController = {
+  validateSupplier: (data: any): { success: boolean; message?: string; field?: string } => {
+    const { name, phone, address } = data;
+    
+    // Validate tên nhà cung cấp
+    if (!name || name.trim() === '') {
+      return { success: false, message: "Tên nhà cung cấp không được để trống", field: "name" };
+    }
+    
+    if (name.trim().length < 3) {
+      return { success: false, message: "Tên nhà cung cấp phải có ít nhất 3 ký tự", field: "name" };
+    }
+    
+    // Validate số điện thoại - REQUIRED
+    if (!phone || phone.trim() === '') {
+      return { success: false, message: "Số điện thoại không được để trống", field: "phone" };
+    }
+    
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone.trim())) {
+      return { success: false, message: "Số điện thoại phải có 10 chữ số", field: "phone" };
+    }
+    
+    // Validate địa chỉ - REQUIRED
+    if (!address || address.trim() === '') {
+      return { success: false, message: "Địa chỉ không được để trống", field: "address" };
+    }
+    
+    if (address.trim().length < 5) {
+      return { success: false, message: "Địa chỉ phải có ít nhất 5 ký tự", field: "address" };
+    }
+    
+    return { success: true };
+  }
+};

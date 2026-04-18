@@ -20,5 +20,6 @@ namespace HQ.Backend.Data
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
     }
 }

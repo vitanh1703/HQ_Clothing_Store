@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiShoppingCart, FiUsers, FiBox, FiBarChart, FiSettings, FiLogOut } from 'react-icons/fi';
+import { FiShoppingCart, FiUsers, FiBox, FiBarChart, FiSettings, FiLogOut, FiTag, FiHome, FiFileText } from 'react-icons/fi';
 
 interface AdminSidebarProps {
   sidebarOpen: boolean;
@@ -9,100 +9,55 @@ interface AdminSidebarProps {
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen }) => {
   const navigate = useNavigate();
+  
+  const menuItems = [
+    { icon: FiHome, label: 'Điều khiển', path: '/admin' },
+    { icon: FiUsers, label: 'Khách hàng', path: '/customers' },
+    { icon: FiBox, label: 'Nhà cung cấp', path: '/suppliers' },
+    { icon: FiTag, label: 'Khuyến mại', path: '/promotions' },
+    { icon: FiBox, label: 'Kho', path: '/warehouse' },
+    { icon: FiBox, label: 'Sản phẩm', path: '/products' },
+    { icon: FiBarChart, label: 'Báo cáo thống kê', path: '/reports' },
+    { icon: FiFileText, label: 'Tin tức', path: '/news' },
+    { icon: FiShoppingCart, label: 'Đơn hàng', path: '/orders' },
+  ];
+
   return (
-    <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-blue-600 text-white transition-all duration-300 flex flex-col shadow-xl`}>
-      <div className="p-4 border-b border-blue-700 flex items-center gap-3 hover:bg-blue-700 transition cursor-pointer">
-        <div className="bg-white text-blue-600 p-2 rounded font-bold text-lg">🛒</div>
-        {sidebarOpen && <span className="text-sm font-bold">SHOP BẢN HÀNG</span>}
+    <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white text-black transition-all duration-300 flex flex-col shadow-lg border-r border-gray-200`}>
+      <div className="p-4 border-b border-gray-200 flex items-center gap-3 hover:bg-black hover:text-white transition cursor-pointer rounded-lg m-2">
+        <div className="bg-black text-white p-2 rounded font-bold text-lg flex-shrink-0">🛒</div>
+        {sidebarOpen && <span className="text-base font-bold truncate">H&Q SHOP</span>}
       </div>
-      
-      {sidebarOpen && (
-        <p className="px-4 py-2 text-xs text-blue-200">Quản lý bán hàng doanh nghiệp Việt Nam</p>
-      )}
 
-      <div className="flex-1 py-6 overflow-y-auto">
-        {/* Tổng quan */}
-        <div className="px-2 mb-6">
-          <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Tổng quan</p>
-          <button className="w-full flex items-center gap-3 px-4 py-3 bg-blue-700 hover:bg-blue-800 rounded-lg text-sm font-medium transition">
-            <FiBarChart className="shrink-0" /> {sidebarOpen && 'Dashboard'}
-          </button>
-        </div>
-
-        {/* Quản lý cơ bản */}
-        <div className="px-2 mb-6">
-          <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Quản lý cơ bản</p>
-          <div className="space-y-2">
-            <button 
-              onClick={() => navigate('/customers')}
-              className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition"
-            >
-              <FiUsers className="shrink-0" /> {sidebarOpen && 'Khách hàng'}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition relative">
-              <FiUsers className="shrink-0" /> {sidebarOpen && 'Khách hàng hết hạn'}
-              {sidebarOpen && <span className="ml-auto bg-red-500 text-xs rounded-full w-5 h-5 flex items-center justify-center">1</span>}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBox className="shrink-0" /> {sidebarOpen && 'Nhà cung cấp'}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBox className="shrink-0" /> {sidebarOpen && 'Sản phẩm'}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBox className="shrink-0" /> {sidebarOpen && 'Danh mục'}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBox className="shrink-0" /> {sidebarOpen && 'Kho hàng'}
-            </button>
-          </div>
-        </div>
-
-        {/* Ngành vụ */}
-        <div className="px-2 mb-6">
-          <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Ngành vụ</p>
-          <div className="space-y-2">
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBarChart className="shrink-0" /> {sidebarOpen && 'Công nợ'}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiShoppingCart className="shrink-0" /> {sidebarOpen && 'Quản lý đơn hàng'}
-            </button>
-          </div>
-        </div>
-
-        {/* Báo cáo */}
-        <div className="px-2 mb-6">
-          <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Báo cáo</p>
-          <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-            <FiBarChart className="shrink-0" /> {sidebarOpen && 'Báo cáo'}
-          </button>
-        </div>
-
-        {/* Hệ thống */}
-        <div className="px-2">
-          <p className="text-xs font-semibold text-blue-200 px-4 mb-3 uppercase tracking-wider">Hệ thống</p>
-          <div className="space-y-2">
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiSettings className="shrink-0" /> {sidebarOpen && 'Cài đặt'}
-            </button>
-            <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition">
-              <FiBarChart className="shrink-0" /> {sidebarOpen && 'Thông Tin Shop'}
-            </button>
-          </div>
+      <div className="flex-1 py-4 overflow-y-auto px-2">
+        <div className="space-y-1">
+          {menuItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={index}
+                onClick={() => navigate(item.path)}
+                className="w-full flex items-center gap-3 px-4 py-3 text-black bg-white hover:bg-black hover:text-white rounded-lg text-sm font-medium transition duration-200 group"
+              >
+                <Icon className="shrink-0 text-lg" />
+                {sidebarOpen && <span className="truncate">{item.label}</span>}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Logout */}
-      <div className="border-t border-blue-700 p-4">
+      <div className="border-t border-gray-200 p-4 m-2">
         <button 
           onClick={() => {
             sessionStorage.clear();
             window.location.href = "/auth";
           }}
-          className="w-full flex items-center gap-3 px-4 py-2 hover:bg-blue-700 rounded-lg text-sm transition text-red-300 hover:text-red-200"
+          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-600 hover:text-white rounded-lg text-sm font-medium transition duration-200 text-black bg-white"
         >
-          <FiLogOut className="shrink-0" /> {sidebarOpen && 'Đăng xuất'}
+          <FiLogOut className="shrink-0 text-lg" />
+          {sidebarOpen && <span>Đăng xuất</span>}
         </button>
       </div>
     </div>

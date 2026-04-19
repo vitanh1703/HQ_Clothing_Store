@@ -123,6 +123,30 @@ namespace HQ.Backend.Controllers
             }
         }
 
+        [HttpGet("admin/all")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _context.Orders
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => new
+                {
+                    o.Id,
+                    o.UserId,
+                    o.OrderCode,
+                    o.FullName,
+                    o.Email,
+                    o.Phone,
+                    o.Address,
+                    o.TotalAmount,
+                    o.Status,
+                    o.OrderDate,
+                    o.PaymentDate
+                })
+                .ToListAsync();
+
+            return Ok(orders);
+        }
+
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUserOrders(int userId)
         {

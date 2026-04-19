@@ -27,6 +27,7 @@ import CustomerManager from './pages/admin/CustomerManager';
 import SupplierManager from './pages/admin/SupplierManager';
 import ProductManager from './pages/admin/ProductManager';
 import NewsManager from './pages/admin/NewsManager';
+import OrderManager from './pages/admin/OrderManager';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
 const RootRedirect = () => {
@@ -74,7 +75,8 @@ function App() {
     hideLayoutPaths.includes(location.pathname) ||
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/customers") ||
-    location.pathname.startsWith("/suppliers");
+    location.pathname.startsWith("/suppliers") ||
+    location.pathname.startsWith("/orders");
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -107,6 +109,7 @@ function App() {
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/customers" element={<AdminRoute><CustomerManager /></AdminRoute>} />
           <Route path="/suppliers" element={<AdminRoute><SupplierManager /></AdminRoute>} />
+          <Route path="/orders" element={<AdminRoute><OrderManager /></AdminRoute>} />
           <Route path="/admin/products" element={<AdminRoute><ProductManager /></AdminRoute>} />
           <Route path="/admin/news" element={<AdminRoute><NewsManager /></AdminRoute>} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold italic">404 - Không tìm thấy trang</div>} />

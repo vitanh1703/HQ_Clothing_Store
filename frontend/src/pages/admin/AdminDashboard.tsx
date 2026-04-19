@@ -62,7 +62,7 @@ const AdminDashboard = () => {
       title: 'Sản phẩm',
       description: 'Thêm, chỉnh sửa và quản lý các sản phẩm bán hàng',
       icon: FiBox,
-      path: '/products',
+      path: '/admin/products',
       color: 'pink',
       bgColor: 'bg-pink-50',
       textColor: 'text-pink-600',

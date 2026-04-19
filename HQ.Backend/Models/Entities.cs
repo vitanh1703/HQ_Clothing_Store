@@ -55,10 +55,6 @@ public class Product
     public string Name { get; set; } = null!;
     [Column("brand_text")]
     public string BrandText { get; set; } = "H&Q";
-    [Column("accent_color")]
-    public string AccentColor { get; set; } = "bg-[#9bdc28]";
-    [Column("hover_accent")]
-    public string HoverAccent { get; set; } = "hover:bg-[#9bdc28]";
     [Column("image_url")]
     public string? ImageUrl { get; set; }
     public string? Description { get; set; }

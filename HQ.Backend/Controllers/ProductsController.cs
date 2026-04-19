@@ -1,6 +1,7 @@
 ﻿using HQ.Backend.Data;
 using Microsoft.AspNetCore.Http;
 using HQ.Backend.Models;
+using HQ.Backend.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -145,6 +146,183 @@ namespace HQ.Backend.Controllers
                 totalReviews = reviews.Count,
                 reviews
             });
+        }
+
+        // ===== ADMIN ENDPOINTS =====
+
+        [HttpGet("admin/all")]
+        public async Task<IActionResult> GetAllProductsForAdmin()
+        {
+            var products = await _context.Products
+                .Include(p => p.Variants)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.BrandText,
+                    p.Description,
+                    p.ImageUrl,
+                    p.CategoryId,
+                    p.SupplierId,
+                    Variants = p.Variants.Select(v => new
+                    {
+                        v.Id,
+                        v.Size,
+                        v.Color,
+                        v.Price,
+                        v.StockQuantity,
+                        v.Sku
+                    }).ToList()
+                })
+                .OrderByDescending(p => p.Id)
+                .ToListAsync();
+
+            return Ok(products);
+        }
+
+        [HttpPost("admin/create")]
+        public async Task<IActionResult> CreateProductAdmin([FromBody] CreateProductRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Name))
+                return BadRequest(new { message = "Tên sản phẩm là bắt buộc" });
+
+            try
+            {
+                var product = new Product
+                {
+                    Name = request.Name.Trim(),
+                    BrandText = request.BrandText?.Trim() ?? "H&Q",
+                    Description = request.Description?.Trim(),
+                    ImageUrl = request.ImageUrl?.Trim(),
+                    CategoryId = request.CategoryId > 0 ? request.CategoryId : null,
+                    SupplierId = request.SupplierId > 0 ? request.SupplierId : null
+                };
+
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+
+                // Add variants if provided
+                if (request.Variants != null && request.Variants.Any())
+                {
+                    var variantList = new List<ProductVariant>();
+                    foreach (var (variant, index) in request.Variants.Select((v, i) => (v, i)))
+                    {
+                        var sku = !string.IsNullOrWhiteSpace(variant.Sku) 
+                            ? variant.Sku.Trim() 
+                            : $"V{product.Id}{index + 1:D3}";
+
+                        if (sku.Length > 50)
+                            sku = sku.Substring(0, 50);
+
+                        variantList.Add(new ProductVariant
+                        {
+                            ProductId = product.Id,
+                            Size = (variant.Size?.Trim() ?? "").Substring(0, Math.Min(10, (variant.Size?.Trim() ?? "").Length)),
+                            Color = (variant.Color?.Trim() ?? "").Substring(0, Math.Min(30, (variant.Color?.Trim() ?? "").Length)),
+                            Price = variant.Price,
+                            StockQuantity = Math.Max(0, variant.StockQuantity),
+                            Sku = sku
+                        });
+                    }
+
+                    _context.ProductVariants.AddRange(variantList);
+                    await _context.SaveChangesAsync();
+                }
+
+                return Ok(new { 
+                    id = product.Id,
+                    name = product.Name,
+                    variantCount = request.Variants?.Count ?? 0,
+                    message = "Sản phẩm được tạo thành công" 
+                });
+            }
+            catch (DbUpdateException ex)
+            {
+                var innerError = ex.InnerException?.Message ?? ex.Message;
+                return BadRequest(new { 
+                    message = "Lỗi khi lưu dữ liệu vào cơ sở dữ liệu",
+                    error = innerError
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { 
+                    message = "Lỗi khi tạo sản phẩm",
+                    error = ex.InnerException?.Message ?? ex.Message
+                });
+            }
+        }
+
+        [HttpPut("admin/{id}")]
+        public async Task<IActionResult> UpdateProductAdmin(int id, [FromBody] UpdateProductRequest request)
+        {
+            try
+            {
+                var product = await _context.Products.Include(p => p.Variants).FirstOrDefaultAsync(p => p.Id == id);
+                if (product == null)
+                    return NotFound(new { message = "Sản phẩm không tồn tại" });
+
+                if (string.IsNullOrWhiteSpace(request.Name))
+                    return BadRequest(new { message = "Tên sản phẩm là bắt buộc" });
+
+                product.Name = request.Name.Trim();
+                product.BrandText = request.BrandText?.Trim() ?? product.BrandText;
+                product.Description = request.Description?.Trim();
+                product.ImageUrl = request.ImageUrl?.Trim();
+                product.CategoryId = request.CategoryId ?? product.CategoryId;
+                product.SupplierId = request.SupplierId ?? product.SupplierId;
+
+                // Xóa variants cũ nếu có variants mới
+                if (request.Variants != null && request.Variants.Count > 0)
+                {
+                    // Xóa tất cả variants cũ
+                    _context.ProductVariants.RemoveRange(product.Variants);
+                    
+                    // Thêm variants mới
+                    var newVariants = request.Variants.Select(v => new ProductVariant
+                    {
+                        ProductId = product.Id,
+                        Size = v.Size?.Trim() ?? "",
+                        Color = v.Color?.Trim() ?? "",
+                        Price = v.Price > 0 ? v.Price : 0,
+                        StockQuantity = v.StockQuantity,
+                        Sku = v.Sku?.Trim()
+                    }).ToList();
+                    
+                    _context.ProductVariants.AddRange(newVariants);
+                }
+
+                _context.Products.Update(product);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { 
+                    id = product.Id,
+                    name = product.Name,
+                    message = "Sản phẩm được cập nhật thành công"
+                });
+            }
+            catch (DbUpdateException ex)
+            {
+                var innerMessage = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, new { message = $"Lỗi cơ sở dữ liệu: {innerMessage}" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi: {ex.Message}" });
+            }
+        }
+
+        [HttpDelete("admin/{id}")]
+        public async Task<IActionResult> DeleteProductAdmin(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+                return NotFound(new { message = "Sản phẩm không tồn tại" });
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Sản phẩm được xóa thành công" });
         }
     }
 }

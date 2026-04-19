@@ -16,9 +16,9 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen }) => {
     { icon: FiBox, label: 'Nhà cung cấp', path: '/suppliers' },
     { icon: FiTag, label: 'Khuyến mại', path: '/promotions' },
     { icon: FiBox, label: 'Kho', path: '/warehouse' },
-    { icon: FiBox, label: 'Sản phẩm', path: '/products' },
+    { icon: FiBox, label: 'Sản phẩm', path: '/admin/products' },
     { icon: FiBarChart, label: 'Báo cáo thống kê', path: '/reports' },
-    { icon: FiFileText, label: 'Tin tức', path: '/news' },
+    { icon: FiFileText, label: 'Tin tức', path: '/admin/news' },
     { icon: FiShoppingCart, label: 'Đơn hàng', path: '/orders' },
   ];
 

@@ -77,11 +77,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const activeVariant = variantToAdd || variants[0] || null;
   const displayPrice = variantToAdd
     ? variantToAdd.price
-    : (variants.length > 0 ? Math.min(...variants.map((v) => v.price)) : 0);
+    : (variants.length > 0 ? Math.min(...variants.map((v) => Number(v.price))) : 0);
 
   useEffect(() => {
     const checkWishlist = () => {
-      if (!activeVariant) return;
+      if (!activeVariant?.id) return;
       const stored = sessionStorage.getItem(WISHLIST_KEY);
       const wishlist: number[] = stored ? JSON.parse(stored) : [];
       setIsFavorite(wishlist.includes(activeVariant.id));
@@ -118,6 +118,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     if (!activeVariant) return;
 
     const variantId = activeVariant.id;
+    if (!variantId) return;
     const willAdd = !isFavorite;
 
     try {
@@ -137,7 +138,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   const handleQuantity = (type: 'plus' | 'minus') => {
     if (type === 'plus') {
-      const maxStock = activeVariant?.stockQuantity || 99;
+      const maxStock = Number(activeVariant?.stockQuantity) || 99;
       if (quantity < maxStock) setQuantity(prev => prev + 1);
     } else {
       if (quantity > 1) setQuantity(prev => prev - 1);
@@ -156,6 +157,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     if (!variantToAdd) {
       alert("Vui lòng chọn đầy đủ màu sắc và kích thước!");
+      return;
+    }
+
+    if (!variantToAdd.id) {
+      alert("Lỗi: Không tìm thấy ID của sản phẩm!");
       return;
     }
 
@@ -304,7 +310,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             } as React.CSSProperties}
           >
             <span className="relative z-10 block transition-opacity duration-300" style={{ opacity: 'var(--text-o)' }}>
-              {variantToAdd ? `Add - ${(displayPrice * quantity).toLocaleString()}đ` : 'Chọn Phân Loại'}
+              {variantToAdd ? `Add - ${(Number(displayPrice) * quantity).toLocaleString()}đ` : 'Chọn Phân Loại'}
             </span>
 
             <div className="shirt pointer-events-none absolute left-1/2 top-0 -ml-3 origin-bottom"

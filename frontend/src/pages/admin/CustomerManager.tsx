@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FiMenu, FiX } from 'react-icons/fi';
-import { Search, User, Trash2, Phone } from 'lucide-react';
+import { Search, Trash2, Phone } from 'lucide-react';
 import AdminSidebar from '../../components/AdminSidebar';
 import CustomerModal from '../../components/CustomerModal';
 

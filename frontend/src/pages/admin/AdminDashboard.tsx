@@ -86,7 +86,7 @@ const AdminDashboard = () => {
       title: 'Tin tức',
       description: 'Viết và quản lý các bài tin tức, thông báo khuyến mãi',
       icon: FiFileText,
-      path: '/news',
+      path: '/admin/news',
       color: 'red',
       bgColor: 'bg-red-50',
       textColor: 'text-red-600',

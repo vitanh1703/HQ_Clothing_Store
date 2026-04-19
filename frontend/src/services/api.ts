@@ -1,15 +1,14 @@
 import axios from "axios";
-
 const API_BASE = "https://localhost:7137/api";
 
 export interface Variant {
-  sku: string;
-  id: number;
-  productId: number;   
+  id?: number;
+  tempId?: string;
   size: string;
   color: string;
-  price: number;
-  stockQuantity: number; 
+  price: number | string;
+  stockQuantity: number | string;
+  sku?: string;
 }
 
 export interface Product {
@@ -17,8 +16,6 @@ export interface Product {
   id: number;
   name: string;
   brandText?: string;    
-  accentColor?: string;
-  hoverAccent?: string;
   imageUrl: string;    
   description?: string;
   categoryId?: number;
@@ -187,6 +184,21 @@ export const productApi = {
   getCategories: async (): Promise<Category[]> => {
     const response = await axios.get(`${API_BASE}/Products/categories`);
     return response.data;
+  },
+  getAllForAdmin: async (): Promise<Product[]> => {
+    const response = await axios.get(`${API_BASE}/Products/admin/all`);
+    return response.data;
+  },
+  create: async (product: Omit<Product, 'id'>): Promise<Product> => {
+    const response = await axios.post(`${API_BASE}/Products/admin/create`, product);
+    return response.data;
+  },
+  update: async (id: number, product: Partial<Product>): Promise<Product> => {
+    const response = await axios.put(`${API_BASE}/Products/admin/${id}`, product);
+    return response.data;
+  },
+  delete: async (id: number): Promise<void> => {
+    await axios.delete(`${API_BASE}/Products/admin/${id}`);
   }
 };
 

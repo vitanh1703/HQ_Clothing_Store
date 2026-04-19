@@ -100,3 +100,34 @@ public class SupplierDto
     public string? Phone { get; set; }
     public string? Address { get; set; }
 }
+
+public class CreateProductRequest
+{
+    public string Name { get; set; } = null!;
+    public string? BrandText { get; set; }
+    public string? Description { get; set; }
+    public string? ImageUrl { get; set; }
+    public int? CategoryId { get; set; }
+    public int? SupplierId { get; set; }
+    public List<CreateVariantRequest>? Variants { get; set; }
+}
+
+public class UpdateProductRequest
+{
+    public string Name { get; set; } = null!;
+    public string? BrandText { get; set; }
+    public string? Description { get; set; }
+    public string? ImageUrl { get; set; }
+    public int? CategoryId { get; set; }
+    public int? SupplierId { get; set; }
+    public List<CreateVariantRequest>? Variants { get; set; }
+}
+
+public class CreateVariantRequest
+{
+    public string Size { get; set; } = null!;
+    public string Color { get; set; } = null!;
+    public decimal Price { get; set; }
+    public int StockQuantity { get; set; } = 0;
+    public string? Sku { get; set; }
+}

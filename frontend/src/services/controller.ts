@@ -120,3 +120,84 @@ export const supplierController = {
     return { success: true };
   }
 };
+
+export const productController = {
+  validateProduct: (data: any): { success: boolean; message?: string; field?: string } => {
+    const { name, brandText, description, imageUrl, categoryId, supplierId } = data;
+    
+    // Validate tên sản phẩm
+    if (!name || name.trim() === '') {
+      return { success: false, message: "Tên sản phẩm không được để trống", field: "name" };
+    }
+    
+    if (name.trim().length < 2) {
+      return { success: false, message: "Tên sản phẩm phải có ít nhất 2 ký tự", field: "name" };
+    }
+
+    if (name.trim().length > 255) {
+      return { success: false, message: "Tên sản phẩm không được vượt quá 255 ký tự", field: "name" };
+    }
+    
+    // Validate thương hiệu
+    if (!brandText || brandText.trim() === '') {
+      return { success: false, message: "Thương hiệu không được để trống", field: "brandText" };
+    }
+    
+    if (brandText.trim().length < 2) {
+      return { success: false, message: "Thương hiệu phải có ít nhất 2 ký tự", field: "brandText" };
+    }
+
+    if (brandText.trim().length > 100) {
+      return { success: false, message: "Thương hiệu không được vượt quá 100 ký tự", field: "brandText" };
+    }
+    
+    // Validate mô tả
+    if (!description || description.trim() === '') {
+      return { success: false, message: "Mô tả sản phẩm không được để trống", field: "description" };
+    }
+    
+    if (description.trim().length < 10) {
+      return { success: false, message: "Mô tả sản phẩm phải có ít nhất 10 ký tự", field: "description" };
+    }
+
+    if (description.trim().length > 2000) {
+      return { success: false, message: "Mô tả sản phẩm không được vượt quá 2000 ký tự", field: "description" };
+    }
+    
+    // Validate ảnh
+    if (!imageUrl || imageUrl.trim() === '') {
+      return { success: false, message: "Ảnh sản phẩm không được để trống", field: "imageUrl" };
+    }
+    
+    const urlRegex = /^(https?:\/\/).+/;
+    if (!urlRegex.test(imageUrl.trim())) {
+      return { success: false, message: "Đường dẫn ảnh phải là URL hợp lệ (http:// hoặc https://)", field: "imageUrl" };
+    }
+
+    if (imageUrl.trim().length > 500) {
+      return { success: false, message: "Đường dẫn ảnh không được vượt quá 500 ký tự", field: "imageUrl" };
+    }
+    
+    // Validate danh mục
+    if (!categoryId || categoryId === '') {
+      return { success: false, message: "Danh mục không được để trống", field: "categoryId" };
+    }
+
+    const categoryNum = Number(categoryId);
+    if (isNaN(categoryNum) || categoryNum <= 0) {
+      return { success: false, message: "Danh mục không hợp lệ", field: "categoryId" };
+    }
+    
+    // Validate nhà cung cấp
+    if (!supplierId || supplierId === '') {
+      return { success: false, message: "Nhà cung cấp không được để trống", field: "supplierId" };
+    }
+
+    const supplierNum = Number(supplierId);
+    if (isNaN(supplierNum) || supplierNum <= 0) {
+      return { success: false, message: "Nhà cung cấp không hợp lệ", field: "supplierId" };
+    }
+    
+    return { success: true };
+  }
+};

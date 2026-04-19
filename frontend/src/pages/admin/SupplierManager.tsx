@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { Search, Package, Edit2, Trash2, Phone, MapPin } from 'lucide-react';
 import { FiMenu, FiX } from 'react-icons/fi';
 import AdminSidebar from '../../components/AdminSidebar';
@@ -88,16 +89,17 @@ const SupplierManager = () => {
           ...s,
           ...formData
         } : s));
+        toast.success(' Cập nhật nhà cung cấp thành công!');
       } else {
         // Add new
         const newSupplier = await supplierApi.create(formData);
         setSuppliers(prev => [...prev, newSupplier]);
+        toast.success(' Thêm nhà cung cấp thành công!');
       }
       setIsModalOpen(false);
-      alert(editingSupplier ? 'Cập nhật thành công!' : 'Thêm nhà cung cấp thành công!');
     } catch (error) {
       console.error('Lỗi khi lưu nhà cung cấp', error);
-      alert('Lỗi: ' + (error instanceof Error ? error.message : 'Không thể lưu'));
+      toast.error('❌ Lỗi: ' + (error instanceof Error ? error.message : 'Không thể lưu'));
     }
   };
 
@@ -107,10 +109,10 @@ const SupplierManager = () => {
       try {
         await supplierApi.delete(id);
         setSuppliers(prev => prev.filter(s => s.id !== id));
-        alert('Xóa thành công!');
+        toast.success('Xóa nhà cung cấp thành công!');
       } catch (error) {
         console.error('Lỗi khi xóa nhà cung cấp', error);
-        alert('Lỗi: ' + (error instanceof Error ? error.message : 'Không thể xóa'));
+        toast.error('❌ Lỗi: ' + (error instanceof Error ? error.message : 'Không thể xóa'));
       }
     }
   };

@@ -94,6 +94,19 @@ const ProductsPage = () => {
         }
       }
 
+      // Check if any filters are active
+      const hasActiveFilters = 
+        filters.sizes.length > 0 ||
+        filters.colors.length > 0 ||
+        filters.minPrice > 0 ||
+        filters.maxPrice < 2000000 ||
+        filters.status.length > 0;
+
+      // If no filters active, show all products
+      if (!hasActiveFilters) {
+        return true;
+      }
+
       // Check if product has any variants that match the filters
       const hasMatchingVariant = product.variants?.some(variant => {
         // Check size filter
@@ -107,14 +120,14 @@ const ProductsPage = () => {
         }
         
         // Check price filter
-        if (variant.price < filters.minPrice || variant.price > filters.maxPrice) {
+        if (Number(variant.price) < filters.minPrice || Number(variant.price) > filters.maxPrice) {
           return false;
         }
 
         // Check status filter based on stock_quantity
         if (filters.status.length > 0) {
-          const isInStock = variant.stockQuantity > 0;
-          const isOutOfStock = variant.stockQuantity === 0;
+          const isInStock = Number(variant.stockQuantity) > 0;
+          const isOutOfStock = Number(variant.stockQuantity) === 0;
           
           const matchesStatus = filters.status.some(status => {
             if (status === "in-stock" && isInStock) return true;

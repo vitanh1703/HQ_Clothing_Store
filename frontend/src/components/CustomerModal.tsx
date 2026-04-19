@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
+import { X, CheckCircle, XCircle, User } from 'lucide-react';
 
 interface Customer {
   id: number;
@@ -7,6 +7,7 @@ interface Customer {
   email: string;
   phone?: string;
   address?: string;
+  status: boolean; // Trạng thái hoạt động tài khoản
 }
 
 interface OrderSummary {
@@ -17,155 +18,137 @@ interface OrderSummary {
   orderDate: string;
 }
 
-interface CustomerSaveData {
-  id: number;
-  fullName: string;
-  email: string;
-  phone?: string;
-  address?: string;
-}
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   customer: Customer | null;
   orders: OrderSummary[];
-  onSave: (customer: CustomerSaveData) => void;
 }
 
-const CustomerModal = ({ isOpen, onClose, customer, orders, onSave }: Props) => {
+const CustomerModal = ({ isOpen, onClose, customer, orders }: Props) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
   useEffect(() => {
-    setFullName(customer?.fullName ?? '');
-    setEmail(customer?.email ?? '');
-    setPhone(customer?.phone ?? '');
-    setAddress(customer?.address ?? '');
-  }, [customer]);
+    if (customer) {
+      setFullName(customer.fullName ?? '');
+      setEmail(customer.email ?? '');
+      setPhone(customer.phone ?? '');
+      setAddress(customer.address ?? '');
+    }
+  }, [customer, isOpen]);
 
   if (!isOpen || !customer) return null;
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    onSave({
-      id: customer.id,
-      fullName,
-      email,
-      phone,
-      address
-    });
-  };
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-bold">Chi tiết khách hàng</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full"><X size={20} /></button>
+      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        
+        {/* Header - Sạch sẽ không viền */}
+        <div className="flex justify-between items-center p-6 pb-2">
+          <h2 className="text-xl font-bold text-gray-800 tracking-tight">Chi tiết khách hàng</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-900">
+            <X size={20} />
+          </button>
         </div>
 
-        <form className="p-6 space-y-4 overflow-y-auto max-h-[80vh]" onSubmit={handleSubmit}>
+        <div className="p-6 pt-2 space-y-8 overflow-y-auto max-h-[80vh]">
+          
+          {/* Phần 1: Avatar và Trạng thái hoạt động */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="w-28 h-28 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
+                <User size={48} />
+              </div>
+              
+              {/* Mục trạng thái tài khoản mới thêm */}
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tài khoản</span>
+                {customer.status ? (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-600 rounded-full border border-green-100">
+                    <CheckCircle size={14} className="fill-green-600 text-white" />
+                    <span className="text-xs font-bold uppercase">Hoạt động</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-600 rounded-full border border-red-100">
+                    <XCircle size={14} className="fill-red-600 text-white" />
+                    <span className="text-xs font-bold uppercase">Bị khóa</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Họ và tên</label>
+                <div className="text-gray-800 font-semibold text-lg leading-tight mt-1">{fullName}</div>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email liên hệ</label>
+                <div className="text-gray-600 text-sm mt-1">{email}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Phần 2: Thông tin liên lạc - Không dấu gạch */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col items-center space-y-3">
-              <label className="text-sm font-medium self-start">Ảnh đại diện</label>
-              <div className="w-32 h-32 rounded-full border-2 border-dashed flex items-center justify-center text-gray-400 text-xl font-bold uppercase">
-                {customer.fullName?.[0] ?? 'K'}
-              </div>
-              <input
-                type="text"
-                placeholder="URL ảnh (chưa hỗ trợ)"
-                className="w-full p-2 border rounded-lg text-sm"
-                disabled
-              />
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Số điện thoại</label>
+              <div className="text-gray-700 font-medium">{phone || 'Chưa cung cấp'}</div>
             </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Tên khách hàng*</label>
-                <input
-                  value={fullName}
-                  onChange={e => setFullName(e.target.value)}
-                  type="text"
-                  placeholder="Nhập tên khách hàng"
-                  className="w-full p-2 bg-gray-50 border rounded-lg"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Email</label>
-                <input
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  type="email"
-                  placeholder="Nhập email"
-                  className="w-full p-2 bg-gray-50 border rounded-lg"
-                  disabled
-                />
-              </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Địa chỉ</label>
+              <div className="text-gray-700 font-medium">{address || 'Chưa cung cấp'}</div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium">Số điện thoại</label>
-              <input
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                type="text"
-                placeholder="Nhập số điện thoại"
-                className="w-full p-2 bg-gray-50 border rounded-lg"
-              />
+          {/* Phần 3: Lịch sử đơn hàng */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Lịch sử giao dịch</label>
+              <span className="text-[10px] font-bold text-gray-400 italic">Tổng {orders.length} đơn</span>
             </div>
-            <div>
-              <label className="text-sm font-medium">Địa chỉ</label>
-              <input
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                type="text"
-                placeholder="Nhập địa chỉ"
-                className="w-full p-2 bg-gray-50 border rounded-lg"
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-              <label className="text-sm font-medium">Trạng thái đơn gần nhất</label>
-              <div className="w-full p-3 bg-gray-50 border rounded-lg text-sm text-gray-700">
-                {orders.length > 0 ? orders[0].status : 'Chưa có đơn hàng'}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4">
-            <label className="text-sm font-medium">Danh sách đơn hàng</label>
-            <div className="space-y-2 max-h-56 overflow-y-auto rounded-lg border bg-gray-50 p-3">
+            <div className="space-y-3 max-h-56 overflow-y-auto pr-1 scrollbar-hide">
               {orders.length === 0 ? (
-                <div className="text-sm text-gray-500">Không có đơn hàng nào.</div>
+                <div className="text-center py-8 bg-gray-50 rounded-2xl text-gray-400 text-sm italic">
+                  Khách hàng này chưa có đơn hàng nào
+                </div>
               ) : (
                 orders.map(order => (
-                  <div key={order.id} className="rounded-lg bg-white px-3 py-2 shadow-sm">
-                    <div className="flex justify-between text-sm text-gray-700 font-medium">
-                      <span>{order.orderCode}</span>
-                      <span className="capitalize">{order.status}</span>
+                  <div key={order.id} className="flex justify-between items-center p-4 bg-white rounded-2xl shadow-sm border border-gray-50">
+                    <div className="space-y-1">
+                      <div className="text-sm font-bold text-gray-900">{order.orderCode}</div>
+                      <div className="text-[10px] text-gray-400">
+                        {new Date(order.orderDate).toLocaleDateString('vi-VN')}
+                      </div>
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {new Date(order.orderDate).toLocaleDateString('vi-VN')} - {order.totalAmount.toLocaleString('vi-VN')} đ
+                    <div className="text-right space-y-1">
+                      <div className="text-sm font-black text-blue-600">
+                        {order.totalAmount.toLocaleString('vi-VN')}đ
+                      </div>
+                      <div className="text-[9px] font-bold uppercase px-2 py-0.5 bg-gray-100 rounded text-gray-500">
+                        {order.status}
+                      </div>
                     </div>
                   </div>
                 ))
               )}
             </div>
           </div>
+        </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="px-6 py-2 border rounded-lg hover:bg-gray-50 font-medium">Hủy</button>
-            <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Lưu</button>
-          </div>
-        </form>
+        {/* Footer: Chỉ một nút Đóng duy nhất */}
+        <div className="p-6 flex justify-end">
+          <button 
+            onClick={onClose} 
+            className="px-10 py-3 bg-gray-900 text-white rounded-xl hover:bg-black transition-all font-bold text-xs uppercase tracking-widest shadow-lg active:scale-95"
+          >
+            Đóng
+          </button>
+        </div>
       </div>
     </div>
   );

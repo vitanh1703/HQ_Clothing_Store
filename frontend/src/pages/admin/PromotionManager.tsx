@@ -115,7 +115,7 @@ const PromotionManager = () => {
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-gray-700 rounded-lg">
             {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-          <h1 className="text-3xl font-bold uppercase tracking-tight">Quản lý Khuyến mãi</h1>
+          <h1 className="text-3xl font-bold uppercase tracking-tight">Quản lý Khuyến mại</h1>
         </div>
 
         <main className="flex-1 overflow-y-auto p-8 bg-white text-black">

@@ -50,7 +50,7 @@ const AdminDashboard = () => {
       title: 'Kho',
       description: 'Theo dõi số lượng hàng tồn kho, nhập xuất hàng',
       icon: FiBox,
-      path: '/warehouse',
+      path: '/admin/inventory',
       color: 'purple',
       bgColor: 'bg-purple-50',
       textColor: 'text-purple-600',

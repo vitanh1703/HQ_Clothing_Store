@@ -62,6 +62,8 @@ public class Product
     public int? CategoryId { get; set; }
     [Column("supplier_id")]
     public int? SupplierId { get; set; }
+    [ForeignKey("CategoryId")]
+    public virtual Category? Category { get; set; }
     public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
 }
 
@@ -94,6 +96,8 @@ public class ProductVariant
     public int Id { get; set; }
     [Column("product_id")]
     public int ProductId { get; set; }
+    [ForeignKey("ProductId")]
+    public virtual Product Product { get; set; } = null!;
     public string Size { get; set; } = null!;
     public string Color { get; set; } = null!;
     public decimal Price { get; set; }

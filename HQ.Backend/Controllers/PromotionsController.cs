@@ -113,5 +113,36 @@ namespace HQ.Backend.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Đã xóa khuyến mãi thành công." });
         }
+        [HttpGet("inventory")]
+        public async Task<IActionResult> GetInventory()
+        {
+            try 
+            {
+                var inventory = await _context.ProductVariants
+                    .Include(v => v.Product)
+                        .ThenInclude(p => p.Category)
+                    .Select(v => new {
+                        sku = v.Sku,
+                        productName = v.Product.Name,
+                        categoryName = v.Product.Category != null ? v.Product.Category.Name : "N/A",
+                        stockQuantity = v.StockQuantity,
+                        size = v.Size,
+                        color = v.Color,
+                        // FIX: So sánh Status không phân biệt hoa thường (Pending/pending)
+                        reservedQuantity = _context.OrderItems
+                            .Where(oi => oi.VariantId == v.Id && 
+                                        oi.Order.Status.ToLower() == "pending") 
+                            .Sum(oi => (int?)oi.Quantity) ?? 0,
+                        updatedAt = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                    })
+                    .ToListAsync();
+
+                return Ok(inventory);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi: {ex.Message}");
+            }
+        }
     }
 }

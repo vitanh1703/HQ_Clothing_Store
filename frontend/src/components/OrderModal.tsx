@@ -126,8 +126,7 @@ const OrderStatusUpdateModal = ({
   isOpen,
   onClose,
   order,
-  onOrderUpdated,
-  getStatusLabel
+  onOrderUpdated
 }: OrderStatusUpdateModalProps) => {
   const [newStatus, setNewStatus] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);

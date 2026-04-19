@@ -258,3 +258,31 @@ public class Supplier
     [Column("address")]
     public string? Address { get; set; }
 }
+
+[Table("promotions")] // THÊM DÒNG NÀY (Đảm bảo tên khớp với DB MySQL)
+public class PromotionEntity
+{
+    [Key] // Nên thêm cái này để EF biết đâu là khóa chính
+    public int Id { get; set; }
+
+    [Column("code")]
+    public string Code { get; set; } = null!;
+
+    [Column("description")]
+    public string? Description { get; set; }
+
+    [Column("discount_value")]
+    public decimal DiscountValue { get; set; }
+
+    [Column("discount_type")]
+    public string DiscountType { get; set; } = null!;
+
+    [Column("start_date")]
+    public DateTime StartDate { get; set; }
+
+    [Column("end_date")]
+    public DateTime EndDate { get; set; }
+
+    [Column("status")]
+    public int Status { get; set; } 
+}

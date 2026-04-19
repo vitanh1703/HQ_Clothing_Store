@@ -201,3 +201,71 @@ export const productController = {
     return { success: true };
   }
 };
+
+export const newsController = {
+  validateNews: (data: any): { success: boolean; message?: string; field?: string } => {
+    const { title, category, description, content, imgUrl, publishDate } = data;
+    
+    // Validate tiêu đề
+    if (!title || title.trim() === '') {
+      return { success: false, message: "Tiêu đề tin tức không được để trống", field: "title" };
+    }
+    if (title.trim().length < 3) {
+      return { success: false, message: "Tiêu đề phải có ít nhất 3 ký tự", field: "title" };
+    }
+    if (title.trim().length > 200) {
+      return { success: false, message: "Tiêu đề không được vượt quá 200 ký tự", field: "title" };
+    }
+    
+    // Validate danh mục
+    if (!category || category.trim() === '') {
+      return { success: false, message: "Danh mục không được để trống", field: "category" };
+    }
+    if (category.trim().length < 2) {
+      return { success: false, message: "Danh mục phải có ít nhất 2 ký tự", field: "category" };
+    }
+    if (category.trim().length > 50) {
+      return { success: false, message: "Danh mục không được vượt quá 50 ký tự", field: "category" };
+    }
+    
+    // Validate mô tả ngắn
+    if (!description || description.trim() === '') {
+      return { success: false, message: "Mô tả ngắn không được để trống", field: "description" };
+    }
+    if (description.trim().length < 10) {
+      return { success: false, message: "Mô tả phải có ít nhất 10 ký tự", field: "description" };
+    }
+    if (description.trim().length > 500) {
+      return { success: false, message: "Mô tả không được vượt quá 500 ký tự", field: "description" };
+    }
+    
+    // Validate nội dung
+    if (!content || content.trim() === '') {
+      return { success: false, message: "Nội dung tin tức không được để trống", field: "content" };
+    }
+    if (content.trim().length < 20) {
+      return { success: false, message: "Nội dung phải có ít nhất 20 ký tự", field: "content" };
+    }
+    if (content.trim().length > 10000) {
+      return { success: false, message: "Nội dung không được vượt quá 10000 ký tự", field: "content" };
+    }
+    
+    // Validate ảnh (optional)
+    if (imgUrl && imgUrl.trim() !== '') {
+      const urlRegex = /^(https?:\/\/).+/;
+      if (!urlRegex.test(imgUrl.trim())) {
+        return { success: false, message: "Đường dẫn ảnh phải là URL hợp lệ (http:// hoặc https://)", field: "imgUrl" };
+      }
+      if (imgUrl.trim().length > 500) {
+        return { success: false, message: "Đường dẫn ảnh không được vượt quá 500 ký tự", field: "imgUrl" };
+      }
+    }
+    
+    // Validate ngày đăng
+    if (!publishDate || publishDate.trim() === '') {
+      return { success: false, message: "Ngày đăng không được để trống", field: "publishDate" };
+    }
+    
+    return { success: true };
+  }
+};

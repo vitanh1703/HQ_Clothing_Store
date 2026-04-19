@@ -131,3 +131,23 @@ public class CreateVariantRequest
     public int StockQuantity { get; set; } = 0;
     public string? Sku { get; set; }
 }
+
+public class CreateNewsRequest
+{
+    public string Title { get; set; } = null!;
+    public string? Category { get; set; }
+    public string? Description { get; set; }
+    public string? Content { get; set; }
+    public string? ImgUrl { get; set; }
+    public DateTime? PublishDate { get; set; }
+}
+
+public class UpdateNewsRequest
+{
+    public string Title { get; set; } = null!;
+    public string? Category { get; set; }
+    public string? Description { get; set; }
+    public string? Content { get; set; }
+    public string? ImgUrl { get; set; }
+    public DateTime? PublishDate { get; set; }
+}

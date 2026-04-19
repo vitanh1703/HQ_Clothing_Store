@@ -145,6 +145,17 @@ export interface Supplier {
   address?: string;
 }
 
+export interface NewsManagerItem {
+  id: number;
+  category: string;
+  title: string;
+  description?: string;
+  content?: string;
+  imgUrl?: string;
+  publishDate: string;
+  createdAt: string;
+}
+
 export const authApi = {
   login: async (loginData: any) => {
     const response = await axios.post(`${API_BASE}/Auth/login`, {
@@ -227,6 +238,21 @@ export const newsApi = {
   getTitles: async (): Promise<NewsTitle[]> => {
     const response = await axios.get(`${API_BASE}/News/titles`);
     return response.data;
+  },
+  getAllForAdmin: async (): Promise<NewsManagerItem[]> => {
+    const response = await axios.get(`${API_BASE}/News/admin/all`);
+    return response.data;
+  },
+  create: async (news: Omit<NewsManagerItem, 'id' | 'createdAt'>): Promise<NewsManagerItem> => {
+    const response = await axios.post(`${API_BASE}/News/admin/create`, news);
+    return response.data;
+  },
+  update: async (id: number, news: Partial<NewsManagerItem>): Promise<NewsManagerItem> => {
+    const response = await axios.put(`${API_BASE}/News/admin/${id}`, news);
+    return response.data;
+  },
+  delete: async (id: number): Promise<void> => {
+    await axios.delete(`${API_BASE}/News/admin/${id}`);
   }
 };
 

@@ -26,6 +26,7 @@ import PaymentCallback from './pages/PaymentCallback';
 import CustomerManager from './pages/admin/CustomerManager';
 import SupplierManager from './pages/admin/SupplierManager';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import PromotionManager from './pages/admin/PromotionManager';
 
 const RootRedirect = () => {
   const auth = sessionStorage.getItem("auth");
@@ -105,6 +106,7 @@ function App() {
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/customers" element={<AdminRoute><CustomerManager /></AdminRoute>} />
           <Route path="/suppliers" element={<AdminRoute><SupplierManager /></AdminRoute>} />
+          <Route path="/promotions" element={<AdminRoute><PromotionManager /></AdminRoute>} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold italic">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

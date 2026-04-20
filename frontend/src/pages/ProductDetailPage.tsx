@@ -155,28 +155,36 @@ const ProductDetailPage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
-      <button
-        onClick={() => {
-          if (from === "cart") navigate("/cart");
-          else if (from === "products") navigate("/products");
-          else navigate(-1);
-        }}
-        className="mb-4 inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium text-gray-500 transition hover:bg-gray-100 hover:text-black"
-      >
-        <span className="text-sm">←</span>
-        Quay lại
-      </button>
-      <div className="flex flex-col gap-8 md:flex-row">
-        <div className="flex-1">
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="w-full rounded object-cover"
-          />
+    <div>
+      {/* Back Button Bar */}
+      <div className="w-full border-b border-gray-200 bg-gray-50">
+        <div className="mx-auto max-w-6xl px-6 py-4">
+          <button
+            onClick={() => {
+              if (from === "cart") navigate("/cart");
+              else if (from === "products") navigate("/products");
+              else navigate(-1);
+            }}
+            className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 transition hover:text-black"
+          >
+            <span className="text-lg">‹</span>
+            TRỞ LẠI
+          </button>
         </div>
+      </div>
 
-        <div className="flex flex-1 flex-col gap-4">
+      {/* Main Content */}
+      <div className="mx-auto max-w-6xl p-6">
+        <div className="flex flex-col gap-8 md:flex-row">
+          <div className="flex-1">
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="w-full rounded object-cover"
+            />
+          </div>
+
+          <div className="flex flex-1 flex-col gap-4">
           <h1 className="text-2xl font-bold uppercase">{product.name}</h1>
           <p className="text-gray-500">{product.brandText || "H&Q"}</p>
 
@@ -251,43 +259,44 @@ const ProductDetailPage = () => {
             Thêm vào giỏ hàng
           </button>
         </div>
-      </div>
-
-      <div className="mt-12 border-t pt-8">
-        <div className="mb-6 flex items-center gap-3">
-          <h2 className="text-2xl font-bold">Đánh giá sản phẩm</h2>
-          <div className="flex items-center gap-2 text-sm">
-            {renderStars(reviewsData.averageRating)}
-            <span className="font-semibold">{reviewsData.averageRating.toFixed(1)}</span>
-            <span className="text-gray-500">({reviewsData.totalReviews} đánh giá)</span>
-          </div>
         </div>
 
-        {reviewsData.reviews.length === 0 ? (
-          <p className="text-gray-500">
-            Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này.
-          </p>
-        ) : (
-          <div className="space-y-6">
-            {reviewsData.reviews.map((review) => (
-              <div key={review.id} className="border-b pb-6">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="font-semibold">{review.userName}</p>
-                    <div className="mt-1 flex items-center gap-2 text-sm">
-                      {renderStars(review.rating)}
-                      <span>{review.rating.toFixed(1)}</span>
-                    </div>
-                  </div>
-                  <span className="text-sm text-gray-500">
-                    {new Date(review.createdAt).toLocaleDateString("vi-VN")}
-                  </span>
-                </div>
-                <p className="mt-3 text-gray-700">{review.comment}</p>
-              </div>
-            ))}
+        <div className="mt-12 border-t pt-8">
+          <div className="mb-6 flex items-center gap-3">
+            <h2 className="text-2xl font-bold">Đánh giá sản phẩm</h2>
+            <div className="flex items-center gap-2 text-sm">
+              {renderStars(reviewsData.averageRating)}
+              <span className="font-semibold">{reviewsData.averageRating.toFixed(1)}</span>
+              <span className="text-gray-500">({reviewsData.totalReviews} đánh giá)</span>
+            </div>
           </div>
-        )}
+
+          {reviewsData.reviews.length === 0 ? (
+            <p className="text-gray-500">
+              Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này.
+            </p>
+          ) : (
+            <div className="space-y-6">
+              {reviewsData.reviews.map((review) => (
+                <div key={review.id} className="border-b pb-6">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="font-semibold">{review.userName}</p>
+                      <div className="mt-1 flex items-center gap-2 text-sm">
+                        {renderStars(review.rating)}
+                        <span>{review.rating.toFixed(1)}</span>
+                      </div>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {new Date(review.createdAt).toLocaleDateString("vi-VN")}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-gray-700">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

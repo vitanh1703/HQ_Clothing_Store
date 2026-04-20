@@ -31,6 +31,7 @@ import OrderManager from './pages/admin/OrderManager';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PromotionManager from './pages/admin/PromotionManager';
 import InventoryManager from './pages/admin/InventoryManager';
+import Statistics from './pages/admin/Statistics';
 
 const RootRedirect = () => {
   const auth = sessionStorage.getItem("auth");
@@ -116,6 +117,7 @@ function App() {
           <Route path="/admin/products" element={<AdminRoute><ProductManager /></AdminRoute>} />
           <Route path="/admin/news" element={<AdminRoute><NewsManager /></AdminRoute>} />
           <Route path="/admin/inventory" element={<AdminRoute><InventoryManager /></AdminRoute>} />
+          <Route path="/reports" element={<AdminRoute><Statistics /></AdminRoute>} />
           <Route path="*" element={<div className="p-10 text-center text-2xl font-bold italic">404 - Không tìm thấy trang</div>} />
         </Routes>
       </div>

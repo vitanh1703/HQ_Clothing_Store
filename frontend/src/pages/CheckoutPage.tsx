@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { promotionsApi } from "../services/api";
 import type { CheckoutCartItem, CheckoutResponse, PromotionItem, PromotionValidationResult } from "../services/api";
@@ -219,15 +219,9 @@ const CheckoutPage = () => {
         <div className="bg-white p-8 rounded-xl shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-black uppercase">Checkout</h1>
+              <h1 className="text-3xl font-black uppercase">Thanh Toán</h1>
               <p className="text-gray-500 mt-1">Xác nhận thông tin đơn hàng và địa chỉ giao hàng.</p>
             </div>
-            <button
-              onClick={() => navigate("/cart")}
-              className="text-sm uppercase tracking-[0.2em] text-gray-600 hover:text-black"
-            >
-              Quay lại giỏ hàng
-            </button>
           </div>
 
           <section className="mb-10">

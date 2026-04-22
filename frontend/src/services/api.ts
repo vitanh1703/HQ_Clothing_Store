@@ -156,6 +156,31 @@ export interface NewsManagerItem {
   createdAt: string;
 }
 
+export interface DashboardStatisticsResponse {
+  totalRevenue: number;
+  totalOrders: number;
+  totalCustomers: number;
+  avgOrderValue: number;
+  totalProducts: number;
+  revenueTrend: {
+    day: string;
+    revenue: number;
+  }[];
+  categoryDistribution: {
+    name: string;
+    value: number;
+  }[];
+  vipCustomers: {
+    name: string;
+    orders: number;
+    total: number;
+  }[];
+  orderStatusDistribution: {
+    name: string;
+    value: number;
+  }[];
+}
+
 export const authApi = {
   login: async (loginData: any) => {
     const response = await axios.post(`${API_BASE}/Auth/login`, {
@@ -311,4 +336,12 @@ export const supplierApi = {
   delete: async (id: number): Promise<void> => {
     await axios.delete(`${API_BASE}/Suppliers/${id}`);
   }
+};
+export const statsApi = {
+  getDashboard: async (range: string = '7days'): Promise<DashboardStatisticsResponse> => {
+    const response = await axios.get(`${API_BASE}/Statistics/dashboard`, {
+      params: { range },
+    });
+    return response.data;
+  },
 };

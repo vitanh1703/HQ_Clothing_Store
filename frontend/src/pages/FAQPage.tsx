@@ -175,7 +175,7 @@ const FAQPage = () => {
               <p className="text-xs text-gray-500">Liên hệ với chúng tôi qua các kênh trực tuyến.</p>
             </div>
             <a 
-              href="https://www.facebook.com/quinh6505/" 
+              href="https://www.facebook.com/h&qstore/"
               target="_blank" 
               className="flex items-center gap-2 bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-all"
             >

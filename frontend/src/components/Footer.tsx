@@ -20,7 +20,7 @@ const Footer = () => {
             {/* 1. Facebook - Mở tab mới */}
             <li>
               <a 
-                href="https://www.facebook.com/quinh6505/" 
+                // href="https://www.facebook.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
@@ -33,7 +33,6 @@ const Footer = () => {
             {/* 2. Instagram - Mở tab mới */}
             <li>
               <a 
-                href="https://www.instagram.com/quinh6505/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
@@ -46,7 +45,7 @@ const Footer = () => {
             {/* 3. Youtube - Mở tab mới */}
             <li>
               <a 
-                href="https://youtube.com/@hqstore" 
+                // href="https://youtube.com/@hqstore" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
@@ -63,7 +62,7 @@ const Footer = () => {
                 className="flex items-center gap-2 hover:text-white transition-all cursor-pointer group"
               >
                 <FaEnvelope size={16} className="group-hover:scale-110 transition-transform" /> 
-                <span>Email: dangquynhhd6505@gmail.com</span>
+                <span>Email: h&qstore@gmail.com</span>
               </a>
             </li>
 

@@ -127,8 +127,6 @@ cd hq-clothing-store
 dotnet run --urls "https://localhost:7137;http://localhost:5257"
 ```
 
-*API sẽ chạy tại: `https://localhost:5001` hoặc `http://localhost:5000`*
-
 ### 4\. Chạy Frontend (UI)
 
 Mở một terminal mới:

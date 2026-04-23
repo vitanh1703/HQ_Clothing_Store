@@ -89,25 +89,128 @@ hq-clothing-store/
 ```
 ## 🚀 Cài đặt và chạy
 
-### 1️⃣ Clone dự án
+# 👕 H\&Q Clothing Store - Website Bán Quần Áo Thời Trang
+
+[](https://dotnet.microsoft.com/)
+[](https://reactjs.org/)
+[](https://tailwindcss.com/)
+[](https://www.mysql.com/)
+
+**H\&Q Clothing Store** là nền tảng thương mại điện tử chuyên biệt cho ngành thời trang. Hệ thống hỗ trợ khách hàng mua sắm trực tuyến dễ dàng và giúp quản trị viên quản lý kho hàng hiệu quả.
+
+-----
+
+## 📋 Mục lục
+
+1.  [Thành viên nhóm](https://www.google.com/search?q=%23-th%C3%A0nh-vi%C3%AAn-nh%C3%B3m)
+2.  [Giới thiệu](https://www.google.com/search?q=%23-gi%E1%BB%9Bi-thi%E1%BB%87u)
+3.  [Tính năng](https://www.google.com/search?q=%23-t%C3%ADnh-n%C4%83ng)
+4.  [Công nghệ sử dụng](https://www.google.com/search?q=%23-c%C3%B4ng-ngh%E1%BB%87-s%E1%BB%AD-d%E1%BB%A5ng)
+5.  [Cấu trúc dự án](https://www.google.com/search?q=%23-c%E1%BA%A5u-tr%C3%BAc-d%E1%BB%B1-%C3%A1n)
+6.  [Hướng dẫn cài đặt và chạy](\#-hướng dẫn-cài-đặt-và-chạy)
+7.  [API Endpoints](https://www.google.com/search?q=%23-api-endpoints)
+
+-----
+
+## 👥 Thành viên nhóm - Cửa hàng H\&Q
+
+| STT | Họ và Tên | MSSV |
+| :--- | :--- | :--- |
+| 1 | **Diêm Việt Anh** | 23810310083 |
+| 2 | **Nguyễn Thị Hảo** | 23810310152 |
+| 3 | **Đặng Thị Quỳnh** | 23810310156 |
+
+-----
+
+## 🌟 Giới thiệu
+
+Dự án **H\&Q** tập trung vào trải nghiệm mua sắm hiện đại, tối ưu trên cả thiết bị di động và máy tính. Website cho phép người dùng duyệt sản phẩm theo danh mục, xem chi tiết kích thước/màu sắc và thực hiện quy trình thanh toán an toàn.
+
+-----
+
+## ✨ Tính năng
+
+### 👤 Khách hàng
+
+  * **🛍️ Duyệt sản phẩm**: Xem danh sách theo danh mục (Nam, Nữ, Phụ kiện).
+  * **🔍 Bộ lọc thông minh**: Lọc theo giá, kích thước (S, M, L, XL) và màu sắc.
+  * **🛒 Giỏ hàng**: Thêm/bớt sản phẩm, cập nhật số lượng và tính tổng tiền.
+  * **💳 Thanh toán**: Nhập thông tin giao hàng và chọn phương thức thanh toán.
+  * **📱 Tài khoản**: Quản lý lịch sử đơn hàng và thông tin cá nhân.
+
+### ⚙️ Quản trị (Admin)
+
+  * **📦 Quản lý sản phẩm**: Thêm, sửa, xóa sản phẩm và cập nhật tồn kho.
+  * **📋 Quản lý đơn hàng**: Theo dõi trạng thái (Chờ xử lý, Đang giao, Đã giao).
+  * **📈 Báo cáo**: Xem thống kê doanh thu theo ngày/tháng.
+
+-----
+
+## 🛠 Công nghệ sử dụng
+
+### Frontend
+
+  - **React 18** & **TypeScript**
+  - **Tailwind CSS** (Giao diện chuẩn Responsive)
+  - **Lucide React** (Icons)
+
+### Backend
+
+  - **ASP.NET Core 9.0 Web API**
+  - **Entity Framework Core** (Pomelo.EntityFrameworkCore.MySql)
+  - **MySQL 8.0**
+
+-----
+
+## 🚀 Hướng dẫn cài đặt và chạy
+
+Để khởi chạy dự án, hãy đảm bảo bạn đã cài đặt: **.NET 9 SDK**, **Node.js (v18+)** và **MySQL Server**.
+
+### 1\. Clone dự án
+
 ```bash
-git clone <repository-url>
+git clone https://github.com/vitanh1703/HQ_Clothing_Store.git
 cd hq-clothing-store
 ```
 
-### 2️⃣ Cấu hình Database (MySQL)
-Chỉnh sửa chuỗi kết nối trong `backend/appsettings.json`:
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Port=3306;Database=hq_clothing_db;User=root;Password=your_password;"
-}
+### 2\. Cấu hình Cơ sở dữ liệu
+
+1.  Tạo database trong MySQL:
+    ```sql
+    CREATE DATABASE hq_clothing_db;
+    ```
+2.  Cập nhật chuỗi kết nối trong `backend/appsettings.json`:
+    ```json
+    "ConnectionStrings": {
+      "DefaultConnection": "Server=localhost;Port=3306;Database=hq_clothing_db;User=YOUR_USER;Password=YOUR_PASSWORD;"
+    }
+    ```
+3.  Chạy Migration để tạo bảng:
+    ```bash
+    cd backend
+    dotnet ef database update
+    ```
+
+### 3\. Chạy Backend (API)
+
+```bash
+# Tại thư mục backend
+dotnet run
 ```
-*Chạy lệnh migration:* `dotnet ef database update`
 
-### 3️⃣ Khởi chạy
-- **Backend:** `cd backend && dotnet run`
-- **Frontend:** `cd frontend && npm install && npm run dev`
+*API sẽ chạy tại: `https://localhost:5001` hoặc `http://localhost:5000`*
 
+### 4\. Chạy Frontend (UI)
+
+Mở một terminal mới:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+*Truy cập website tại: `http://localhost:5173`*
 ---
 
 ## 📡 API Endpoints chính

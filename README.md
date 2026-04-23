@@ -153,9 +153,6 @@ npm run dev
 
 ---
 
-## 🐳 Triển khai với Docker (MySQL Ready)
-Dự án đã được cấu hình sẵn `docker-compose.yml` để khởi chạy đồng thời cả API và MySQL Server:
-
 ---
 ##  Software Requirement Specifications (SRS)
 

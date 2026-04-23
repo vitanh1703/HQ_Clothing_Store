@@ -231,7 +231,9 @@ const AdminDashboard = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       let reports = orders.filter((o: any) => {
+        if (!o.orderDate) return false;
         const orderDate = new Date(o.orderDate);
+        if (isNaN(orderDate.getTime())) return false;
         orderDate.setHours(0, 0, 0, 0);
         return orderDate.getTime() === today.getTime();
       }).length;

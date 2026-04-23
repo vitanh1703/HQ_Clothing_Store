@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { 
   FiSearch, FiBox, FiMenu, FiX, FiRefreshCcw, 
@@ -35,8 +35,8 @@ const InventoryManager = () => {
   // --- LOGIC LỌC DỮ LIỆU ĐA TẦNG ---
   const filteredData = warehouseData.filter(item => {
     // 1. Lọc theo thanh tìm kiếm
-    const matchesSearch = item.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          item.sku?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (item.productName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (item.sku || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     // 2. Lọc theo nút thống kê (Stats Cards)
     if (statusFilter === 'inStock') return matchesSearch && item.stockQuantity >= 20;

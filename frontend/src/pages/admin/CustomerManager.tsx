@@ -75,8 +75,8 @@ const CustomerManager = () => {
   };
 
   const filteredCustomers = customers.filter(c => 
-    c.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.phone?.includes(searchTerm)
   );
 

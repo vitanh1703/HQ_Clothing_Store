@@ -141,7 +141,6 @@ const PromotionManager = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {promotions.filter(p => (p.code || p.Code || "").toLowerCase().includes(searchTerm.toLowerCase())).map((promo) => {
-                    const isOnline = promo.status === 1 || promo.status === true || promo.Status === 1;
                     return (
                       <tr key={promo.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="p-4 font-semibold text-gray-800 text-sm">
@@ -150,7 +149,7 @@ const PromotionManager = () => {
                         <td className="p-4 font-mono font-bold text-blue-600">{promo.code || promo.Code}</td>
                         <td className="p-4 text-sm">{ (promo.discountType || promo.DiscountType) === 'Percentage' ? 'Phần trăm' : 'Giảm tiền' }</td>
                         <td className="p-4 text-xs text-gray-500">
-                          {new Date(promo.startDate || promo.startDate).toLocaleDateString('vi-VN')} - {new Date(promo.endDate || promo.EndDate).toLocaleDateString('vi-VN')}
+                      {new Date(promo.startDate || promo.StartDate).toLocaleDateString('vi-VN')} - {new Date(promo.endDate || promo.EndDate).toLocaleDateString('vi-VN')}
                         </td>
                         <td className="p-4 text-center">
                             {(() => {
@@ -204,7 +203,7 @@ const PromotionManager = () => {
 
       {/* MODAL GIỮ NGUYÊN PHẦN JSX FORM NHƯNG DÙNG CÁC TRƯỜNG DỮ LIỆU ĐÃ FIX */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden text-black">
             <div className="bg-gray-900 p-4 flex justify-between items-center text-white">
               <h3 className="font-bold text-lg">{editingPromotion ? 'Sửa khuyến mãi' : 'Tạo mới khuyến mãi'}</h3>

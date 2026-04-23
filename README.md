@@ -98,23 +98,27 @@ git clone https://github.com/vitanh1703/HQ_Clothing_Store.git
 cd hq-clothing-store
 ```
 
-### 2\. Cấu hình Cơ sở dữ liệu
+### 2. Cấu hình Cơ sở dữ liệu
 
-1.  Tạo database trong MySQL:
-    ```sql
-    CREATE DATABASE hq_clothing_db;
-    ```
-2.  Cập nhật chuỗi kết nối trong `backend/appsettings.json`:
-    ```json
-    "ConnectionStrings": {
-      "DefaultConnection": "Server=localhost;Port=3306;Database=hq_clothing_db;User=YOUR_USER;Password=YOUR_PASSWORD;"
-    }
-    ```
-3.  Chạy Migration để tạo bảng:
-    ```bash
-    cd backend
-    dotnet ef database update
-    ```
+1. **Tạo database trong MySQL**:
+   Mở **MySQL Workbench** hoặc **Terminal** và chạy câu lệnh:
+   ```sql
+   CREATE DATABASE hq_clothing_db;
+   ```
+
+2. **Cập nhật chuỗi kết nối**:
+   Mở file `backend/appsettings.json` và thay đổi thông tin `User` và `Password` theo cấu hình MySQL của bạn:
+   ```json
+   "ConnectionStrings": {
+     "DefaultConnection": "Server=localhost;Port=3306;Database=hq_clothing_db;User=YOUR_USER;Password=YOUR_PASSWORD;"
+   }
+   ```
+
+3. **Khởi tạo dữ liệu từ file SQL**:
+   * Mở công cụ quản lý MySQL (như MySQL Workbench, Navicat hoặc phpMyAdmin).
+   * Chọn database `hq_clothing_db` vừa tạo.
+   * Sử dụng tính năng **Import** hoặc **Open SQL Script** để mở file database của dự án (ví dụ: `database.sql` hoặc file `.sql` tương ứng).
+   * Nhấn **Execute** (hình tia sét) để tạo toàn bộ bảng và dữ liệu mẫu.
 
 ### 3\. Chạy Backend (API)
 

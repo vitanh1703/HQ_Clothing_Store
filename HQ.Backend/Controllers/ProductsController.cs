@@ -275,21 +275,49 @@ namespace HQ.Backend.Controllers
                 // Xóa variants cũ nếu có variants mới
                 if (request.Variants != null && request.Variants.Count > 0)
                 {
-                    // Xóa tất cả variants cũ
-                    _context.ProductVariants.RemoveRange(product.Variants);
-                    
-                    // Thêm variants mới
-                    var newVariants = request.Variants.Select(v => new ProductVariant
+                    var existingVariants = product.Variants.ToList();
+                    var incomingVariants = request.Variants;
+
+                    // 1. Cập nhật các biến thể cũ hoặc thêm mới
+                    foreach (var v in incomingVariants)
                     {
-                        ProductId = product.Id,
-                        Size = v.Size?.Trim() ?? "",
-                        Color = v.Color?.Trim() ?? "",
-                        Price = v.Price > 0 ? v.Price : 0,
-                        StockQuantity = v.StockQuantity,
-                        Sku = v.Sku?.Trim()
-                    }).ToList();
-                    
-                    _context.ProductVariants.AddRange(newVariants);
+                        var existing = existingVariants.FirstOrDefault(ev => 
+                            ev.Size == v.Size?.Trim() && ev.Color == v.Color?.Trim());
+
+                        if (existing != null)
+                        {
+                            // Cập nhật thông tin, giữ nguyên ID để tránh lỗi Foreign Key
+                            existing.Price = v.Price > 0 ? v.Price : 0;
+                            existing.StockQuantity = v.StockQuantity;
+                            existing.Sku = v.Sku?.Trim() ?? existing.Sku;
+                            existingVariants.Remove(existing); // Đánh dấu đã xử lý
+                        }
+                        else
+                        {
+                            // Thêm mới nếu chưa có
+                            _context.ProductVariants.Add(new ProductVariant
+                            {
+                                ProductId = product.Id,
+                                Size = v.Size?.Trim() ?? "",
+                                Color = v.Color?.Trim() ?? "",
+                                Price = v.Price > 0 ? v.Price : 0,
+                                StockQuantity = v.StockQuantity,
+                                Sku = v.Sku?.Trim()
+                            });
+                        }
+                    }
+
+                    // 2. Xóa những biến thể không còn trong danh sách gửi lên
+                    foreach (var oldVariant in existingVariants)
+                    {
+                        // Kiểm tra xem biến thể này đã có đơn hàng chưa
+                        var isUsed = await _context.OrderItems.AnyAsync(oi => oi.VariantId == oldVariant.Id);
+                        if (isUsed)
+                        {
+                            return BadRequest(new { message = $"Không thể xóa biến thể {oldVariant.Size}/{oldVariant.Color} vì đã có đơn hàng liên quan. Hãy chỉ cập nhật thông tin." });
+                        }
+                        _context.ProductVariants.Remove(oldVariant);
+                    }
                 }
 
                 _context.Products.Update(product);
@@ -315,9 +343,18 @@ namespace HQ.Backend.Controllers
         [HttpDelete("admin/{id}")]
         public async Task<IActionResult> DeleteProductAdmin(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.Include(p => p.Variants).FirstOrDefaultAsync(p => p.Id == id);
             if (product == null)
                 return NotFound(new { message = "Sản phẩm không tồn tại" });
+
+            // Kiểm tra xem bất kỳ biến thể nào của sản phẩm đã được đặt hàng chưa trước khi xóa toàn bộ
+            foreach (var variant in product.Variants)
+            {
+                if (await _context.OrderItems.AnyAsync(oi => oi.VariantId == variant.Id))
+                {
+                    return BadRequest(new { message = "Không thể xóa sản phẩm này vì đã có đơn hàng liên quan trong hệ thống." });
+                }
+            }
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();

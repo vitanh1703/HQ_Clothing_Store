@@ -79,7 +79,9 @@ function App() {
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/customers") ||
     location.pathname.startsWith("/suppliers") ||
-    location.pathname.startsWith("/orders");
+    location.pathname.startsWith("/orders") ||
+    location.pathname.startsWith("/promotions") ||
+    location.pathname.startsWith("/reports");
 
   return (
     <div className="min-h-screen flex flex-col bg-white">

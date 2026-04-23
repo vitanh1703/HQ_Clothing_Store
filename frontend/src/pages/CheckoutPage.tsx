@@ -28,9 +28,13 @@ const CheckoutPage = () => {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"bank" | "vnpay" | "cod">("bank");
 
-  const userId = Number(sessionStorage.getItem("userId")) || 1;
+  const userId = Number(sessionStorage.getItem("userId"));
 
   useEffect(() => {
+    if (!userId) {
+      navigate("/auth");
+      return;
+    }
     if (!selectedItems || selectedItems.length === 0) {
       navigate("/cart");
       return;

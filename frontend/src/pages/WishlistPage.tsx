@@ -52,17 +52,23 @@ const WishlistPage = () => {
         });
     } else {
       const stored = sessionStorage.getItem("wishlistVariantIds");
-      const variantIds = stored ? (JSON.parse(stored) as number[]) : DEFAULT_WISHLIST;
+      let variantIds = DEFAULT_WISHLIST;
+      if (stored && stored !== "undefined") {
+        try {
+          variantIds = JSON.parse(stored) as number[];
+        } catch (e) {
+          console.error("Lỗi parse wishlist", e);
+        }
+      }
       setWishlistVariantIds(variantIds);
     }
   }, []);
 
   useEffect(() => {
-    if (!products.length) return;
     const items: WishlistItem[] = [];
 
     products.forEach((product: Product) => {
-      product.variants.forEach((variant: Variant) => {
+      (product.variants || []).forEach((variant: Variant) => {
         if (wishlistVariantIds.includes(variant.id)) {
           items.push({
             id: variant.id,

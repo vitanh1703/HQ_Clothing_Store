@@ -60,10 +60,11 @@ const OrderManager = () => {
   };
 
   const filteredOrders = useMemo(() => orders.filter(o => {
-    const matchesSearch = o.orderCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      o.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      o.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      o.phone.includes(searchTerm);
+    const term = searchTerm.toLowerCase();
+    const matchesSearch = (o.orderCode || '').toLowerCase().includes(term) ||
+      (o.fullName || '').toLowerCase().includes(term) ||
+      (o.email || '').toLowerCase().includes(term) ||
+      (o.phone || '').includes(searchTerm);
     
     if (filterStatus === null) return matchesSearch;
     return matchesSearch && o.status?.toLowerCase() === filterStatus.toLowerCase();

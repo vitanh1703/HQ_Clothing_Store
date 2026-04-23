@@ -35,9 +35,13 @@ const CartPage = () => {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
-  const userId = Number(sessionStorage.getItem("userId")) || 1;
+  const userId = Number(sessionStorage.getItem("userId"));
 
   useEffect(() => {
+    if (!userId) {
+      navigate("/auth");
+      return;
+    }
     fetchCart();
     fetchPromotions();
     restorePromo();

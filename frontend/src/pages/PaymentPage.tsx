@@ -29,6 +29,13 @@ const PaymentPage = () => {
     };
   }, [checkoutData, navigate]);
 
+  useEffect(() => {
+    if (timeLeft === 0) {
+      alert("Thời gian thanh toán đã hết. Vui lòng thử lại!");
+      navigate("/cart");
+    }
+  }, [timeLeft, navigate]);
+
   if (!checkoutData) return null;
 
   const formatTime = (seconds: number) => {

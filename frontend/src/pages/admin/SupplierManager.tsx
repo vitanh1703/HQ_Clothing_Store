@@ -218,7 +218,7 @@ const SupplierManager = () => {
                         <td className="px-4 py-4 text-sm text-gray-700">
                           {supplier.phone && (
                             <span className="flex items-center gap-1">
-                              <Phone size={16} className="text-green-600 flex-shrink-0" />
+                              <Phone size={16} className="text-green-600 shrink-0" />
                               {supplier.phone}
                             </span>
                           ) || 'N/A'}
@@ -226,7 +226,7 @@ const SupplierManager = () => {
                         <td className="px-4 py-4 text-sm text-gray-700">
                           {supplier.address && (
                             <span className="flex items-center gap-1">
-                              <MapPin size={16} className="text-red-600 flex-shrink-0" />
+                              <MapPin size={16} className="text-red-600 shrink-0" />
                               {supplier.address}
                             </span>
                           ) || 'N/A'}

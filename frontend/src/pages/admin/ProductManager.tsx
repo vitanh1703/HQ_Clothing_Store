@@ -277,7 +277,7 @@ const ProductManager = () => {
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                          <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">
                             <FiBox size={48} className="text-gray-400" />
                           </div>
                         )}
@@ -302,9 +302,9 @@ const ProductManager = () => {
                               <span className="font-semibold">Thương hiệu:</span> {product.brandText}
                             </p>
                           )}
-                          {product.categoryId && (
+                        {product.categoryId !== undefined && (
                             <p className="text-sm text-gray-700">
-                              <span className="font-semibold">Danh mục:</span> {categoryMap.get(product.categoryId) || `ID ${product.categoryId}`}
+                            <span className="font-semibold">Danh mục:</span> {product.categoryId ? (categoryMap.get(product.categoryId) || `ID ${product.categoryId}`) : 'Chưa phân loại'}
                             </p>
                           )}
                         </div>

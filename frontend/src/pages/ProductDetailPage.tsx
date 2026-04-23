@@ -135,7 +135,8 @@ const ProductDetailPage = () => {
     const userId = Number(sessionStorage.getItem("userId"));
 
     if (!userId) {
-      alert("Chưa đăng nhập!");
+      alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
+      navigate("/auth");
       return;
     }
 

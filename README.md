@@ -7,6 +7,7 @@
 
 **H&Q Clothing Store** là nền tảng thương mại điện tử chuyên biệt cho ngành thời trang. Hệ thống hỗ trợ khách hàng mua sắm trực tuyến dễ dàng và giúp quản trị viên quản lý kho hàng hiệu quả.
 
+**Link deloy web** vitanh17.id.vn
 ---
 
 ## 📋 Mục lục
@@ -22,11 +23,11 @@
 
 ## 👥 Thành viên nhóm - Cửa hàng H&Q
 
-| STT | Họ và Tên | MSSV |
-| :--- | :--- | :--- |
-| 1 | **Diêm Việt Anh** | 23810310083 |
-| 2 | **Nguyễn Thị Hảo** | 23810310152 |
-| 3 | **Đặng Thị Quỳnh** | 23810310156 |
+| STT | Họ và Tên | MSSV | Nội dung thực hiện |
+| :--- | :--- | :--- | :--- |
+| 1 | **Diêm Việt Anh** | 23810310083 | Thanh toán VNPAY, Luồng đơn hàng, module Giỏ hàng và Deploy website |
+| 2 | **Nguyễn Thị Hảo** | 23810310152 | Quản trị hệ thống (Admin), Xác thực qua mail, Module Chương trình Khuyến mãi |
+| 3 | **Đặng Thị Quỳnh** | 23810310156 | Module Tin tức, Dịch vụ Tiện ích và Sản phẩm, Đăng nhập bằng Google |
 
 ---
 
@@ -46,13 +47,19 @@ Dự án **H&Q** tập trung vào trải nghiệm mua sắm hiện đại, tối
 | **💳 Thanh toán** | Nhập thông tin giao hàng và chọn phương thức thanh toán |
 | **📱 Tài khoản cá nhân** | Quản lý lịch sử đơn hàng và thông tin cá nhân |
 | **💬 Phản hồi** | Gửi đánh giá và bình luận cho từng sản phẩm |
+| **💬 Chatbot** | Khách hàng có thể nhắn tin để tư vấn sản phẩm, chọn size, hỗ trợ đặt hàng và giải đáp thắc mắc nhanh chóng 24/7. |
 
 ### ⚙️ Quản trị (Admin)
 | Tính năng | Mô tả |
 | :--- | :--- |
+| **👥 Quản lý khách hàng** | Theo dõi, cập nhật và quản lý thông tin khách hàng trong hệ thống |
+| **📦 Quản lý nhà cung cấp** | Thêm, sửa, xóa và quản lý thông tin nhà cung cấp sản phẩm |
 | **📦 Quản lý sản phẩm** | Thêm, sửa, xóa sản phẩm và cập nhật số lượng tồn kho |
 | **📋 Quản lý đơn hàng** | Theo dõi trạng thái đơn hàng (Chờ xử lý, Đang giao, Đã giao) |
 | **📈 Báo cáo doanh thu** | Xem thống kê bán hàng theo ngày/tháng |
+| **🏷️ Quản lý khuyến mại** | Tạo và quản lý các chương trình giảm giá, ưu đãi sản phẩm |
+| **📚 Quản lý kho** | Kiểm tra số lượng tồn kho và cập nhật trạng thái hàng hóa |
+| **📰 Quản lý tin tức** | Đăng tải, chỉnh sửa và quản lý các bài viết tin tức |
 
 ---
 

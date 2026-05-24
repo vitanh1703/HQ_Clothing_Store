@@ -1,61 +1,66 @@
 # 📘 Software Requirement Specification (SRS)
-## Chức năng: Đăng ký tài khoản (User Registration)
+## Chức năng: Đăng ký & Xác thực Mail (User Registration)
 **Mã chức năng:** AUTH-01  
-**Trạng thái:** Review  
-**Người soạn thảo:** [Diêm Việt Anh]  
-**Vai trò:** Developer
+**Trạng thái:** Hoàn thành  
+**Người soạn thảo:** Nguyễn Thị Hảo  
+**Vai trò:** Developer  
 **Dự án:** H&Q Clothing Store
 
 ---
 
 ### 1. Mô tả tổng quan (Description)
-Cho phép người dùng mới tạo tài khoản thành viên trên hệ thống H&Q. Tài khoản sau khi đăng ký mặc định sẽ có vai trò là `Customer`. Hệ thống đảm bảo tính duy nhất của Email và tính bảo mật của mật khẩu trước khi lưu vào CSDL.
+Phân hệ Đăng ký cho phép người dùng mới tạo tài khoản thành viên (Customer) trên hệ thống H&Q Store. Hệ thống đảm bảo tính duy nhất của Email, mã hóa mật khẩu an toàn và tự động khởi tạo Giỏ hàng (Cart) trống cho người dùng. Đặc biệt, hệ thống tích hợp API Brevo để tự động gửi Email chào mừng/xác thực ngay sau khi tài khoản được tạo thành công.
+
+---
 
 ### 2. Luồng nghiệp vụ (User Workflow)
 
 | Bước | Hành động người dùng | Phản hồi hệ thống |
 | :--- | :--- | :--- |
-| 1 | Truy cập URL `/register` | Hiển thị Form đăng ký (Họ tên, Email, Mật khẩu, Nhập lại mật khẩu). |
-| 2 | Nhập thông tin và nhấn "Đăng ký" | Validate dữ liệu tại Client (Định dạng, Độ dài, Khớp mật khẩu). |
-| 3 | Gửi dữ liệu lên API | API `/api/auth/register` kiểm tra Email đã tồn tại trong DB chưa. |
-| 4 | Xử lý dữ liệu tại Backend | Mã hóa mật khẩu, Insert vào bảng `users`, tạo bản ghi trong bảng `carts`. |
-| 5 | Đăng ký thành công | Thông báo thành công và điều hướng người dùng tới trang `/login`. |
-| 6 | Đăng ký thất bại | Hiển thị lỗi cụ thể (Email đã tồn tại, Lỗi kết nối DB). |
+| 1 | Truy cập trang Đăng ký (`/register`) | Frontend hiển thị Form đăng ký (Họ tên, Email, Mật khẩu, Xác nhận mật khẩu). |
+| 2 | Điền thông tin và nhấn "Đăng ký" | Frontend Validate dữ liệu (Email hợp lệ, Mật khẩu >= 8 ký tự, 2 ô mật khẩu trùng khớp). |
+| 3 | Gửi yêu cầu lên Backend | Gọi API `POST /api/auth/register`. Backend kiểm tra tính duy nhất của `email` trong bảng `users`. |
+| 4 | Xử lý CSDL (Database Transaction) | - Băm mật khẩu (BCrypt).<br>- Insert vào bảng `users` (`role='Customer'`, `auth_provider='local'`).<br>- Insert vào bảng `carts` với `user_id` vừa tạo. |
+| 5 | Gửi Email tự động (Tùy chọn) | Hệ thống gọi API Brevo gửi một Email Welcome tới địa chỉ email của khách hàng. |
+| 6 | Đăng ký thành công | Frontend hiển thị Toast thông báo thành công và tự động chuyển hướng sang trang Đăng nhập. |
+
+---
 
 ### 3. Yêu cầu dữ liệu (Data Requirements)
 
-#### 3.1. Dữ liệu đầu vào (Input Fields)
-* **Full Name:** `string`, tối thiểu 2 ký tự, bắt buộc.
-* **Email:** `string`, định dạng hợp lệ, duy nhất (Unique), bắt buộc.
-* **Password:** `string`, tối thiểu 8 ký tự, bao gồm chữ và số, bắt buộc.
-* **Confirm Password:** `string`, phải trùng khớp với `Password`.
+#### 3.1. Dữ liệu đầu vào (Form Inputs)
+* **`full_name`**: Chuỗi văn bản, tối thiểu 2 ký tự, bắt buộc.
+* **`email`**: Chuỗi văn bản, định dạng Email chuẩn, duy nhất, bắt buộc.
+* **`password`**: Chuỗi văn bản, tối thiểu 8 ký tự, bắt buộc.
+* **`confirm_password`**: Chuỗi văn bản, dùng để Validate ở Frontend, không gửi lên Backend.
 
-#### 3.2. Logic lưu trữ (Database - Bảng `users` & `carts`)
-* **Bảng `users`**:
-    * `role`: Gán mặc định là `'Customer'`.
-    * `auth_provider`: Gán mặc định là `'local'`.
-    * `status`: Gán mặc định là `1` (Active).
-    * `password`: Lưu dưới dạng chuỗi đã băm (BCrypt).
-* **Bảng `carts`**:
-    * Tự động tạo 1 dòng mới với `user_id` vừa được sinh ra để sẵn sàng cho việc mua hàng.
+#### 3.2. Logic CSDL (Bảng `users` & `carts`)
+* **Bảng `users`**: Dữ liệu được gán tự động các giá trị mặc định:
+  * `role` = `'Customer'`
+  * `auth_provider` = `'local'`
+  * `status` = `1` (Active)
+* **Bảng `carts`**: Một bản ghi mới sẽ được tạo trong bảng `carts` ánh xạ trực tiếp `1-1` với `user_id` vừa sinh ra.
+
+---
 
 ### 4. Ràng buộc kỹ thuật & Bảo mật (Technical Constraints)
-* **Xác thực dữ liệu (Validation):** Thực hiện cả ở Frontend (trải nghiệm người dùng) và Backend (bảo mật dữ liệu).
-* **Bảo mật mật khẩu:** Tuyệt đối không lưu mật khẩu gốc. Sử dụng `BCrypt` với độ khó (Work Factor) phù hợp.
-* **Chống Spam:** Có thể tích hợp **Google reCAPTCHA** để ngăn chặn việc tạo tài khoản ảo hàng loạt bằng bot.
-* **Tính toàn vẹn (Transaction):** Việc tạo `users` và `carts` phải nằm trong một **Database Transaction** (Nếu tạo giỏ hàng lỗi thì phải hủy việc tạo user).
+* **Toàn vẹn dữ liệu (Transaction):** Việc Insert vào `users` và `carts` phải được bọc trong một `IDbContextTransaction`. Nếu việc tạo `carts` gặp lỗi, phải Rollback lệnh tạo `users` để tránh tình trạng "Tài khoản rác" (Không có giỏ hàng).
+* **Mã hóa (Hashing):** Mật khẩu bắt buộc mã hóa một chiều bằng thuật toán `BCrypt` trước khi lưu.
+* **Bất đồng bộ (Asynchronous):** Tác vụ gửi Email qua Brevo API nên được chạy dưới dạng Background Task (Fire-and-forget) để không làm chậm thời gian phản hồi (Response Time) của API đăng ký.
+
+---
 
 ### 5. Trường hợp ngoại lệ & Xử lý lỗi (Edge Cases)
 
 | Tình huống | Hành động xử lý |
 | :--- | :--- |
-| **Email đã được sử dụng** | Thông báo: "Email này đã được đăng ký, vui lòng sử dụng email khác hoặc đăng nhập". |
-| **Mật khẩu quá yếu** | Cảnh báo: "Mật khẩu cần tối thiểu 8 ký tự, bao gồm cả chữ và số". |
-| **Mất kết nối Internet** | Hiển thị Toast thông báo: "Không thể kết nối máy chủ, vui lòng thử lại sau". |
-| **Lỗi Transaction** | Rollback dữ liệu và thông báo: "Có lỗi xảy ra trong quá trình khởi tạo tài khoản". |
+| **Email đã tồn tại (Duplicate)** | Backend trả về `400 Bad Request` kèm thông báo. Frontend hiển thị chữ đỏ dưới ô Email: "Email này đã được sử dụng, vui lòng đăng nhập hoặc chọn email khác". |
+| **Mật khẩu xác nhận không khớp** | Chặn ngay tại Frontend, không gọi API, báo lỗi: "Mật khẩu không trùng khớp". |
+| **Lỗi từ dịch vụ Gửi Mail (Brevo)** | Nếu API Brevo bị lỗi (hết quota, sập), Backend vẫn phải bắt (Catch) lỗi, coi như Đăng ký thành công, log lỗi vào console và bỏ qua việc gửi mail. |
+
+---
 
 ### 6. Giao diện (UI/UX)
-* **Real-time Validation:** Hiển thị dấu tích xanh hoặc báo đỏ ngay khi người dùng đang nhập (ví dụ: mật khẩu không khớp).
-* **Password Toggle:** Nút ẩn/hiện mật khẩu để người dùng kiểm tra lại thông tin.
-* **Redirect:** Sau khi đăng ký thành công, tự động điền Email vào trang Login để người dùng chỉ cần nhập Pass.
-
+* **Trực quan nhập liệu:** Cung cấp Icon (Mắt) để người dùng có thể Bật/Tắt chế độ xem mật khẩu (Show/Hide Password).
+* **Validation Real-time:** Kiểm tra định dạng Email (Regex) ngay khi người dùng rời khỏi ô Input (onBlur), hiển thị cảnh báo đỏ nếu không có ký tự `@`.
+* **Tiện ích chuyển hướng:** Cung cấp dòng text "Bạn đã có tài khoản? Đăng nhập ngay" nổi bật để điều hướng người dùng dễ dàng.

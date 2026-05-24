@@ -1,55 +1,67 @@
 # 📘 Software Requirement Specification (SRS)
-## Chức năng: Duyệt danh mục & Tìm kiếm sản phẩm (Product Catalog)
+## Chức năng: Danh mục & Tìm kiếm sản phẩm (Product Catalog)
 **Mã chức năng:** PROD-01  
-**Trạng thái:** Review  
-**Người soạn thảo:** [Diêm Việt Anh]
+**Trạng thái:** Hoàn thành  
+**Người soạn thảo:** Đặng Thị Quỳnh
 **Vai trò:** Developer  
 **Dự án:** H&Q Clothing Store
 
 ---
 
 ### 1. Mô tả tổng quan (Description)
-Cung cấp giao diện cho phép người dùng xem danh sách toàn bộ sản phẩm hoặc lọc theo danh mục (Áo, Quần, Phụ kiện). Hệ thống hỗ trợ tìm kiếm theo tên và bộ lọc thông minh theo thuộc tính thời trang (Giá, Size, Màu).
+Phân hệ Cửa hàng (Shop/Catalog) cung cấp giao diện trực quan cho phép khách hàng khám phá toàn bộ các bộ sưu tập thời trang của H&Q Store. Hệ thống kết hợp bộ lọc (Filter) đa tầng theo Danh mục, Khoảng giá, Kích thước (Size) và Màu sắc (Color), giúp người dùng dễ dàng thu hẹp phạm vi và tìm thấy sản phẩm ưng ý một cách nhanh chóng nhất.
+
+---
 
 ### 2. Luồng nghiệp vụ (User Workflow)
 
 | Bước | Hành động người dùng | Phản hồi hệ thống |
 | :--- | :--- | :--- |
-| 1 | Truy cập trang chủ hoặc trang "Cửa hàng" | Hiển thị danh sách sản phẩm mới nhất (từ bảng `products`). |
-| 2 | Chọn một danh mục (ví dụ: "Áo sơ mi") | Lọc sản phẩm theo `category_id`. |
-| 3 | Nhập từ khóa vào thanh tìm kiếm | Tìm kiếm sản phẩm theo tên (`name`) hoặc mô tả (`description`). |
-| 4 | Sử dụng bộ lọc (Size, Màu, Khoảng giá) | Truy vấn bảng `product_variants` để lọc các mẫu khớp yêu cầu. |
-| 5 | Thay đổi kiểu sắp xếp (Giá tăng/giảm, Mới nhất) | Sắp xếp lại danh sách hiển thị dựa trên giá hoặc ngày tạo. |
-| 6 | Nhấn vào một sản phẩm | Điều hướng tới trang chi tiết sản phẩm (`SRS_PRODUCT_DETAIL.MD`). |
+| 1 | Truy cập trang "Sản phẩm" (`/products`) | Gọi API `GET /api/products`. Trả về danh sách sản phẩm (mặc định phân trang, sắp xếp mới nhất). |
+| 2 | Chọn Danh mục ở Sidebar | Frontend đính kèm param `categoryId` gọi lại API, giao diện cập nhật chỉ hiển thị sản phẩm thuộc danh mục đó. |
+| 3 | Kéo thanh trượt khoảng giá | Hệ thống cập nhật truy vấn `minPrice` và `maxPrice`, hiển thị các sản phẩm nằm trong ngân sách. |
+| 4 | Tick chọn Size / Màu sắc | Backend truy vấn chéo vào bảng `product_variants` để chỉ trả về các sản phẩm chứa Size/Màu mà khách tìm. |
+| 5 | Gõ từ khóa vào thanh Search | Gọi API tìm kiếm `LIKE %keyword%` vào trường `name` và `brand_text` của bảng `products`. |
+| 6 | Click vào một sản phẩm cụ thể | Điều hướng sang URL `/product/{id}` để xem chi tiết thông tin và đặt hàng. |
+
+---
 
 ### 3. Yêu cầu dữ liệu (Data Requirements)
 
-#### 3.1. Dữ liệu hiển thị trên Card sản phẩm
-* **Tên sản phẩm:** Từ bảng `products`.
-* **Ảnh đại diện:** Lấy ảnh đầu tiên từ bảng `product_variants` hoặc `product_images`.
-* **Giá hiển thị:** Lấy giá thấp nhất (`MIN(price)`) từ bảng `product_variants`.
-* **Nhãn danh mục:** Tên danh mục từ bảng `categories`.
+#### 3.1. Dữ liệu hiển thị trên Giao diện (Product Card)
+Mỗi thẻ sản phẩm (Card) trên màn hình sẽ cần hiển thị:
+* **Ảnh đại diện:** Trích xuất từ trường `image_url` của bảng `products`.
+* **Thương hiệu & Tên:** Lấy từ `brand_text` (Thường là 'H&Q') và trường `name`.
+* **Mức giá hiển thị:** Truy vấn `MIN(price)` từ bảng `product_variants` của sản phẩm đó để hiển thị mức giá khởi điểm (VD: "Từ 150.000đ").
+* **Trạng thái tồn kho:** Nếu tổng `stock_quantity` của tất cả các biến thể = 0, đánh dấu là "Hết hàng".
 
-#### 3.2. Logic bộ lọc (Filtering Logic)
-* **Theo Size:** Lọc những sản phẩm có ít nhất một biến thể trong bảng `product_variants` khớp với size đã chọn.
-* **Theo Màu:** Lọc theo cột `color` trong bảng `product_variants`.
-* **Theo Giá:** Lọc theo khoảng giá người dùng kéo thanh Slider.
+#### 3.2. Logic Bộ Lọc tại Backend (Filter & Sort)
+* Lọc **Category:** Match trực tiếp với trường `category_id`.
+* Lọc **Size & Color:** Yêu cầu `INNER JOIN` với bảng `product_variants` để truy vấn chính xác (S, M, L, Trắng, Đen).
+* Sắp xếp **(Sort By):** Hỗ trợ `price_asc` (Giá thấp đến cao), `price_desc` (Giá cao xuống thấp), `newest` (Hàng mới về).
+
+---
 
 ### 4. Ràng buộc kỹ thuật (Technical Constraints)
-* **Phân trang (Pagination):** Không tải toàn bộ sản phẩm cùng lúc. Mặc định hiển thị 12-20 sản phẩm/trang.
-* **Hiệu năng:** Sử dụng `Include` (Eager Loading) trong Entity Framework một cách hợp lý để tránh lỗi N+1 khi lấy dữ liệu từ bảng liên quan.
-* **SEO Friendly:** Sử dụng `slug` (ví dụ: `/san-pham/ao-somi-nam-hq`) thay vì `id` đơn thuần trên URL.
+* **Chống quá tải truy vấn (N+1 Query):** Backend ASP.NET Core phải sử dụng `.Include(p => p.Variants)` khi lấy danh sách sản phẩm thay vì lặp qua từng phần tử để gọi DB.
+* **Phân trang (Pagination):** Backend hỗ trợ trả về `TotalItems`, `TotalPages` cùng dữ liệu phân trang, tránh kéo toàn bộ dữ liệu làm sập trình duyệt của người dùng.
+* **Tối ưu Mobile:** Bộ lọc Sidebar trên Desktop phải được thiết kế dạng Modal/Drawer (Vuốt từ dưới lên hoặc cạnh sang) trên thiết bị di động.
+
+---
 
 ### 5. Trường hợp ngoại lệ & Xử lý lỗi (Edge Cases)
 
 | Tình huống | Hành động xử lý |
 | :--- | :--- |
-| **Không tìm thấy kết quả** | Hiển thị thông báo: "Rất tiếc, không tìm thấy sản phẩm nào khớp với tìm kiếm của bạn". |
-| **Sản phẩm hết hàng** | Vẫn hiển thị sản phẩm nhưng có nhãn "Hết hàng" (nếu tổng `stock_quantity` của các biến thể = 0). |
-| **Lỗi tải dữ liệu** | Hiển thị "Skeleton Screen" (khung ảnh mờ) trong lúc chờ API phản hồi. |
+| **Lọc quá sâu không ra kết quả** | Hiển thị UI: "Không tìm thấy sản phẩm phù hợp. Vui lòng xóa bớt bộ lọc." kèm theo nút "Xóa tất cả bộ lọc". |
+| **Hết hàng (Out of Stock)** | Ảnh sản phẩm bị làm mờ xám (Grayscale), có badge đỏ ghi chữ "Hết Hàng" đè lên và vô hiệu hóa nút "Thêm vào giỏ". |
+| **Lỗi kết nối / Đang fetch API** | Frontend hiển thị "Skeleton Loading" (Cấu trúc khung xám nhấp nháy) để giữ trải nghiệm mượt mà không bị giật layout. |
+
+---
 
 ### 6. Giao diện (UI/UX)
-* **Grid View:** Hiển thị dạng lưới (2 cột trên Mobile, 4 cột trên Desktop).
-* **Sidebar Filter:** Bộ lọc nằm bên trái trên Desktop và ẩn vào nút "Filter" trên Mobile.
-* **Quick View:** (Tùy chọn) Cho phép xem nhanh thông tin khi di chuột vào ảnh.
-
+* **Grid Layout:** 
+  * **Desktop:** Chia tỉ lệ Grid 2 cột: Cột trái (Sidebar Filter chiếm khoảng 1/4), Cột phải hiển thị lưới sản phẩm (3-4 Card / hàng).
+  * **Mobile:** Lưới hiển thị 2 Card / hàng. Nút "Lọc" nổi bật ở trên cùng.
+* **Tương tác Filter:** Khi người dùng tick vào bộ lọc (ví dụ: Chọn Màu Đen), giao diện tự động reload lại danh sách ngay lập tức mà không cần bấm nút "Áp dụng".
+* **Hiệu ứng Hover:** Khi di chuột (hover) vào hình ảnh sản phẩm, viền thẻ đổi màu nhẹ và nút "Xem chi tiết" hiện lên.

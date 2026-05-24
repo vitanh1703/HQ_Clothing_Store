@@ -1,57 +1,68 @@
-# Software Requirement Specification (SRS)
+# 📘 Software Requirement Specification (SRS)
 ## Chức năng: Quản lý & Áp dụng mã giảm giá (Promotion Code)
 **Mã chức năng:** MKT-01  
-**Trạng thái:** Review  
-**Người soạn thảo:** [Nguyễn Thị Hảo]  
-**Vai trò:** Developer
+**Trạng thái:** Hoàn thành  
+**Người soạn thảo:** Nguyễn Thị Hảo  
+**Vai trò:** Developer  
 **Dự án:** H&Q Clothing Store
 
 ---
 
 ### 1. Mô tả tổng quan (Description)
-Cung cấp cơ chế cho phép Quản lý tạo các chương trình ưu đãi và cho phép Khách hàng áp dụng mã giảm giá vào đơn hàng. Hệ thống tự động tính toán số tiền được giảm dựa trên loại giảm giá (Phần trăm hoặc Số tiền cố định).
+Phân hệ Khuyến mãi cung cấp cơ chế cho phép Quản trị viên (Admin) tạo các chương trình ưu đãi linh hoạt (Voucher/Coupon) và cho phép Khách hàng áp dụng mã giảm giá vào đơn hàng tại bước Thanh toán (Checkout). Hệ thống tự động đối chiếu điều kiện áp dụng và tính toán số tiền được giảm dựa trên loại giảm giá (Phần trăm hoặc Số tiền cố định).
+
+---
 
 ### 2. Luồng nghiệp vụ (User Workflow)
 
 | Bước | Hành động người dùng | Phản hồi hệ thống |
 | :--- | :--- | :--- |
-| 1 | Nhập mã tại trang Giỏ hàng/Thanh toán | Gửi request POST tới API `/api/promotions/apply`. |
-| 2 | Hệ thống kiểm tra mã (`code`) | Truy vấn bảng `promotions` để kiểm tra sự tồn tại của mã. |
-| 3 | Xác thực điều kiện | Kiểm tra: Ngày hiệu lực, Số lần sử dụng, Giá trị đơn hàng tối thiểu. |
-| 4 | Tính toán giảm giá | Trừ số tiền tương ứng vào `total_amount` của đơn hàng. |
-| 5 | Hiển thị kết quả | Thông báo "Áp dụng thành công" và hiển thị số tiền được giảm. |
-| 6 | Hủy áp dụng mã | Cho phép người dùng gỡ mã để nhập mã khác. |
+| 1 | Truy cập trang Thanh toán (`/checkout`) | Khách hàng có thể nhập tay mã khuyến mãi vào ô input hoặc nhấn "Chọn mã" để mở `PromoSelectionModal`. |
+| 2 | Gửi yêu cầu áp dụng mã | Frontend gọi API `GET /api/promotions/validate` với tham số `code`. |
+| 3 | Xác thực điều kiện tại Backend | Hệ thống kiểm tra bảng `promotions`: Sự tồn tại, `status = 1`, `start_date`, `end_date`, `usage_limit > used_count` và `min_order_value`. |
+| 4 | Tính toán & Hiển thị trên UI | Nếu hợp lệ, lưu mã vào `sessionStorage`. Frontend tự động tính và hiển thị số tiền được giảm (Discount Amount). |
+| 5 | Chốt đơn hàng (Place Order) | Khi gọi API tạo `orders`, Backend lấy mã ra kiểm tra lại lần cuối và tính toán `total_amount` ghi vào CSDL. |
+| 6 | Hủy áp dụng (Clear Promo) | Khách hàng nhấn "Xóa mã", hệ thống xóa khỏi `sessionStorage` và hoàn lại tổng tiền gốc. |
+
+---
 
 ### 3. Yêu cầu dữ liệu (Data Requirements)
 
 #### 3.1. Dữ liệu lưu trữ (Bảng `promotions`)
-* **`code`**: Chuỗi ký tự duy nhất (Ví dụ: HELLO2026, EPU_SALES).
+* **`code`**: Chuỗi ký tự duy nhất, viết liền, không dấu (Ví dụ: `WELCOME2026`, `FREESHIP`).
+* **`description`**: Mô tả ngắn gọn (VD: "Giảm 50k cho đơn hàng đầu tiên").
 * **`discount_value`**: Giá trị giảm (Ví dụ: 10% hoặc 50,000đ).
 * **`discount_type`**: Kiểu giảm (`Percentage` hoặc `FixedAmount`).
 * **`min_order_value`**: Giá trị đơn hàng tối thiểu để được áp dụng mã.
 * **`start_date` & `end_date`**: Khoảng thời gian mã có hiệu lực.
-* **`usage_limit`**: Tổng số lần mã có thể sử dụng (tránh bị lạm dụng).
+* **`usage_limit` & `used_count`**: Kiểm soát số lượt đã dùng so với tổng số lượt cho phép.
+* **`status`**: Trạng thái (1: Đang hoạt động, 0: Ngưng áp dụng).
 
-#### 3.2. Logic tính toán (Calculation Logic)
-* **Nếu là Phần trăm:** `Giảm = Tổng tiền * (discount_value / 100)`. (Nên có thêm `max_discount` để giới hạn số tiền giảm tối đa).
-* **Nếu là Số tiền cố định:** `Giảm = discount_value`.
+#### 3.2. Logic tính toán (Discount Calculation)
+* **Nếu là `Percentage`:** Số tiền giảm = `Math.round((total_amount * discount_value) / 100)`.
+* **Nếu là `FixedAmount`:** Số tiền giảm = `Math.min(discount_value, total_amount)` (Giảm tối đa bằng đúng giá trị đơn hàng, không để tổng tiền bị âm).
+
+---
 
 ### 4. Ràng buộc kỹ thuật (Technical Constraints)
 * **Tính duy nhất:** Một đơn hàng chỉ được áp dụng tối đa 01 mã giảm giá.
-* **Bảo mật Backend:** Tuyệt đối không để Frontend tự tính tiền giảm. Backend phải truy vấn DB và tính toán lại toàn bộ trước khi tạo đơn hàng (`orders`).
-* **Trạng thái:** Mã chỉ được áp dụng nếu trạng thái đơn hàng là `Pending` (chưa thanh toán/chưa chốt).
+* **Bảo mật & Tính toàn vẹn:** Việc Frontend tính toán (ở Bước 4) chỉ mang tính chất hiển thị UI (Trải nghiệm người dùng). Khi submit Đặt hàng, Backend **bắt buộc** phải tự truy vấn lại mã và tự tính lại `total_amount` để ngăn chặn hacker can thiệp công cụ DevTools sửa giá trị gửi lên.
+* **Session Storage:** Dữ liệu mã giảm giá (kèm mức giảm) được lưu tạm trong trình duyệt (`sessionStorage.setItem("selectedPromo", ...)`) để không bị mất khi khách hàng vô tình F5 trang.
+
+---
 
 ### 5. Trường hợp ngoại lệ & Xử lý lỗi (Edge Cases)
 
 | Tình huống | Hành động xử lý |
 | :--- | :--- |
-| **Mã không tồn tại** | Thông báo: "Mã giảm giá không hợp lệ, vui lòng kiểm tra lại". |
-| **Mã hết hạn** | Thông báo: "Rất tiếc, mã giảm giá này đã hết hạn sử dụng". |
-| **Đơn hàng chưa đủ giá trị** | Thông báo: "Đơn hàng cần tối thiểu [giá trị] để áp dụng mã này". |
-| **Hết lượt sử dụng** | Thông báo: "Mã giảm giá đã đạt giới hạn sử dụng tối đa". |
+| **Mã sai, hết hạn hoặc không tồn tại** | API trả về lỗi `400 Bad Request`. Giao diện catch lỗi và hiển thị dòng chữ đỏ: "Mã giảm giá không hợp lệ hoặc đã hết hạn." |
+| **Đơn hàng chưa đủ điều kiện (`min_order_value`)** | API trả về thông báo lỗi: "Đơn hàng chưa đạt giá trị tối thiểu để áp dụng mã này." |
+| **Khách hàng thay đổi giỏ hàng sau khi nhập mã** | Nếu khách quay lại Giỏ hàng để xóa/sửa bớt sản phẩm làm cho `total_amount` < `min_order_value`, Backend sẽ tự động loại bỏ (Reject) mã khi tiến hành tạo đơn hàng. |
+
+---
 
 ### 6. Giao diện (UI/UX)
-* **Promotion Input:** Ô nhập mã nằm ngay cạnh phần Tổng tiền (Summary) để khách dễ thấy.
-* **Success Tag:** Hiển thị nhãn xanh lá cây kèm tên mã đã áp dụng thành công.
-* **Discount Display:** Số tiền được giảm phải hiển thị dấu trừ (ví dụ: -20.000đ) để phân biệt với giá gốc.
-
+* **Cửa sổ chọn mã (PromoSelectionModal):** Cung cấp Modal popup cho phép khách hàng nhấn chọn mã trực tiếp thay vì phải ghi nhớ và gõ tay.
+* **Khu vực nhập mã (Input Section):** Gồm một ô Input nhập text (Placeholder: "Nhập mã") và nút "Áp dụng" (Nút đen chữ trắng). Nằm phía dưới danh sách sản phẩm.
+* **Thẻ thành công (Success Tag):** Khi áp dụng thành công, mã được hiển thị trong một khung màu xanh lá nhạt (Green-50), có viền xanh kèm theo nút "Xóa mã" nhỏ bên cạnh.
+* **Hiển thị Tóm tắt (Summary):** Tại cột bên phải (Sidebar Tóm tắt đơn hàng), mục "Giảm giá" sẽ xuất hiện và có màu xanh lục (Ví dụ: `-50.000đ`).

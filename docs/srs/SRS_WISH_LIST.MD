@@ -1,52 +1,59 @@
-# Software Requirement Specification (SRS)
+# 📘 Software Requirement Specification (SRS)
 ## Chức năng: Danh sách sản phẩm yêu thích (Wishlist)
 **Mã chức năng:** USER-01  
-**Trạng thái:** Review  
-**Người soạn thảo:** [Nguyễn Thị Hảo]
+**Trạng thái:** Hoàn thành  
+**Người soạn thảo:** Đặng Thị Quỳnh  
 **Vai trò:** Developer  
 **Dự án:** H&Q Clothing Store
 
 ---
 
 ### 1. Mô tả tổng quan (Description)
-Cho phép khách hàng lưu trữ các sản phẩm quan tâm vào một danh sách riêng tư. Tính năng này giúp người dùng dễ dàng tìm lại sản phẩm và theo dõi biến động giá hoặc tình trạng hàng hóa mà không cần thêm vào giỏ hàng.
+Phân hệ Yêu thích (Wishlist) cho phép khách hàng lưu trữ các sản phẩm (cụ thể tới từng phân loại Size/Màu sắc) mà họ đang quan tâm vào một danh sách cá nhân. Tính năng này giúp người dùng dễ dàng tìm lại, theo dõi tình trạng tồn kho hoặc chờ đợi các chương trình khuyến mãi trước khi quyết định thêm vào Giỏ hàng.
+
+---
 
 ### 2. Luồng nghiệp vụ (User Workflow)
 
 | Bước | Hành động người dùng | Phản hồi hệ thống |
 | :--- | :--- | :--- |
-| 1 | Nhấn icon "Trái tim" tại Card sản phẩm hoặc trang Chi tiết | API `/api/wishlist/add` kiểm tra đăng nhập và lưu vào bảng `wishlists`. |
-| 2 | Truy cập trang "Sản phẩm yêu thích" | Hệ thống truy vấn bảng `wishlists` JOIN với bảng `products`. |
-| 3 | Nhấn "Thêm vào giỏ" từ Wishlist | Chuyển hướng người dùng chọn Size/Màu hoặc thêm trực tiếp nếu đã chọn trước đó. |
-| 4 | Xóa sản phẩm khỏi danh sách | Gửi request DELETE để loại bỏ bản ghi trong bảng `wishlists`. |
-| 5 | Nhận thông báo (Tùy chọn) | Hệ thống hiển thị nhãn "Giảm giá" nếu sản phẩm trong Wishlist có chương trình `promotions`. |
+| 1 | Nhấn icon "Trái tim" tại trang Sản phẩm | Giao diện gửi request API `POST /api/wishlist/add`. Hệ thống kiểm tra xác thực (JWT) và lưu `variant_id` vào bảng `wishlist`. |
+| 2 | Truy cập trang "Yêu thích" (`/wishlist`) | Hệ thống gọi API truy vấn bảng `wishlist` JOIN với `product_variants` và `products` để hiển thị danh sách. |
+| 3 | Nhấn "Thêm vào giỏ" từ Wishlist | Vì đã lưu trữ sẵn `variant_id`, hệ thống tự động đẩy thẳng sản phẩm với đúng Size/Màu đó vào Giỏ hàng mà khách không cần thao tác chọn lại. |
+| 4 | Xóa khỏi danh sách yêu thích | Người dùng nhấn lại vào icon Trái tim (hoặc nút Xóa). Gửi request `DELETE` để loại bỏ bản ghi trong CSDL. |
+
+---
 
 ### 3. Yêu cầu dữ liệu (Data Requirements)
 
-#### 3.1. Dữ liệu lưu trữ (Bảng `wishlists`)
-* **`user_id`**: Định danh người dùng sở hữu danh sách.
-* **`product_id`**: Định danh sản phẩm được yêu thích (Lưu theo sản phẩm gốc, không lưu theo biến thể để khách tự chọn size sau).
-* **`created_at`**: Thời điểm thêm vào danh sách.
+#### 3.1. Dữ liệu lưu trữ (Bảng `wishlist`)
+* **`user_id`**: Khóa ngoại định danh người dùng sở hữu danh sách.
+* **`variant_id`**: Khóa ngoại liên kết tới biến thể cụ thể (Hệ thống thiết kế lưu chính xác SKU/Size/Color mà khách hàng thích, không lưu chung chung).
+* **`added_at`**: Thời điểm (Timestamp) thêm vào danh sách yêu thích để sắp xếp.
 
-#### 3.2. Logic hiển thị
-* **Giá:** Hiển thị giá thấp nhất hiện tại của sản phẩm đó.
-* **Trạng thái:** Hiển thị "Còn hàng" hoặc "Hết hàng" dựa trên tổng kho của các biến thể.
+#### 3.2. Ràng buộc Dữ liệu (Database Constraint)
+* **Unique Key:** CSDL thiết lập ràng buộc `UNIQUE KEY unique_wishlist_variant (user_id, variant_id)` để đảm bảo một khách hàng không thể thêm trùng lặp cùng một biến thể vào Wishlist nhiều lần.
+
+---
 
 ### 4. Ràng buộc kỹ thuật (Technical Constraints)
-* **Xác thực:** Chỉ người dùng đã đăng nhập mới có thể sử dụng tính năng Wishlist (Yêu cầu JWT Token).
-* **Số lượng:** Giới hạn tối đa 50 sản phẩm trong danh sách yêu thích của mỗi User để tránh rác dữ liệu.
-* **Đồng bộ UI:** Khi người dùng nhấn yêu thích, icon trái tim phải đổi màu ngay lập tức (Real-time feedback) mà không cần load lại trang.
+* **Xác thực (Authentication):** Chỉ người dùng đã đăng nhập (có Token hợp lệ) mới có thể sử dụng tính năng Wishlist. Khách vãng lai khi nhấn Trái tim sẽ bị hệ thống yêu cầu chuyển hướng sang trang Đăng nhập.
+* **Toàn vẹn dữ liệu (Cascade):** Nhờ thiết lập `ON DELETE CASCADE` trong MySQL, khi một biến thể (`product_variants`) hoặc một tài khoản (`users`) bị xóa, các bản ghi Wishlist liên quan sẽ tự động bị xóa theo để tránh dữ liệu rác.
+* **Trải nghiệm Real-time:** Khi nhấn Yêu thích, icon trái tim ở Frontend sử dụng React State để chuyển sang màu đỏ (Filled) ngay lập tức (Optimistic UI) trong lúc gọi API.
+
+---
 
 ### 5. Trường hợp ngoại lệ & Xử lý lỗi (Edge Cases)
 
 | Tình huống | Hành động xử lý |
 | :--- | :--- |
-| **Chưa đăng nhập mà nhấn yêu thích** | Hiển thị thông báo (Modal/Toast): "Vui lòng đăng nhập để lưu sản phẩm yêu thích". |
-| **Sản phẩm đã có trong danh sách** | Hệ thống không tạo mới mà thông báo: "Sản phẩm này đã có trong danh sách yêu thích của bạn". |
-| **Sản phẩm bị xóa khỏi hệ thống** | Tự động ẩn hoặc xóa bản ghi tương ứng trong `wishlists`. |
+| **Khách hàng chưa đăng nhập** | Bắt sự kiện Click, hiển thị Modal hoặc Toast nhắc nhở: "Vui lòng đăng nhập để sử dụng tính năng Yêu thích" kèm nút chuyển hướng. |
+| **Sản phẩm yêu thích đã hết hàng** | Sản phẩm vẫn được giữ trong Wishlist nhưng ảnh bị làm mờ, hiển thị nhãn đỏ "Hết hàng" và nút "Thêm vào giỏ" bị vô hiệu hóa. |
+| **Biến thể bị Shop ngừng kinh doanh (Xóa)** | Do có ràng buộc Cascade, sản phẩm tự động biến mất khỏi danh sách Wishlist của khách hàng. |
+
+---
 
 ### 6. Giao diện (UI/UX)
-* **Icon tương tác:** Sử dụng icon Trái tim (Outline khi chưa chọn, Filled khi đã chọn).
-* **Trang danh sách:** Thiết kế dạng lưới (Grid) tương tự trang Catalog nhưng có thêm nút "Xóa" nhanh.
-* **Thông báo:** Hiển thị số lượng sản phẩm yêu thích (Badge) trên icon trái tim ở Header/Navbar.
-
+* **Icon tương tác:** Sử dụng icon Trái tim (Outline viền đen khi chưa chọn, Filled màu đỏ/đen khi đã thêm vào Wishlist). Nằm ở góc trên cùng của Card Sản phẩm và bên cạnh nút "Thêm vào giỏ" trong trang Chi tiết.
+* **Trang danh sách (Wishlist Page):** Thiết kế dạng Grid tương tự trang Cửa hàng (Catalog). Mỗi thẻ sản phẩm sẽ hiển thị rõ thông tin Size/Màu mà khách đã chọn.
+* **Bộ đếm (Badge):** (Tùy chọn) Hiển thị số lượng sản phẩm đang yêu thích trên icon Trái tim ở thanh Navbar (Header) bên cạnh Giỏ hàng.

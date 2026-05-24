@@ -1,76 +1,68 @@
-# Software Requirement Specification (SRS)
-
-## Chức năng: Quản lý & Theo dõi đơn hàng (Order Tracking)
-**Mã chức năng:** ORDER-05  
-**Trạng thái:** Draft / Review  
-**Người soạn thảo:** [Đặng Thị Quỳnh]  
-**Vai trò:** Developer
+# 📘 Software Requirement Specification (SRS)
+## Chức năng: Theo dõi Lịch sử đơn hàng (Order Tracking)
+**Mã chức năng:** ORD-02  
+**Trạng thái:** Hoàn thành  
+**Người soạn thảo:** Đặng Thị Quỳnh  
+**Vai trò:** Developer  
+**Dự án:** H&Q Clothing Store
 
 ---
 
 ### 1. Mô tả tổng quan (Description)
-Cung cấp khả năng giám sát vòng đời của một đơn hàng từ khi khởi tạo đến khi hoàn tất. Cho phép Khách hàng nắm bắt lộ trình hàng hóa và Admin kiểm soát luồng vận hành, đảm bảo tính chính xác giữa dữ liệu đơn hàng và số lượng tồn kho thực tế.
+Phân hệ dành riêng cho Khách hàng (Customer) để giám sát và theo dõi toàn bộ lịch sử mua sắm cá nhân. Tính năng này cho phép người dùng xem lại chi tiết các hóa đơn đã đặt, giá trị thanh toán thực tế và theo dõi lộ trình trạng thái giao hàng một cách minh bạch.
 
 ---
 
-### 2. Luồng nghiệp vụ (User Workflow)
+### 2. Luồng nghiệp vụ (Customer Workflow)
 
-#### 2.1. Phía Khách hàng (Customer)
 | Bước | Hành động người dùng | Phản hồi hệ thống |
 | :--- | :--- | :--- |
-| 1 | Truy cập "Lịch sử đơn hàng" | Liệt kê danh sách các đơn hàng đã đặt (mới nhất lên đầu). |
-| 2 | Nhấn vào một đơn hàng cụ thể | Hiển thị chi tiết: Sản phẩm, giá, địa chỉ và Trạng thái hiện tại. |
-| 3 | Nhấn "Hủy đơn" (Chỉ khi trạng thái là `Pending`) | Gửi yêu cầu hủy đơn, cập nhật trạng thái đơn thành `Cancelled`. |
-
-#### 2.2. Phía Quản trị viên (Admin/Staff)
-| Bước | Hành động người dùng | Phản hồi hệ thống |
-| :--- | :--- | :--- |
-| 1 | Xem danh sách đơn hàng tổng | Lọc đơn hàng theo trạng thái (Chờ duyệt, Đang giao, v.v.). |
-| 2 | Duyệt đơn & Nhập mã vận đơn | Cập nhật trạng thái sang `Shipping`, lưu thông tin đối tác giao hàng. |
-| 3 | Xác nhận "Đã giao hàng" | Hệ thống tự động kiểm tra và trừ số lượng sản phẩm trong kho (Inventory Update). |
+| 1 | Truy cập "Hồ sơ" -> "Lịch sử đơn hàng" | Hệ thống gọi API `GET /api/orders/user/{userId}` và trả về danh sách đơn hàng được sắp xếp mới nhất lên đầu. |
+| 2 | Lọc đơn hàng (Tùy chọn) | Người dùng nhấn vào các tab: Tất cả, Chờ xử lý, Đang giao, Thành công, Đã hủy để lọc kết quả hiển thị. |
+| 3 | Nhấn "Xem chi tiết" một đơn cụ thể | Gọi API hiển thị rõ địa chỉ nhận hàng, danh sách `order_items` với hình ảnh, số lượng và tổng tiền. |
+| 4 | Nhấn "Hủy đơn" (Nếu muốn) | Nút này chỉ xuất hiện khi trạng thái là `Pending`. Hệ thống gửi yêu cầu cập nhật thành `Cancel`. |
+| 5 | Mua lại đơn hàng (Re-order) | (Tùy chọn) Nhấn nút để thêm nhanh tất cả các món đồ của đơn hàng cũ vào lại Giỏ hàng hiện tại. |
 
 ---
 
 ### 3. Yêu cầu dữ liệu (Data Requirements)
 
-#### 3.1. Các trạng thái đơn hàng (Order Statuses)
-* **Pending (Chờ xử lý):** Đơn hàng mới tạo, khách có quyền tự hủy.
-* **Confirmed (Đã xác nhận):** Admin đã kiểm tra kho và chấp nhận đơn.
-* **Shipping (Đang giao):** Hàng đã giao cho đơn vị vận chuyển, có mã vận đơn.
-* **Delivered (Đã giao):** Khách đã nhận hàng thành công.
-* **Cancelled (Đã hủy):** Đơn bị hủy bởi khách hoặc Admin.
+#### 3.1. Dữ liệu Trạng thái (Customer View)
+* **Pending (Chờ xử lý):** Đơn hàng đang chờ Shop đóng gói. Khách hàng có quyền tự hủy đơn.
+* **Shipping (Đang giao):** Hàng đã xuất kho và giao cho đơn vị vận chuyển.
+* **Success (Thành công):** Đơn hàng đã giao thành công và hoàn tất thanh toán.
+* **Cancel (Đã hủy):** Đơn bị hủy bởi khách, bị hệ thống hủy tự động (do chưa thanh toán) hoặc Shop hủy.
 
-#### 3.2. Dữ liệu lưu trữ (Database - Bảng `orders` & `order_logs`)
-* `order_status`: string, lưu trạng thái hiện tại.
-* `tracking_number`: string, mã vận đơn từ nhà vận chuyển.
-* `shipped_date`: datetime, thời điểm bắt đầu giao hàng.
-* `delivery_date`: datetime, thời điểm hoàn tất đơn hàng.
+#### 3.2. Dữ liệu hiển thị chi tiết (`orders` & `order_items`)
+* **Thông tin chung:** `order_code` (Mã đơn), `order_date` (Ngày đặt), `total_amount` (Tổng tiền cuối cùng sau giảm giá).
+* **Sản phẩm đã mua:** Trích xuất từ `order_items`, JOIN với `product_variants` để lấy `size`, `color`, tên và ảnh.
+* **Giá chốt đơn (`price_at_purchase`):** Bắt buộc sử dụng giá này để hiển thị thay vì giá hiện tại của sản phẩm (Tránh việc khách thắc mắc vì sao giá lịch sử bị đổi).
 
 ---
 
 ### 4. Ràng buộc kỹ thuật & Bảo mật (Technical Constraints)
-* **Tự động hóa tồn kho:** Khi `order_status` chuyển sang `Delivered`, hệ thống phải thực hiện trừ số lượng tương ứng trong bảng `product_variants`.
-* **Tính toàn vẹn:** Sử dụng **Database Transaction** để đảm bảo: Nếu việc trừ kho thất bại, trạng thái đơn hàng không được phép chuyển sang `Delivered`.
-* **Thông báo:** Tự động gửi Email/Thông báo hệ thống cho khách hàng mỗi khi trạng thái đơn hàng thay đổi.
-* **Quyền hạn:** Khách hàng chỉ xem được đơn của chính mình (kiểm tra `customer_id` qua Token). Admin/Staff xem được toàn bộ.
+* **Bảo mật dữ liệu cá nhân (IDOR Prevention):** Endpoint `/api/orders/user/{userId}` phải kiểm tra Token JWT. Nếu `userId` trong Token không khớp với `userId` được truyền lên (và không phải Admin), chặn truy cập trả về `403 Forbidden`.
+* **Kiểm soát cập nhật:** Frontend và Backend tuyệt đối không cho phép khách hàng tự ý thay đổi trạng thái lên `Shipping` hoặc `Success`.
+* **Hoàn kho khi hủy:** Khi khách bấm Hủy đơn (`Cancel`), Backend phải thực hiện một Transaction cộng trả lại `stock_quantity` vào kho để đảm bảo tồn kho thực tế chính xác.
 
 ---
 
 ### 5. Trường hợp ngoại lệ & Xử lý lỗi (Edge Cases)
-* **Trường hợp:** Khách hàng yêu cầu hủy đơn khi hàng đã ở trạng thái `Shipping`.  
-    * *Xử lý:* Hệ thống không cho phép khách tự hủy. Hiển thị thông báo: "Đơn hàng đã được gửi đi, vui lòng liên hệ hotline để được hỗ trợ".
-* **Trường hợp:** Sản phẩm trong kho bị hư hỏng/hết hàng đột xuất sau khi khách đã đặt.  
-    * *Xử lý:* Admin thực hiện hủy đơn và nhập lý do "Hết hàng". Hệ thống gửi thông báo xin lỗi và hoàn tiền (nếu đã thanh toán trước).
-* **Trường hợp:** Lỗi kết nối khi cập nhật trạng thái đơn hàng.  
-    * *Xử lý:* Hiển thị lỗi "Cập nhật thất bại, vui lòng kiểm tra lại kết nối". Không thực hiện trừ kho nếu trạng thái chưa cập nhật thành công.
+
+| Tình huống | Hành động xử lý |
+| :--- | :--- |
+| **Khách dùng công cụ (Postman) cố tình hủy đơn Đang giao** | Backend bắt chặt điều kiện `if (order.Status != "Pending") return BadRequest("Chỉ được hủy đơn ở trạng thái chờ xử lý");`. |
+| **Sản phẩm lịch sử đã bị Shop xóa** | Vì bảng `order_items` lưu trữ thông tin độc lập, hoặc dùng `ON DELETE SET NULL`, hệ thống vẫn phải hiển thị thông tin hóa đơn (Tên, giá, size) mà không bị sập. |
+| **Khách đặt hàng qua VNPAY nhưng chưa quét mã** | Đơn hàng hiện trong lịch sử với trạng thái `Pending`. Sau 24h, background job của server sẽ tự động dọn và chuyển thành `Cancel`. |
 
 ---
 
 ### 6. Giao diện (UI/UX)
-* **Thanh tiến trình (Progress Bar):** Hiển thị trực quan lộ trình đơn hàng cho khách (ví dụ: Đặt hàng -> Xác nhận -> Đang giao -> Thành công).
-* **Màu sắc trạng thái:** * Xanh lá: Đã giao thành công.
-    * Cam/Vàng: Đang xử lý hoặc Đang giao.
-    * Đỏ: Đơn đã hủy.
-* **Chi tiết đơn hàng:** Hiển thị ảnh thumbnail nhỏ của từng món đồ để khách dễ nhận diện.
+* **Tab Navigation:** Sử dụng các tab ngang (Tất cả / Chờ xử lý / Đang giao / Hoàn thành / Đã hủy) để khách dễ dàng quản lý.
+* **Thiết kế Card (Order Card):** 
+  * Header Card: Mã đơn, Ngày đặt, Trạng thái (Huy hiệu màu sắc: Vàng cho Pending, Xanh dương cho Shipping, Xanh lá cho Success, Xám/Đỏ cho Cancel).
+  * Body Card: Danh sách 1-2 sản phẩm tiêu biểu (Có nút xem thêm nếu đơn hàng dài).
+  * Footer Card: Tổng tiền và các nút thao tác (Hủy đơn, Xem chi tiết).
+* **Màn hình Trống (Empty State):** Nếu khách chưa mua hàng, hiển thị hình ảnh minh họa giỏ hàng rỗng và nút "Tiếp tục mua sắm" điều hướng về Trang chủ.
 
 ---

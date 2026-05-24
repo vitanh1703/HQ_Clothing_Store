@@ -54,13 +54,18 @@ namespace HQ.Backend.Controllers
 
             _registerOtpStorage[user.Email] = (otp, DateTime.Now.AddMinutes(5), 0, user);
 
-            bool isSent = await SendEmailAsync(user.Email, "Mã OTP đăng ký tài khoản - H&Q Store", 
-                $"Xin chào,\n\nMã OTP để đăng ký tài khoản của bạn là: {otp}\n\nMã này có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã này với bất kỳ ai.");
+            // XÓA BỎ HOÀN TOÀN DÒNG: bool isSent = true; VÀ BẬT LẠI DÒNG DƯỚI NÀY:
+            bool isSent = await SendEmailAsync(user.Email, "[H&Q Store] Mã OTP Xác Thực Đăng Ký Tài Khoản", otp);
+
+            // In log đen để bạn kiểm soát hệ thống trên Railway
+            Console.WriteLine($"====== [DỰ ÁN H&Q STORE] OTP CỦA {user.Email} LÀ: {otp} ======");
 
             if (isSent) 
-                return Ok(new { message = "Mã OTP đã được gửi!" });
+            {
+                return Ok(new { message = "Mã OTP đã được gửi thật qua API Brevo!" });
+            }
             
-            return StatusCode(500, new { message = "Gửi mail thất bại, kiểm tra kết nối mạng hoặc cấu hình SMTP!" });
+            return StatusCode(500, new { message = "Gửi mail thất bại từ Mail Server Brevo API!" });
         }
 
         [HttpPost("verify-register-otp")]
@@ -151,7 +156,7 @@ namespace HQ.Backend.Controllers
             {
                 var settings = new GoogleJsonWebSignature.ValidationSettings()
                 {
-                    Audience = new List<string> { "249381559845-1s30c3kjmaeic2v35il5vjqir9930pq2.apps.googleusercontent.com" }
+                    Audience = new List<string> { "991505623424-nku31al8k2k1ajf7ad8l4b2piuft8ccf.apps.googleusercontent.com" }
                 };
                 var payload = await GoogleJsonWebSignature.ValidateAsync(request.Token, settings);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == payload.Email);
@@ -221,26 +226,31 @@ namespace HQ.Backend.Controllers
         {
             try
             {
-                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                using (var client = new HttpClient())
                 {
-                    smtp.Credentials = new NetworkCredential("diema448@gmail.com", "gyykaypfhslrkvew");
-                    smtp.EnableSsl = true;
+                    client.BaseAddress = new Uri("https://api.brevo.com/v3/");
+                    // Dán API Key Brevo của bạn vào đây
+                    client.DefaultRequestHeaders.Add("api-key", "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");
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                    MailMessage mail = new MailMessage
+                    var emailData = new
                     {
-                        From = new MailAddress("diema448@gmail.com", "H&Q Store"),
-                        Subject = subject,
-                        Body = body
+                        sender = new { name = "H&Q Store", email = "diema448@gmail.com" }, // Email chủ tài khoản Brevo
+                        to = new[] { new { email = toEmail, name = "Khách Hàng" } },
+                        subject = subject,
+                        htmlContent = $@"<h3>Mã OTP xác thực của bạn là: <b style='color:blue; font-size:24px;'>{body}</b></h3>"
                     };
-                    mail.To.Add(toEmail);
 
-                    await smtp.SendMailAsync(mail);
-                    return true;
+                    var options = new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase };
+                    var jsonContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(emailData, options), System.Text.Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("smtp/email", jsonContent);
+                    return response.IsSuccessStatusCode;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Email Error: " + ex.Message);
+                Console.WriteLine("[Brevo API Error]: " + ex.Message);
                 return false;
             }
         }

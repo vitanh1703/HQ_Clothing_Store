@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import gsap from 'gsap';
 import { Heart } from 'lucide-react';
-import type { Product } from '../services/api';
+import { API_BASE, type Product } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -123,10 +123,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     try {
       if (willAdd) {
-        await axios.post(`https://localhost:7137/api/wishlist`, { userId, variantId });
+        await axios.post(`${API_BASE}/wishlist`, { userId, variantId });
         toast.success("Đã thêm vào danh sách yêu thích");
       } else {
-        await axios.delete(`https://localhost:7137/api/wishlist/${userId}/${variantId}`);
+        await axios.delete(`${API_BASE}/wishlist/${userId}/${variantId}`);
         toast.info("Đã xóa khỏi danh sách yêu thích");
       }
       updateWishlistStorage(variantId, willAdd);
@@ -234,7 +234,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </button>
 
         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-end pb-4 px-3">
-          <div className="flex flex-wrap justify-center gap-1 mb-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+          <div className="flex flex-wrap justify-center gap-1 mb-1.5 lg:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
             {availableColors.map((color) => (
               <button
                 key={color}
@@ -256,7 +256,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             ))}
           </div>
 
-          <div className="flex flex-wrap justify-center gap-1.5 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+          <div className="flex flex-wrap justify-center gap-1.5 mb-3 lg:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
             {allSizes.map((size) => {
               const isAvailable = !selectedColor || variants.some((v) => v.color === selectedColor && v.size === size);
               return (
@@ -287,7 +287,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             })}
           </div>
 
-          <div className="flex items-center bg-white/95 rounded-sm mb-3 w-full justify-between px-3 py-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 shadow-sm">
+          <div className="flex items-center bg-white/95 rounded-sm mb-3 w-full justify-between px-3 py-2 lg:translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 shadow-sm">
             <span className="text-[9px] font-bold uppercase text-gray-500 tracking-wider">Số lượng</span>
             <div className="flex items-center gap-4">
               <button onClick={(e) => { e.stopPropagation(); handleQuantity('minus'); }} className="text-sm font-bold hover:text-red-500">-</button>

@@ -6,6 +6,7 @@ import {
 } from "react-icons/fi";
 import AdminSidebar from '../../components/AdminSidebar';
 import { toast } from 'react-toastify';
+import { API_BASE } from '../../services/api';
 
 const InventoryManager = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -23,7 +24,7 @@ const InventoryManager = () => {
     setLoading(true);
     try {
       // Gọi API lấy dữ liệu kho (nhớ kiểm tra route này ở backend)
-      const res = await axios.get('https://localhost:7137/api/promotions/inventory');
+      const res = await axios.get(`${API_BASE}/promotions/inventory`);
       setWarehouseData(res.data);
     } catch (err) {
       toast.error("Lỗi kết nối Server!");
@@ -69,18 +70,18 @@ const InventoryManager = () => {
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="bg-gray-900 shadow-xl px-8 py-6 flex items-center gap-4 text-white uppercase tracking-tight font-bold text-3xl">
+        <div className="bg-gray-900 shadow-xl px-4 py-4 md:px-8 md:py-6 flex items-center gap-4 text-white uppercase tracking-tight font-bold text-xl md:text-3xl">
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-gray-700 rounded-lg transition">
             {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-          Quản lý Kho hàng
+          <span className="truncate">Quản lý Kho hàng</span>
         </div>
 
-        <div className="flex-1 overflow-auto p-8">
+        <div className="flex-1 overflow-auto p-4 md:p-8">
           <div className="max-w-7xl mx-auto">
             
             {/* Search Bar */}
-            <div className="flex gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6 md:mb-8">
               <div className="flex-1 relative">
                 <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
@@ -90,13 +91,13 @@ const InventoryManager = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <button onClick={() => {setStatusFilter('all'); fetchData();}} className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg">
+              <button onClick={() => {setStatusFilter('all'); fetchData();}} className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-blue-700 shadow-lg whitespace-nowrap">
                 <FiRefreshCcw className={loading ? "animate-spin" : ""} /> Tất cả hàng
               </button>
             </div>
 
             {/* Stats Cards - CÓ CHỨC NĂNG CLICK LỌC */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-6 md:mb-8">
               <StatCard 
                 active={statusFilter === 'all'} 
                 onClick={() => setStatusFilter('all')} 
@@ -121,8 +122,8 @@ const InventoryManager = () => {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex flex-col">
-              <table className="w-full text-left">
+            <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-x-auto flex flex-col">
+              <table className="w-full text-left min-w-200">
                 <thead className="bg-gray-50 border-b text-gray-500 text-xs font-bold uppercase">
                   <tr>
                     <th className="p-4">SKU</th>

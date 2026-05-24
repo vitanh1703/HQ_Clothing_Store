@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { promotionsApi } from "../services/api";
+import { API_BASE, promotionsApi } from "../services/api";
 import type { CheckoutCartItem, CheckoutResponse, PromotionItem, PromotionValidationResult } from "../services/api";
 import { PromoSelectionModal } from "../components/PromoSelectionModal";
 import { checkoutController } from "../services/controller";
@@ -159,12 +159,12 @@ const CheckoutPage = () => {
         }))
       };
 
-      const response = await axios.post("https://localhost:7137/api/orders/create", orderPayload);
+      const response = await axios.post(`${API_BASE}/orders/create`, orderPayload);
       const savedOrder = response.data; 
 
       if (paymentMethod === "vnpay") {
-        const paymentRes = await axios.post("https://localhost:7137/api/payment/create-payment", {
-          orderId: savedOrder.id,
+        const paymentRes = await axios.post(`${API_BASE}/payment/create-payment`, {
+          orderId: savedOrder.id || savedOrder.Id || savedOrder.orderId, // Tránh lỗi lệch kiểu CamelCase/PascalCase
           amount: totalAfterDiscount
         });
         window.location.href = paymentRes.data.url;
@@ -301,8 +301,8 @@ const CheckoutPage = () => {
           </section>
 
           <section className="mt-10">
-            <div className="flex items-center justify-between gap-4">
-              <h2 className="text-xl font-bold mb-4">Mã giảm giá</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-4">
+              <h2 className="text-xl font-bold">Mã giảm giá</h2>
               <button
                 onClick={() => setShowPromoModal(true)}
                 className="text-sm font-semibold text-blue-600 hover:text-blue-800"

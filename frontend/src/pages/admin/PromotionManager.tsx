@@ -4,6 +4,7 @@ import { Search, Trash2, Edit2, Plus, X as CloseIcon } from 'lucide-react';
 import { FiX, FiMenu } from "react-icons/fi";
 import AdminSidebar from '../../components/AdminSidebar';
 import { toast } from 'react-toastify';
+import { API_BASE } from '../../services/api';
 
 const PromotionManager = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -24,12 +25,10 @@ const PromotionManager = () => {
     status: true
   });
 
-  const apiBase = 'https://localhost:7137/api/promotions';
-
   const fetchPromotions = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(apiBase);
+      const response = await axios.get(API_BASE + '/promotions');
       setPromotions(response.data);
     } catch (error) {
       toast.error("Lỗi tải dữ liệu từ Server!");
@@ -84,10 +83,10 @@ const PromotionManager = () => {
 
     try {
       if (editingPromotion) {
-        await axios.put(`${apiBase}/${editingPromotion.id}`, dataToSend);
+        await axios.put(`${API_BASE}/promotions/${editingPromotion.id}`, dataToSend);
         toast.success("Cập nhật thành công!");
       } else {
-        await axios.post(apiBase, dataToSend);
+        await axios.post(`${API_BASE}/promotions`, dataToSend);
         toast.success("Thêm mới thành công!");
       }
       setIsModalOpen(false);
@@ -100,7 +99,7 @@ const PromotionManager = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa mã khuyến mại này không?")) {
       try {
-        await axios.delete(`${apiBase}/${id}`);
+        await axios.delete(`${API_BASE}/promotions/${id}`);
         toast.success("Đã xóa thành công!");
         fetchPromotions();
       } catch (error) { toast.error("Lỗi khi xóa!"); }
@@ -111,24 +110,30 @@ const PromotionManager = () => {
     <div className="flex h-screen bg-[#f8f9fa] overflow-hidden">
       <AdminSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col h-full overflow-hidden border-l">
-        <div className="bg-gray-900 shadow-xl px-8 py-6 flex items-center gap-4 text-white">
+        <div className="bg-gray-900 shadow-xl px-4 py-4 md:px-8 md:py-6 flex items-center gap-4 text-white">
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-gray-700 rounded-lg">
             {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-          <h1 className="text-3xl font-bold uppercase tracking-tight">Quản lý Khuyến mại</h1>
+          <h1 className="text-xl md:text-3xl font-bold uppercase tracking-tight truncate">Quản lý Khuyến mại</h1>
         </div>
 
-        <main className="flex-1 overflow-y-auto p-8 bg-white text-black">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-white text-black">
           <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 sm:gap-0">
                <h2 className="text-2xl font-bold text-gray-800">Danh sách mã giảm giá</h2>
-               <button onClick={handleOpenAddModal} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-bold shadow-md">
-                 <Plus size={20}/> Thêm mới
-               </button>
+               <div className="flex items-center gap-4 w-full sm:w-auto mt-4 sm:mt-0">
+                 <div className="relative w-full sm:w-64">
+                   <input type="text" placeholder="Tìm kiếm mã..." className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                   <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+                 </div>
+                 <button onClick={handleOpenAddModal} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-bold shadow-md min-w-max">
+                   <Plus size={20}/> Thêm mới
+                 </button>
+               </div>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden text-black">
-              <table className="w-full text-left border-collapse">
+            <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-x-auto text-black">
+              <table className="w-full text-left border-collapse min-w-200">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr className="text-gray-500 text-sm uppercase font-bold">
                     <th className="p-4">Chương trình</th>

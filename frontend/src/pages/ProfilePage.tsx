@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE } from '../services/api';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const ProfilePage = () => {
       try {
         const userId = userData.user.id || userData.user.Id;
         if (userId) {
-          const res = await axios.get(`https://localhost:7137/api/orders/user/${userId}`);
+          const res = await axios.get(`${API_BASE}/orders/user/${userId}`);
           setOrders(res.data);
         }
       } catch (error) {
@@ -58,7 +59,7 @@ const ProfilePage = () => {
     
     try {
       const userId = user.id || user.Id;
-      await axios.put(`https://localhost:7137/api/users/${userId}/password`, {
+      await axios.put(`${API_BASE}/users/${userId}/password`, {
         currentPassword,
         newPassword
       });
@@ -78,7 +79,7 @@ const ProfilePage = () => {
 
     try {
       const userId = user.id || user.Id;
-      await axios.put(`https://localhost:7137/api/users/${userId}/info`, {
+      await axios.put(`${API_BASE}/users/${userId}/info`, {
         fullName: editFullName,
         phone: editPhone,
         address: editAddress
@@ -113,8 +114,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] py-12">
-      <div className="max-w-4xl mx-auto px-8">
+    <div className="min-h-screen bg-[#F5F5F5] py-8 lg:py-12">
+      <div className="max-w-4xl mx-auto px-4 lg:px-8">
         <div className="bg-white rounded-lg shadow-sm p-8">
           <h1 className="text-3xl font-black uppercase mb-8 text-center">Thông tin cá nhân</h1>
 
@@ -152,7 +153,12 @@ const ProfilePage = () => {
           </div>
 
           <div>
-            <h2 className="text-xl font-bold uppercase mb-4">Lịch sử mua hàng</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold uppercase">Lịch sử mua hàng</h2>
+              <button onClick={() => navigate('/orders-history')} className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-black transition-colors">
+                Xem tất cả
+              </button>
+            </div>
             {loadingOrders ? (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
                 <p className="text-gray-600">Đang tải lịch sử mua hàng...</p>
@@ -168,7 +174,7 @@ const ProfilePage = () => {
                 </button>
               </div>
             ) : (
-              <div className="bg-white border border-gray-200 rounded-lg max-h-90 overflow-y-auto">
+              <div className="bg-white border border-gray-200 rounded-lg max-h-90 overflow-auto">
                 <table className="w-full text-left text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200 uppercase text-xs tracking-wider sticky top-0 z-10">
                     <tr>
@@ -202,7 +208,7 @@ const ProfilePage = () => {
           </div>
           <div className="mt-8 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-bold uppercase mb-4">Cài đặt tài khoản</h2>
-            <div className="flex gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <button 
                 onClick={() => { setShowChangePassword(!showChangePassword); setShowEditProfile(false); }}
                 className={`px-6 py-2 rounded-lg font-bold uppercase text-sm transition-colors ${showChangePassword ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}

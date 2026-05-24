@@ -32,6 +32,11 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import PromotionManager from './pages/admin/PromotionManager';
 import InventoryManager from './pages/admin/InventoryManager';
 import Statistics from './pages/admin/Statistics';
+import { API_BASE } from './services/api'; // Hãy điều chỉnh đường dẫn ../ cho đúng vị trí file
+import PromotionsPage from './pages/PromotionsPage';
+import OrderHistoryPage from './pages/OrderHistoryPage';
+import OrderDetailPage from './pages/OrderDetailPage';
+import { AIChatbot } from './components/AIChatbot';
 
 const RootRedirect = () => {
   const auth = sessionStorage.getItem("auth");
@@ -57,7 +62,7 @@ const AdminRoute = ({ children }: { children: JSX.Element }) => {
         return;
       }
       try {
-        await axios.get(`https://localhost:7137/api/auth/verify-admin/${userId}`);
+        await axios.get(`${API_BASE}/auth/verify-admin/${userId}`);
         setIsAuthorized(true);
       } catch {
         setIsAuthorized(false);
@@ -80,7 +85,6 @@ function App() {
     location.pathname.startsWith("/customers") ||
     location.pathname.startsWith("/suppliers") ||
     location.pathname.startsWith("/orders") ||
-    location.pathname.startsWith("/promotions") ||
     location.pathname.startsWith("/reports");
 
   return (
@@ -98,6 +102,9 @@ function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/promotions" element={<PromotionsPage />} />
+          <Route path="/orders-history" element={<OrderHistoryPage />} />
+          <Route path="/orders-history/:id" element={<OrderDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/payment" element={<PaymentPage />} />
@@ -115,7 +122,7 @@ function App() {
           <Route path="/customers" element={<AdminRoute><CustomerManager /></AdminRoute>} />
           <Route path="/suppliers" element={<AdminRoute><SupplierManager /></AdminRoute>} />
           <Route path="/orders" element={<AdminRoute><OrderManager /></AdminRoute>} />
-          <Route path="/promotions" element={<AdminRoute><PromotionManager /></AdminRoute>} />
+          <Route path="/admin/promotions" element={<AdminRoute><PromotionManager /></AdminRoute>} />
           <Route path="/admin/products" element={<AdminRoute><ProductManager /></AdminRoute>} />
           <Route path="/admin/news" element={<AdminRoute><NewsManager /></AdminRoute>} />
           <Route path="/admin/inventory" element={<AdminRoute><InventoryManager /></AdminRoute>} />
@@ -125,6 +132,7 @@ function App() {
       </div>
 
       {!isHideLayout && <Footer />}
+      <AIChatbot />
     </div>
   );
 }

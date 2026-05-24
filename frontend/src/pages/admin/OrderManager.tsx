@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import AdminSidebar from '../../components/AdminSidebar';
 import { OrderDetailModal, OrderStatusUpdateModal } from '../../components/OrderModal';
 import type { Order } from '../../components/OrderModal';
+import { API_BASE } from '../../services/api';
 
 const OrderManager = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -17,12 +18,10 @@ const OrderManager = () => {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
 
-  const apiBase = 'https://localhost:7137/api';
-
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await axios.get<Order[]>(`${apiBase}/orders/admin/all`);
+      const response = await axios.get<Order[]>(`${API_BASE}/orders/admin/all`);
       setOrders(response.data);
     } catch (error) {
       console.error('Lỗi khi tải đơn hàng', error);
@@ -36,9 +35,14 @@ const OrderManager = () => {
     fetchOrders();
   }, []);
 
-  const handleViewDetails = (order: Order) => {
-    setSelectedOrder(order);
-    setIsDetailModalOpen(true);
+  const handleViewDetails = async (order: Order) => {
+    try {
+      const res = await axios.get(`${API_BASE}/orders/${order.id}`);
+      setSelectedOrder(res.data);
+      setIsDetailModalOpen(true);
+    } catch (error) {
+      toast.error('Không thể tải chi tiết đơn hàng');
+    }
   };
 
   const handleEditStatus = (order: Order) => {
@@ -152,18 +156,18 @@ const OrderManager = () => {
 
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         {/* Header */}
-        <div className="bg-gray-900 shadow-xl px-8 py-6 flex items-center gap-4">
+        <div className="bg-gray-900 shadow-xl px-4 py-4 md:px-8 md:py-6 flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 hover:bg-gray-700 text-white rounded-lg transition duration-200"
           >
             {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-          <h1 className="text-3xl font-bold text-white">Quản lý Đơn hàng</h1>
+          <h1 className="text-xl md:text-3xl font-bold text-white truncate">Quản lý Đơn hàng</h1>
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-8 bg-white">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800">Danh sách Đơn hàng</h2>
@@ -171,7 +175,7 @@ const OrderManager = () => {
             </div>
 
             {/* Filter Cards */}
-            <div className="grid grid-cols-5 gap-6 mb-10">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 mb-8 md:mb-10">
               {[
                 { status: null, label: 'Tất cả', count: statusCounts.all },
                 { status: 'Pending', label: 'Chờ xử lý', count: statusCounts.pending },
@@ -196,7 +200,7 @@ const OrderManager = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="relative mb-10">
+            <div className="relative mb-6 md:mb-10">
               <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
               <input
                 type="text"

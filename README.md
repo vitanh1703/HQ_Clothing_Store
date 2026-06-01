@@ -51,7 +51,6 @@ Dự án **H&Q** tập trung vào trải nghiệm mua sắm hiện đại, tối
 ---
 
 ## 📸 Hình ảnh minh họa hệ thống
-*(Hãy chụp ảnh màn hình website của bạn, lưu vào thư mục `img/` và cập nhật lại tên file dưới đây)*
 
 **1. Giao diện Trang chủ (Home Page)**
 <img src="img/screenshot_home.png" alt="Giao diện Trang chủ" width="800" />

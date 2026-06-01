@@ -24,6 +24,8 @@
 5. [Cấu trúc dự án](#-cấu-trúc-dự-án)
 6. [Cài đặt và chạy](#-cài-đặt-và-chạy)
 7. [API Endpoints](#-api-endpoints)
+8. [Video Demo](#-video-demo)
+9. [Hình ảnh minh họa hệ thống](#-hình-ảnh-minh-họa-hệ-thống)
 
 ---
 
@@ -42,12 +44,29 @@ Dự án **H&Q** tập trung vào trải nghiệm mua sắm hiện đại, tối
 
 ---
 
+## 🎥 Video Demo
+
+[!Video Demo](https://drive.google.com/drive/folders/1OfRFlPW7xALTE6DBWu4d7hyPqBMV_r1U?usp=sharing)
+
+---
+
+## 📸 Hình ảnh minh họa hệ thống
+*(Hãy chụp ảnh màn hình website của bạn, lưu vào thư mục `img/` và cập nhật lại tên file dưới đây)*
+
+**1. Giao diện Trang chủ (Home Page)**
+<img src="img/screenshot_home.png" alt="Giao diện Trang chủ" width="800" />
+
+**2. Giao diện Quản trị (Admin Dashboard)**
+<img src="img/screenshot_admin.png" alt="Giao diện Admin" width="800" />
+
+---
+
 ## ✨ Tính năng
 
 ### 👤 Khách hàng
 | Tính năng | Mô tả |
 | :--- | :--- |
-| ** Xác thực** | Đăng nhập/Đăng ký tài khoản nội bộ và tích hợp đăng nhập bằng Google. |
+| **Xác thực** | Đăng nhập/Đăng ký tài khoản nội bộ và tích hợp đăng nhập bằng Google. |
 | **🛍️ Duyệt sản phẩm** | Xem chi tiết sản phẩm, biến thể (kích thước, màu sắc) theo danh mục. |
 | **🔍 Bộ lọc & Tìm kiếm** | Lọc sản phẩm linh hoạt theo giá, danh mục, kích thước và màu sắc. |
 | **🛒 Giỏ hàng & Wishlist**| Thêm/bớt sản phẩm giỏ hàng và lưu trữ danh sách sản phẩm yêu thích. |

@@ -33,9 +33,9 @@
 
 | STT | Họ và Tên | MSSV | Nội dung thực hiện |
 | :--- | :--- | :--- | :--- |
-| 1 | **Diêm Việt Anh** | 23810310083 | Thanh toán VNPAY, Luồng đơn hàng, module Giỏ hàng, ChatBot AI và Deploy website |
-| 2 | **Nguyễn Thị Hảo** | 23810310152 | Quản trị hệ thống (Admin), Xác thực qua mail, Module Chương trình Khuyến mãi |
-| 3 | **Đặng Thị Quỳnh** | 23810310156 | Module Tin tức, Dịch vụ Tiện ích và Sản phẩm, Đăng nhập bằng Google |
+| 1 | **Diêm Việt Anh** | 23810310083 | Luồng đơn hàng, module Giỏ hàng, ChatBot AI và Deploy website |
+| 2 | **Nguyễn Thị Hảo** | 23810310152 | Quản trị hệ thống (Admin), Đăng ký và Xác thực qua mail, Đăng nhập bằng Google, Module Chương trình Khuyến mãi |
+| 3 | **Đặng Thị Quỳnh** | 23810310156 | Module Tin tức, Dịch vụ Tiện ích, Module Sản phẩm, Thanh toán VNPAY, Danh sách yêu thích |
 
 ---
 
